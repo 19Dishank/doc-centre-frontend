@@ -27,17 +27,17 @@ const App = () => {
           children: [
             {
               path: "/",
-              element: <HomePage />
+              element: <HomePage />,
             },
             {
               path: "/register",
-              element: <RegistrationPage />
+              element: <RegistrationPage />,
             },
             {
               path: "/login",
-              element: <LoginPage />
+              element: <LoginPage />,
             },
-          ]
+          ],
         },
         {
           element: <ProtectedRoutes />,
@@ -47,54 +47,57 @@ const App = () => {
               children: [
                 {
                   path: "/dashboard",
-                  element: <Dashboard />
+                  element: <Dashboard />,
                 },
                 {
                   path: "/files",
-                  element: <Files />
+                  element: <Files />,
                 },
                 {
-                  path: "/upload_file",
-                  element: <UploadFile />
+                  path: "/upload",
+                  element: <UploadFile />,
                 },
                 {
                   path: "/users",
-                  element: <UsersList />
+                  element: <UsersList />,
                 },
                 {
                   path: "/roles",
-                  element: <Roles />
+                  element: <Roles />,
                 },
                 {
-                  path: "/billing",
-                  element: <BillingPage />
+                  path: "/settings",
+                  children: [
+                    {
+                      path: "billing",
+                      element: <BillingPage />,
+                    },
+                    {
+                      path: "organization",
+                      element: <Organization />,
+                    },
+                    {
+                      path: "api-access",
+                      element: <ApiAccess />,
+                    },
+                    {
+                      path: "notifications",
+                      element: <Notifications />,
+                    },
+                    {
+                      path: "danger-zone",
+                      element: <DangerZone />,
+                    },
+                  ]
                 },
-                {
-                  path: "/organization",
-                  element: <Organization />
-                },
-                {
-                  path: "/api-access",
-                  element: <ApiAccess />
-                },
-                {
-                  path: "/notifications",
-                  element: <Notifications />
-                },
-                {
-                  path: "/danger-zone",
-                  element: <DangerZone />
-                }
-              ]
+              ],
             },
-          ]
-        }
-      ]
+          ],
+        },
+      ],
     },
-  ])
-  return (
-    <RouterProvider router={router} />
-  );
+  ]);
+  return <RouterProvider router={router} />;
 };
 
 export default App;

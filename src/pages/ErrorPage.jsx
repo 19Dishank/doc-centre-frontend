@@ -1,10 +1,21 @@
 import { ArrowLeft, FileSearch, LayoutDashboard } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { isRouteErrorResponse, useRouteError } from "react-router-dom";
 
-export default function ErrorPage({ statusCode }) {
+export default function ErrorPage() {
 
-  if (statusCode !== 404) return null; // only render for 404
+  const error = useRouteError();
+
+  console.log(error);
+
+  let statusCode = 500;
+
+  if (isRouteErrorResponse(error)) {
+    statusCode = error.status;
+  }
+
+  if (statusCode !== 404) return <div>Something went wrong : "{error.message}"</div>
 
   return (
     <div>

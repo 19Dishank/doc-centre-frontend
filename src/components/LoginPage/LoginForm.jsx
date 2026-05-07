@@ -1,9 +1,10 @@
-import { ArrowRight, Eye, FileStack } from "lucide-react";
+import { ArrowRight, Eye, EyeOff, FileStack } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { NavLink, useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 const LoginForm = () => {
 
@@ -12,6 +13,23 @@ const LoginForm = () => {
     const handleLogin = () => {
         localStorage.setItem("token", "dummy-token");
         navigate("/dashboard");
+    }
+
+    const initialData = {
+        email: "",
+        password: ""
+    };
+
+    const [loginData, setLoginData] = useState(initialData);
+    const [showPassword, setShowPassword] = useState(false);
+
+    const handleChange = (e) => {
+        e.preventDefault();
+        const {name, value} = e.target;
+        setLoginData({
+            ...loginData,
+            [name]: value
+        });
     }
 
     return (
@@ -49,7 +67,9 @@ const LoginForm = () => {
                             id="email"
                             type="email"
                             placeholder="you@company.com"
-                            defaultValue="jordan@acmecorp.com"
+                            name="email"
+                            onChange={handleChange}
+                            value={loginData.email}
                             className="rounded-lg bg-white border-zinc-200 border border-solid h-11"
                         />
                     </div>
@@ -60,13 +80,19 @@ const LoginForm = () => {
                         <div className="relative">
                             <Input
                                 id="password"
-                                type="password"
+                                type={showPassword ? "text" : "password"}
                                 placeholder="Enter your password"
-                                defaultValue="••••••••••••"
+                                name="password"
+                                onChange={handleChange}
+                                value={loginData.password}
                                 className="rounded-lg bg-white border-zinc-200 border border-solid pr-10 h-11"
                             />
-                            <button className="top-1/2 -translate-y-1/2 text-[#71717b] absolute right-3">
-                                <Eye className="size-4" />
+                            <button
+                                type="button"
+                                className="top-1/2 -translate-y-1/2 text-[#71717b] absolute right-3"
+                                onClick={() => setShowPassword(!showPassword)}
+                            >
+                                {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
                             </button>
                         </div>
                         <a href="#" className="font-medium text-[#2b7fff] text-xs self-end">

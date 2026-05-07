@@ -3,11 +3,41 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { NavLink } from "react-router-dom";
-
+import axios from "axios";
+import { useState } from "react";
 
 const RegistrationForm = () => {
+
+    const initialData = {
+        firstName: "",
+        lastName: "",
+        email: "",
+        orgName: "",
+        orgSlogan: "",
+        slug: ""
+    }
+
+    const [registrationData, setRegistrationData] = useState(initialData);
+
+    const handleChange = (e) => {
+        e.preventDefault();
+        const { name, value } = e.target;
+        setRegistrationData({
+            ...registrationData,
+            [name]: value
+        });
+    }
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        const res = await axios.post("http://192.168.100.117:3000/api/v1/tenant/register", registrationData);
+        console.log("Registration Data:", res);
+    }
+
+    console.log("Registration Data", registrationData)
+
     return (
-        <div className="bg-white flex p-12 flex-col justify-center items-center flex-1">
+        <div className="min-h-screen bg-white flex p-12 flex-col justify-center items-center flex-1">
             <div className="max-w-xl flex flex-col gap-8 w-full">
 
                 <div className="flex items-center gap-2">
@@ -55,10 +85,12 @@ const RegistrationForm = () => {
                                 First Name
                             </Label>
                             <Input
+                                onChange={handleChange}
+                                name="firstName"
+                                value={registrationData.firstName}
                                 id="firstName"
                                 placeholder="Jane"
                                 className="rounded-lg border border-zinc-200 border-solid h-10"
-                                defaultValue="Jane"
                             />
                         </div>
                         <div className="flex flex-col gap-2">
@@ -74,9 +106,11 @@ const RegistrationForm = () => {
                             </Label>
                             <Input
                                 id="lastName"
+                                name="lastName"
+                                onChange={handleChange}
+                                value={registrationData.lastName}
                                 placeholder="Doe"
                                 className="rounded-lg border border-zinc-200 border-solid h-10"
-                                defaultValue="Doe"
                             />
                         </div>
                     </div>
@@ -93,15 +127,17 @@ const RegistrationForm = () => {
                         </Label>
                         <Input
                             id="email"
+                            name="email"
+                            onChange={handleChange}
+                            value={registrationData.email}
                             type="email"
                             placeholder="you@company.com"
                             className="rounded-lg border border-zinc-200 border-solid h-10"
-                            defaultValue="jane.doe@acme.com"
                         />
                     </div>
                     <div className="flex flex-col gap-2">
                         <Label
-                            htmlFor="org"
+                            htmlFor="orgName"
                             className="font-medium uppercase text-zinc-950 tracking-wider"
                             style={{
                                 fontSize: "11px",
@@ -111,15 +147,17 @@ const RegistrationForm = () => {
                             Organization Name
                         </Label>
                         <Input
-                            id="org"
+                            id="orgName"
+                            name="orgName"
+                            onChange={handleChange}
+                            value={registrationData.orgName}
                             placeholder="Acme Corp"
                             className="rounded-lg border-zinc-200 border border-solid h-10"
-                            defaultValue="Acme Corp"
                         />
                     </div>
                     <div className="flex flex-col gap-2">
                         <Label
-                            htmlFor="org"
+                            htmlFor="orgSlogan"
                             className="font-medium uppercase text-zinc-950 tracking-wider"
                             style={{
                                 fontSize: "11px",
@@ -129,10 +167,12 @@ const RegistrationForm = () => {
                             Organization Slogan
                         </Label>
                         <Input
-                            id="org"
+                            id="orgSlogan"
+                            name="orgSlogan"
+                            onChange={handleChange}
+                            value={registrationData.orgSlogan}
                             placeholder="Acme Corp"
                             className="rounded-lg border border-zinc-200 border-solid h-10"
-                            defaultValue="Organization Slogan"
                         />
                     </div>
                     <div className="flex flex-col gap-2">
@@ -149,7 +189,9 @@ const RegistrationForm = () => {
                         <div className="rounded-md bg-white border-zinc-200 border border-solid flex h-10 overflow-hidden">
                             <input
                                 id="slug"
-                                defaultValue="acmecorp"
+                                name="slug"
+                                onChange={handleChange}
+                                value={registrationData.slug}
                                 className="bg-transparent outline-none text-sm leading-5 px-3"
                             />
                             <span className="bg-zinc-100 text-[#71717b] text-sm leading-5 border-zinc-200 border-t-0 border-r-1 flex-1 border-b-0 border-l-0 border-solid flex px-3 items-center">
@@ -177,7 +219,7 @@ const RegistrationForm = () => {
                     </div>
                 </div>
 
-                <Button className=" cursor-pointer font-semibold rounded-lg bg-[#2b7fff] text-blue-50 w-full" style={{ height: "44px" }}>
+                <Button onClick={handleSubmit} className=" cursor-pointer font-semibold rounded-lg bg-[#2b7fff] text-blue-50 w-full" style={{ height: "44px" }}>
                     Create Account
                 </Button>
                 <div className="flex flex-col items-center gap-4">

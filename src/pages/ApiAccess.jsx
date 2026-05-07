@@ -213,7 +213,7 @@ export default function ApiAccess() {
                   </div>
                 </div>
               </CardContent>
-              <CardFooter className="p-0 justify-end gap-2">
+              <CardFooter className="px-0 bg-white justify-end gap-2">
                 <Button variant="outline" className="gap-2">
                   <Download className="size-4" />
                   Download CSV

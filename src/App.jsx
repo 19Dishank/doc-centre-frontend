@@ -1,103 +1,20 @@
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import LoginPage from "./pages/LoginPage";
-import ErrorPage from "./pages/ErrorPage";
-import RegistrationPage from "./pages/RegistrationPage";
-import Dashboard from "./pages/Dashboard";
-import BillingPage from "./pages/BillingPage";
-import AppLayout from "./layouts/AppLayout";
-import Files from "./pages/Files";
-import UploadFile from "./pages/Upload";
-import UsersList from "./pages/Users";
-import Roles from "./pages/Roles";
-import Organization from "./pages/Organization";
-import ApiAccess from "./pages/ApiAccess";
-import Notifications from "./pages/Notifications";
-import DangerZone from "./pages/DangerZone";
-import PublicRoutes from "./routes/PublicRoutes";
-import ProtectedRoutes from "./routes/PrivateRoutes";
-import HomePage from "./pages/HomePage";
+import { RouterProvider } from "react-router-dom";
+import { getSubdomain } from "./helper/getSubdomain";
+import { platformRouter } from "./routes/platformRouter";
+import { tenantRouter } from "./routes/tenentRouter";
 
-const App = () => {
-  const router = createBrowserRouter([
-    {
-      errorElement: <ErrorPage />,
-      children: [
-        {
-          element: <PublicRoutes />,
-          children: [
-            {
-              path: "/",
-              element: <HomePage />,
-            },
-            {
-              path: "/register",
-              element: <RegistrationPage />,
-            },
-            {
-              path: "/login",
-              element: <LoginPage />,
-            },
-          ],
-        },
-        {
-          element: <ProtectedRoutes />,
-          children: [
-            {
-              element: <AppLayout />,
-              children: [
-                {
-                  path: "/dashboard",
-                  element: <Dashboard />,
-                },
-                {
-                  path: "/files",
-                  element: <Files />,
-                },
-                {
-                  path: "/upload",
-                  element: <UploadFile />,
-                },
-                {
-                  path: "/users",
-                  element: <UsersList />,
-                },
-                {
-                  path: "/roles",
-                  element: <Roles />,
-                },
-                {
-                  path: "/settings",
-                  children: [
-                    {
-                      path: "billing",
-                      element: <BillingPage />,
-                    },
-                    {
-                      path: "organization",
-                      element: <Organization />,
-                    },
-                    {
-                      path: "api-access",
-                      element: <ApiAccess />,
-                    },
-                    {
-                      path: "notifications",
-                      element: <Notifications />,
-                    },
-                    {
-                      path: "danger-zone",
-                      element: <DangerZone />,
-                    },
-                  ]
-                },
-              ],
-            },
-          ],
-        },
-      ],
-    },
-  ]);
+
+const subdomain = getSubdomain();
+console.log(subdomain)
+
+const isPlatform =
+  subdomain === "app" ||
+  subdomain === null;
+
+  console.log(isPlatform)
+
+const router = isPlatform ? platformRouter : tenantRouter;
+
+export default function App() {
   return <RouterProvider router={router} />;
-};
-
-export default App;
+}

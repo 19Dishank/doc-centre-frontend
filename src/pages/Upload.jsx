@@ -15,8 +15,22 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
-import { Input } from "@/components/ui/input";
+import PDFPreviewer from "@/components/ui/pdf-viewer";
+import { useState } from "react";
+import { formatSize } from "@/helper/formatSize";
+
 export default function UploadFile() {
+
+  const [file, setFile] = useState(null);
+  const handleFileChange = (e) => {
+    const selectedFile = e.target.files[0];
+    if (selectedFile) {
+      setFile(selectedFile);
+    }
+  }
+
+  console.log("file", file)
+
   return (
     <div>
       <div className="min-h-239 flex">
@@ -44,7 +58,7 @@ export default function UploadFile() {
                         <FolderOpen className="size-4 cursor-pointer" />
                         Browse Files
                       </Button>
-                      <input id="file-upload-input" type="file" className="absolute inset-0 opacity-0 cursor-pointer" />
+                      <input onChange={handleFileChange} id="file-upload-input" type="file" className="absolute inset-0 opacity-0 cursor-pointer" />
                     </label>
                     <p className="text-[#71717b] text-xs leading-4">
                       Max 200MB per file · PDF, DOCX, XLSX, PNG, MP4, ZIP
@@ -128,56 +142,61 @@ export default function UploadFile() {
                   <CardHeader className="p-0 gap-2">
                     <CardTitle className="font-semibold text-sm leading-5">Preview</CardTitle>
                   </CardHeader>
-                  <CardContent className="flex p-0 flex-col gap-4">
-                    <div className="rounded-lg bg-zinc-100 flex justify-center items-center min-h-48">
-                      <div className="flex flex-col items-center gap-2">
-                        <div className="size-16 rounded-lg bg-red-100 text-red-600 flex justify-center items-center">
-                          <FileText className="size-8" />
-                        </div>
-                        <span className="text-[#71717b] text-xs leading-4">PDF Preview</span>
-                      </div>
-                    </div>
-                    <div className="flex flex-col gap-2">
-                      <span className="font-bold text-sm leading-5">Annual_Report_2024.pdf</span>
-                      <div className="rounded-lg border-zinc-200 border border-solid flex p-4 flex-col gap-2">
-                        <div className="flex justify-between items-center">
-                          <span className="text-[#71717b] text-xs leading-4">Type</span>
-                          <span className="font-medium text-xs leading-4">PDF Document</span>
-                        </div>
-                        <Separator />
-                        <div className="flex justify-between items-center">
-                          <span className="text-[#71717b] text-xs leading-4">Size</span>
-                          <span className="font-medium text-xs leading-4">4.2 MB</span>
-                        </div>
-                        <Separator />
-                        <div className="flex justify-between items-center">
-                          <span className="text-[#71717b] text-xs leading-4">Pages</span>
-                          <span className="font-medium text-xs leading-4">18</span>
-                        </div>
-                        <Separator />
-                        <div className="flex justify-between items-center">
-                          <span className="text-[#71717b] text-xs leading-4">Modified</span>
-                          <span className="font-medium text-xs leading-4">Today 14:32</span>
+                  <CardContent className="flex p-0 flex-col gap-4 w-full">
+                    {file ? (
+                      <PDFPreviewer file={file} />
+                    ) : (
+                      <div className="rounded-lg bg-zinc-100 flex justify-center items-center min-h-48">
+                        <div className="flex flex-col items-center gap-2">
+                          <div className="size-16 rounded-lg bg-red-100 text-red-600 flex justify-center items-center">
+                            <FileText className="size-8" />
+                          </div>
+                          <span className="text-[#71717b] text-xs leading-4">PDF Preview</span>
                         </div>
                       </div>
-                    </div>
-                    <div className="flex flex-col gap-2">
-                      <label className="font-medium text-[#71717b] text-xs leading-4">Destination Folder</label>
-                      <button className="rounded-lg bg-white text-sm leading-5 border-zinc-200 border border-solid flex px-3 py-2 justify-between items-center">
-                        <span className="flex items-center gap-2">
-                          <Folder className="size-4 text-[#71717b]" />
-                          My Files / Projects
-                        </span>
-                        <ChevronDown className="size-4 text-[#71717b]" />
-                      </button>
-                    </div>
+                    )}
+                    {file && (
+                      <>
+                        <div className="flex flex-col gap-2">
+                          <span className="font-bold text-sm leading-5">{file.name}</span>
+                          <div className="rounded-lg border-zinc-200 border border-solid flex p-4 flex-col gap-2">
+                            <div className="flex justify-between items-center">
+                              <span className="text-[#71717b] text-xs leading-4">Type</span>
+                              <span className="font-medium text-xs leading-4">{file.type}</span>
+                            </div>
+                            <Separator />
+                            <div className="flex justify-between items-center">
+                              <span className="text-[#71717b] text-xs leading-4">Size</span>
+                              <span className="font-medium text-xs leading-4">{formatSize(file.size)}</span>
+                            </div>
+                            <Separator />
+                            <div className="flex justify-between items-center">
+                              <span className="text-[#71717b] text-xs leading-4">Modified</span>
+                              <span className="font-medium text-xs leading-4">{file.lastModifiedDate.toLocaleDateString()}</span>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="flex flex-col gap-2">
+                          <label className="font-medium text-[#71717b] text-xs leading-4">Destination Folder</label>
+                          <button className="rounded-lg bg-white text-sm leading-5 border-zinc-200 border border-solid flex px-3 py-2 justify-between items-center">
+                            <span className="flex items-center gap-2">
+                              <Folder className="size-4 text-[#71717b]" />
+                              My Files / Projects
+                            </span>
+                            <ChevronDown className="size-4 text-[#71717b]" />
+                          </button>
+                        </div>
+                      </>
+                    )}
                   </CardContent>
-                  <CardFooter className="gap-2 bg-white p-0 pb-6 pt-4">
-                    <Button className="gap-2 w-full p-2">
-                      <Upload className="size-4" />
-                      Start Upload
-                    </Button>
-                  </CardFooter>
+                  {file && (
+                    <CardFooter className="gap-2 bg-white p-0 pb-6 pt-4">
+                      <Button className="gap-2 w-full p-2">
+                        <Upload className="size-4" />
+                        Start Upload
+                      </Button>
+                    </CardFooter>
+                  )}
                 </Card>
               </div>
             </div>

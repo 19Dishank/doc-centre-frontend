@@ -1,4 +1,4 @@
-import { Building2, Calendar, Check, Upload, Users, X, Zap } from "lucide-react";
+import { Building2, Calendar, Check, Upload, Users, Zap } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
+
 export default function Organization() {
   return (
     <div>
@@ -39,18 +40,25 @@ export default function Organization() {
                     <Input id="orgname" defaultValue="Acme Corp" className="h-10" />
                   </div>
                   <div className="flex flex-col gap-2">
-                    <Label htmlFor="slug" className="text-sm leading-5">
+                    <Label
+                      htmlFor="org"
+                      className="font-medium uppercase text-zinc-950 tracking-wider"
+                      style={{
+                        fontSize: "11px",
+                        lineHeight: "16px",
+                        letterSpacing: "0.06em",
+                      }}>
                       Slug
                     </Label>
                     <div className="rounded-md bg-white border-zinc-200 border border-solid flex h-10 overflow-hidden">
-                      <span className="bg-zinc-100 text-[#71717b] text-sm leading-5 border-zinc-200 border-t-0 border-r border-b-0 border-l-0 border-solid flex px-3 items-center">
-                        app.docucentral.com/
-                      </span>
                       <input
                         id="slug"
-                        defaultValue="acme-corp"
-                        className="bg-transparent outline-none text-sm leading-5 px-3 flex-1"
+                        defaultValue="acmecorp"
+                        className="bg-transparent outline-none text-sm leading-5 px-3"
                       />
+                      <span className="bg-zinc-100 text-[#71717b] text-sm leading-5 border-zinc-200 border-t-0 border-r flex-1 border-b-0 border-l-0 border-solid flex px-3 items-center">
+                        .cdms.com
+                      </span>
                     </div>
                   </div>
                   <div className="flex flex-col gap-2">
@@ -126,8 +134,7 @@ export default function Organization() {
                   </div>
                 </div>
               </CardContent>
-              <Separator />
-              <CardFooter className="p-0 justify-end gap-2">
+              <CardFooter className="px-0 bg-white justify-end gap-2">
                 <Button variant="outline" className="h-9">
                   Cancel
                 </Button>
@@ -137,26 +144,6 @@ export default function Organization() {
                 </Button>
               </CardFooter>
             </Card>
-          </div>
-          <div
-            className="shadow-lg min-w-80 rounded-lg bg-white border-black/1 border border-solid flex absolute right-6 bottom-6 pl-4 pr-10 py-4 items-start gap-3"
-            style={{ borderColor: "#a7f3d0", backgroundColor: "#ecfdf5" }}>
-            <div
-              className="size-8 shrink-0 rounded-full flex justify-center items-center"
-              style={{ backgroundColor: "#10b981" }}>
-              <Check className="size-4 text-white" />
-            </div>
-            <div className="flex flex-col gap-0.5">
-              <span className="font-semibold text-sm leading-5" style={{ color: "#065f46" }}>
-                Saved successfully
-              </span>
-              <span className="text-xs leading-4" style={{ color: "#047857" }}>
-                Organization details saved.
-              </span>
-            </div>
-            <button className="absolute right-3 top-3">
-              <X className="size-4" style={{ color: "#047857" }} />
-            </button>
           </div>
         </main>
       </div>

@@ -10,13 +10,25 @@ const __dirname = path.dirname(__filename);
 
 export default defineConfig({
   plugins: [react(), tailwindcss()],
+
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },
   },
+
   server: {
-    host: "0.0.0.0",
-    allowedHosts: true,
+    host: true,
+
+    allowedHosts: [
+      ".192.168.100.166.nip.io",
+    ],
+
+    proxy: {
+      "/api": {
+        target: 'http://192.168.100.117:3000',
+        changeOrigin: true
+      },
+    },
   },
 });

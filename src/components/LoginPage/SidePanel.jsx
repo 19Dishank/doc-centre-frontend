@@ -3,9 +3,8 @@ import { Check, FileSpreadsheet, FileStack, FileText, FolderOpen, Star } from "l
 const SidePanel = () => {
   return (
     <div
-      className="relative text-white flex p-12 flex-col justify-between overflow-hidden"
+      className="relative text-white lg:flex p-12 flex-col justify-between overflow-hidden w-full"
       style={{
-        width: "480px",
         background: "linear-gradient(135deg, oklch(0.42 0.18 264) 0%, oklch(0.55 0.22 260) 100%)",
       }}>
       <div className="relative z-10 flex items-center gap-2">

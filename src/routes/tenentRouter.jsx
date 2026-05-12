@@ -1,6 +1,5 @@
 import ErrorPage from "@/pages/ErrorPage";
 import { createBrowserRouter } from "react-router-dom";
-import ProtectedRoutes from "./PrivateRoutes";
 import AppLayout from "@/layouts/AppLayout";
 import Dashboard from "@/pages/Dashboard";
 import Files from "@/pages/Files";
@@ -18,57 +17,52 @@ export const tenantRouter = createBrowserRouter([
         errorElement: <ErrorPage />,
         children: [
             {
-                element: <ProtectedRoutes />,
+                element: <AppLayout />,
                 children: [
                     {
-                        element: <AppLayout />,
+                        path: "/dashboard",
+                        element: <Dashboard />,
+                    },
+                    {
+                        path: "/files",
+                        element: <Files />,
+                    },
+                    {
+                        path: "/upload",
+                        element: <UploadFile />,
+                    },
+                    {
+                        path: "/users",
+                        element: <UsersList />,
+                    },
+                    {
+                        path: "/roles",
+                        element: <Roles />,
+                    },
+                    {
+                        path: "/settings",
                         children: [
                             {
-                                path: "/dashboard",
-                                element: <Dashboard />,
+                                path: "billing",
+                                element: <BillingPage />,
                             },
                             {
-                                path: "/files",
-                                element: <Files />,
+                                path: "organization",
+                                element: <Organization />,
                             },
                             {
-                                path: "/upload",
-                                element: <UploadFile />,
+                                path: "api-access",
+                                element: <ApiAccess />,
                             },
                             {
-                                path: "/users",
-                                element: <UsersList />,
+                                path: "notifications",
+                                element: <Notifications />,
                             },
                             {
-                                path: "/roles",
-                                element: <Roles />,
+                                path: "danger-zone",
+                                element: <DangerZone />,
                             },
-                            {
-                                path: "/settings",
-                                children: [
-                                    {
-                                        path: "billing",
-                                        element: <BillingPage />,
-                                    },
-                                    {
-                                        path: "organization",
-                                        element: <Organization />,
-                                    },
-                                    {
-                                        path: "api-access",
-                                        element: <ApiAccess />,
-                                    },
-                                    {
-                                        path: "notifications",
-                                        element: <Notifications />,
-                                    },
-                                    {
-                                        path: "danger-zone",
-                                        element: <DangerZone />,
-                                    },
-                                ]
-                            },
-                        ],
+                        ]
                     },
                 ],
             },

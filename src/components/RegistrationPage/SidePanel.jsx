@@ -1,11 +1,10 @@
-import { FileCheck2, FileStack, FileText, Folder, Image, Shield, Users, Zap } from "lucide-react";
+import { FileCheck2, FileStack, FileText, Folder, Image, Star } from "lucide-react";
 
 const SidePanel = () => {
     return (
         <div
-            className="relative text-white flex p-12 flex-col justify-between overflow-hidden"
+            className="relative text-white lg:flex p-12 flex-col justify-between overflow-hidden w-full"
             style={{
-                width: "480px",
                 background:
                     "linear-gradient(160deg, oklch(0.42 0.19 264) 0%, oklch(0.52 0.22 262) 55%, oklch(0.46 0.20 268) 100%)",
             }}>
@@ -16,7 +15,7 @@ const SidePanel = () => {
                 </div>
                 <span className="font-bold text-lg leading-7 tracking-tight">DocuCentral</span>
             </div>
-            
+
             <div className="flex flex-col items-center gap-8">
                 <div className="relative flex justify-center items-center" style={{ width: "320px", height: "240px" }}>
                     <div className="grid grid-cols-4 grid-rows-3 opacity-20 absolute inset-0 gap-4">
@@ -55,33 +54,18 @@ const SidePanel = () => {
                     </p>
                 </div>
             </div>
-            
-            <div className="flex flex-col gap-4">
-                <div className="flex items-center gap-4">
-                    <div className="size-9 shrink-0 rounded-lg bg-white/15 flex justify-center items-center">
-                        <Shield className="size-4 text-white" />
-                    </div>
-                    <span className="text-sm leading-5" style={{ color: "oklch(0.9 0.04 254)" }}>
-                        Enterprise-grade security
-                    </span>
+
+            <div className="relative z-10 flex items-center gap-2">
+                <div className="flex items-center gap-0.5">
+                    <Star className="size-3.5 fill-amber-300 text-amber-300" />
+                    <Star className="size-3.5 fill-amber-300 text-amber-300" />
+                    <Star className="size-3.5 fill-amber-300 text-amber-300" />
+                    <Star className="size-3.5 fill-amber-300 text-amber-300" />
+                    <Star className="size-3.5 fill-amber-300 text-amber-300" />
                 </div>
-                <div className="flex items-center gap-4">
-                    <div className="size-9 shrink-0 rounded-lg bg-white/15 flex justify-center items-center">
-                        <Zap className="size-4 text-white" />
-                    </div>
-                    <span className="text-sm leading-5" style={{ color: "oklch(0.9 0.04 254)" }}>
-                        Instant file access
-                    </span>
-                </div>
-                <div className="flex items-center gap-4">
-                    <div className="size-9 shrink-0 rounded-lg bg-white/15 flex justify-center items-center">
-                        <Users className="size-4 text-white" />
-                    </div>
-                    <span className="text-sm leading-5" style={{ color: "oklch(0.9 0.04 254)" }}>
-                        Team collaboration
-                    </span>
-                </div>
+                <span className="text-white/70 text-xs">Trusted by 10,000+ teams worldwide</span>
             </div>
+
         </div>
     );
 };

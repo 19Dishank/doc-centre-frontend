@@ -5,15 +5,11 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { loginUser } from "@/api/auth";
 
-const LoginForm = () => {
+const TenantLoginForm = () => {
 
     const navigate = useNavigate();
-
-    const handleLogin = () => {
-        localStorage.setItem("token", "dummy-token");
-        navigate("/dashboard");
-    }
 
     const initialData = {
         email: "",
@@ -21,16 +17,80 @@ const LoginForm = () => {
     };
 
     const [loginData, setLoginData] = useState(initialData);
+    const [errors, setErrors] = useState(initialData);
     const [showPassword, setShowPassword] = useState(false);
 
+    const validateField = (name, value) => {
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+
+        switch (name) {
+
+            case "email":
+                if (!value.trim()) return "Email is required";
+
+
+                if (!emailRegex.test(value)) {
+                    return "Please provide a valid email";
+                }
+
+                return "";
+
+            case "password":
+                if (!value.trim()) return "Password is required";
+                if (!passwordRegex.test(value)) {
+                    return "Password must contain at least 8 characters, including one uppercase letter, one lowercase letter, one number, and one special character";
+                }
+                return "";
+
+            default:
+                return "";
+        }
+    };
+
     const handleChange = (e) => {
-        e.preventDefault();
-        const {name, value} = e.target;
-        setLoginData({
-            ...loginData,
+        const { name, value } = e.target;
+
+        setLoginData((prev) => ({
+            ...prev,
             [name]: value
+        }));
+
+        setErrors((prev) => ({
+            ...prev,
+            [name]: validateField(name, value)
+        }));
+    };
+
+    const validateForm = () => {
+        const newErrors = {};
+
+        Object.keys(loginData).forEach((key) => {
+            newErrors[key] = validateField(key, loginData[key]);
         });
-    }
+
+        setErrors(newErrors);
+
+        return Object.values(newErrors).every((error) => error === "");
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        const isValid = validateForm();
+
+        if (!isValid) return;
+
+        try {
+            const res = await loginUser(loginData);
+            console.log("Login Data:", res);
+            localStorage.setItem("accessToken", res.data.accessToken);
+            navigate("/dashboard");
+        } catch (error) {
+            console.error(error);
+        }
+    };
 
     return (
         <div className="bg-white flex justify-center items-center flex-1" style={{ width: "660px" }}>
@@ -61,7 +121,7 @@ const LoginForm = () => {
                 <div className="flex flex-col gap-4">
                     <div className="flex flex-col gap-2">
                         <Label htmlFor="email" className="font-medium text-zinc-800 text-sm leading-5">
-                            Email Address
+                            Email Address <p className="text-red-500">*</p>
                         </Label>
                         <Input
                             id="email"
@@ -72,10 +132,11 @@ const LoginForm = () => {
                             value={loginData.email}
                             className="rounded-lg bg-white border-zinc-200 border border-solid h-11"
                         />
+                        {errors.email && (<p className="text-red-500 text-xs"> * {errors.email}</p>)}
                     </div>
                     <div className="flex flex-col gap-2">
                         <Label htmlFor="password" className="font-medium text-zinc-800 text-sm leading-5">
-                            Password
+                            Password <p className="text-red-500">*</p>
                         </Label>
                         <div className="relative">
                             <Input
@@ -95,19 +156,20 @@ const LoginForm = () => {
                                 {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
                             </button>
                         </div>
+                        {errors.password && (<p className="text-red-500 text-xs"> * {errors.password}</p>)}
                         <a href="#" className="font-medium text-[#2b7fff] text-xs self-end">
                             Forgot password?
                         </a>
                     </div>
-                    <Button onClick={handleLogin} className="cursor-pointer font-semibold rounded-lg bg-[#2b7fff] text-blue-50 mt-2 w-full h-11">
+                    <Button onClick={handleSubmit} className="cursor-pointer font-semibold rounded-lg bg-[#2b7fff] text-blue-50 mt-2 w-full h-11">
                         Sign In
                         <ArrowRight className="size-4 ml-1" />
                     </Button>
                 </div>
                 <div className="text-sm leading-5 flex mt-8 justify-center items-center gap-1">
-                    <span className="text-[#71717b]">Don't have an account?</span>
-                    <NavLink to="/register" className="font-medium text-[#2b7fff]">
-                        Sign up
+                    <span className="text-[#71717b]">Need a workspace for your team?</span>
+                    <NavLink to="/onboarding" className="font-medium text-[#2b7fff]">
+                        Register your company
                     </NavLink>
                 </div>
             </div>
@@ -115,4 +177,4 @@ const LoginForm = () => {
     );
 };
 
-export default LoginForm;
+export default TenantLoginForm;

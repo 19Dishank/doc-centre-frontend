@@ -1,10 +1,11 @@
 import { FileStack } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { NavLink } from "react-router-dom";
 import { useState } from "react";
 import { createTenant } from "@/api/auth";
+import FormField from "../ui/form-field";
+import { emailRegex, slugRegex } from "@/constants";
+import { toastNotification } from "@/helper/toastNotification";
 
 const OnBoardingForm = () => {
 
@@ -20,11 +21,10 @@ const OnBoardingForm = () => {
 
     const [registrationData, setRegistrationData] = useState(initialData);
     const [errors, setErrors] = useState(initialData);
+    const [loading, setLoading] = useState(false);
 
+    console.log("Regasfad", registrationData)
     const validateField = (name, value) => {
-
-        const slugRegex = /^[a-z0-9-]+$/;
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
         switch (name) {
             case "firstName":
@@ -53,14 +53,14 @@ const OnBoardingForm = () => {
 
             case "orgName":
                 if (!value.trim()) return "Organization name is required";
-                
+
                 if (value.length < 2 || value.length > 100) {
                     return "Organization name must be between 2 and 100 characters";
                 }
-                
+
                 return "";
-                
-                case "orgSlogan":
+
+            case "orgSlogan":
                 if (!value.trim()) return "Organization slogan is required";
                 if (value.length > 200) {
                     return "Organization slogan cannot exceed 200 characters";
@@ -74,7 +74,6 @@ const OnBoardingForm = () => {
                 if (value.length < 3 || value.length > 50) {
                     return "Slug must be between 3 and 50 characters";
                 }
-
 
                 if (!slugRegex.test(value)) {
                     return "Slug can only contain lowercase letters, numbers, and hyphens";
@@ -130,11 +129,18 @@ const OnBoardingForm = () => {
 
         if (!isValid) return;
 
+        setLoading(true);
         try {
+            console.log(registrationData)
             const res = await createTenant(registrationData);
             console.log("Response Data:", res);
+            toastNotification("Tenant created successfully! Please check your email to complete the onboarding process.", "success");
+            setRegistrationData(initialData);
         } catch (error) {
             console.error("Error creating tenant:", error);
+            toastNotification(error?.response?.data?.message || "An error occurred while creating the tenant. Please try again.", "error");
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -162,172 +168,24 @@ const OnBoardingForm = () => {
                     <p className="text-[#71717b] text-sm leading-6">Start your 14-day free trial. No credit card required.</p>
                 </div>
 
-                <Button variant="outline" className="font-medium rounded-lg border-zinc-200 border border-solid gap-2 w-full h-11">
-                    <img src="/images/GoogleLogo.svg" alt="Google Logo" className="size-5" />
-                    Sign up with Google
-                </Button>
-
-                <div className="flex items-center gap-4">
-                    <div className="bg-zinc-200 flex-1 h-px" />
-                    <span className="uppercase text-[#71717b] text-xs leading-4 tracking-wider">or sign up with email</span>
-                    <div className="bg-zinc-200 flex-1 h-px" />
-                </div>
-
                 <div className="flex flex-col gap-4">
                     <div className="grid grid-cols-2 gap-4">
-                        <div className="flex flex-col gap-2">
-                            <Label
-                                htmlFor="firstName"
-                                className="font-medium uppercase text-zinc-950 tracking-wider"
-                                style={{
-                                    fontSize: "11px",
-                                    lineHeight: "16px",
-                                    letterSpacing: "0.06em",
-                                }}>
-                                First Name <p className="text-red-500">*</p>
-                            </Label>
-                            <Input
-                                onChange={handleChange}
-                                name="firstName"
-                                value={registrationData.firstName}
-                                id="firstName"
-                                placeholder="Jane"
-                                className="rounded-lg border border-zinc-200 border-solid h-10"
-                            />
-                            {errors.firstName && (<p className="text-red-500 text-xs"> * {errors.firstName}</p>)}
-                        </div>
-                        <div className="flex flex-col gap-2">
-                            <Label
-                                htmlFor="lastName"
-                                className="font-medium uppercase text-zinc-950 tracking-wider"
-                                style={{
-                                    fontSize: "11px",
-                                    lineHeight: "16px",
-                                    letterSpacing: "0.06em",
-                                }}>
-                                Last Name <p className="text-red-500">*</p> 
-                            </Label>
-                            <Input
-                                id="lastName"
-                                name="lastName"
-                                onChange={handleChange}
-                                value={registrationData.lastName}
-                                placeholder="Doe"
-                                className="rounded-lg border border-zinc-200 border-solid h-10"
-                            />
-                            {errors.lastName && (<p className="text-red-500 text-xs"> * {errors.lastName}</p>)}
-                        </div>
+                        <FormField label="First Name" name="firstName" value={registrationData.firstName} onChange={handleChange} placeholder="Jane" error={errors.firstName} />
+                        <FormField label="Last Name" name="lastName" value={registrationData.lastName} onChange={handleChange} placeholder="Doe" error={errors.lastName} />
                     </div>
-                    <div className="flex flex-col gap-2">
-                        <Label
-                            htmlFor="email"
-                            className="font-medium uppercase text-zinc-950 tracking-wider"
-                            style={{
-                                fontSize: "11px",
-                                lineHeight: "16px",
-                                letterSpacing: "0.06em",
-                            }}>
-                            Work Email <p className="text-red-500">*</p>
-                        </Label>
-                        <Input
-                            id="email"
-                            name="email"
-                            onChange={handleChange}
-                            value={registrationData.email}
-                            type="email"
-                            placeholder="you@company.com"
-                            className="rounded-lg border border-zinc-200 border-solid h-10"
-                        />
-                        {errors.email && (<p className="text-red-500 text-xs"> * {errors.email}</p>)}
-                    </div>
-                    <div className="flex flex-col gap-2">
-                        <Label
-                            htmlFor="orgName"
-                            className="font-medium uppercase text-zinc-950 tracking-wider"
-                            style={{
-                                fontSize: "11px",
-                                lineHeight: "16px",
-                                letterSpacing: "0.06em",
-                            }}>
-                            Organization Name <p className="text-red-500">*</p>
-                        </Label>
-                        <Input
-                            id="orgName"
-                            name="orgName"
-                            onChange={handleChange}
-                            value={registrationData.orgName}
-                            placeholder="Acme Corp"
-                            className="rounded-lg border-zinc-200 border border-solid h-10"
-                        />
-                        {errors.orgName && (<p className="text-red-500 text-xs"> * {errors.orgName}</p>)}
-                    </div>
-                    <div className="flex flex-col gap-2">
-                        <Label
-                            htmlFor="orgSlogan"
-                            className="font-medium uppercase text-zinc-950 tracking-wider"
-                            style={{
-                                fontSize: "11px",
-                                lineHeight: "16px",
-                                letterSpacing: "0.06em",
-                            }}>
-                            Organization Slogan <p className="text-red-500">*</p>
-                        </Label>
-                        <Input
-                            id="orgSlogan"
-                            name="orgSlogan"
-                            onChange={handleChange}
-                            value={registrationData.orgSlogan}
-                            placeholder="Acme Corp"
-                            className="rounded-lg border border-zinc-200 border-solid h-10"
-                        />
-                        {errors.orgSlogan && (<p className="text-red-500 text-xs"> * {errors.orgSlogan}</p>)}
-                    </div>
-                    <div className="flex flex-col gap-2">
-                        <Label
-                            htmlFor="org"
-                            className="font-medium uppercase text-zinc-950 tracking-wider"
-                            style={{
-                                fontSize: "11px",
-                                lineHeight: "16px",
-                                letterSpacing: "0.06em",
-                            }}>
-                            Slug <p className="text-red-500">*</p>
-                        </Label>
-                        <div className="rounded-md bg-white border-zinc-200 border border-solid flex h-10 overflow-hidden">
-                            <input
-                                id="slug"
-                                name="slug"
-                                onChange={handleChange}
-                                value={registrationData.slug}
-                                className="bg-transparent outline-none text-sm leading-5 px-3 flex-1"
-                            />
-                            <span className="bg-zinc-100 text-[#71717b] text-sm leading-5 border-zinc-200 border-t-0 border-r flex-1 border-b-0 border-l-0 border-solid flex px-3 items-center">
-                                .cdms.com
-                            </span>
-                        </div>
-                        {errors.slug && (<p className="text-red-500 text-xs"> * {errors.slug}</p>)}
-                    </div>
-                    {/* <div className="flex flex-col gap-2">
-                        <Label
-                            htmlFor="org"
-                            className="font-medium uppercase text-zinc-950 tracking-wider"
-                            style={{
-                                fontSize: "11px",
-                                lineHeight: "16px",
-                                letterSpacing: "0.06em",
-                            }}>
-                            Upload Organization Logo <p className="text-red-500">*</p>
-                        </Label>
-                        <Input
-                            id="org"
-                            placeholder="Acme Corp"
-                            className="rounded-lg border border-zinc-200 border-solid h-10"
-                        />
-                    </div> */}
+                    <FormField label="Work Email" name="email" value={registrationData.email} onChange={handleChange} placeholder="you@company.com" error={errors.email} />
+                    <FormField label="Organization Name" name="orgName" value={registrationData.orgName} onChange={handleChange} placeholder="Acme Corp" error={errors.orgName} />
+                    <FormField label="Organization Slogan" name="orgSlogan" value={registrationData.orgSlogan} onChange={handleChange} placeholder="Acme Corp" error={errors.orgSlogan} />
+                    <FormField label="Slug" name="slug" value={registrationData.slug} onChange={handleChange} placeholder="acme-corp" error={errors.slug} />
                 </div>
 
-                <Button onClick={handleSubmit} className=" cursor-pointer font-semibold rounded-lg bg-[#2b7fff] text-blue-50 w-full" style={{ height: "44px" }}>
-                    Create Account
+                <Button
+                    onClick={handleSubmit}
+                    className=" cursor-pointer font-semibold rounded-lg bg-[#2b7fff] text-blue-50 w-full disabled:cursor-not-allowed"
+                    style={{ height: "44px" }}
+                    disabled={loading}
+                >
+                    {loading ? "Creating Account..." : "Create Account"}
                 </Button>
                 <div className="flex flex-col items-center gap-4">
                     <p className="text-[#71717b] text-sm leading-5">

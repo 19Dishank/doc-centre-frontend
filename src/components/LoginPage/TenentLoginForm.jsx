@@ -1,78 +1,40 @@
-import { ArrowRight, Eye, EyeOff, FileStack } from "lucide-react";
+import { ArrowRight, FileStack } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
-import { NavLink, useNavigate } from "react-router-dom";
-import { useState } from "react";
-import { loginUser } from "@/api/auth";
+import { NavLink, useNavigate, useSearchParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { loginUser, validateEmailVerificationToken } from "@/api/auth";
+import FormField from "../ui/form-field";
+import { passwordRegex } from "@/constants";
+import Loader from "../ui/loader";
 
 const TenantLoginForm = () => {
 
+    const [searchParams] = useSearchParams();
+    const emailVerifyToken = searchParams.get("t") || "";
+
     const navigate = useNavigate();
 
-    const initialData = {
-        email: "",
-        password: ""
-    };
+    const [password, setPassword] = useState("");
+    const [error, setError] = useState("");
+    const [loading, setLoading] = useState(false);
 
-    const [loginData, setLoginData] = useState(initialData);
-    const [errors, setErrors] = useState(initialData);
-    const [showPassword, setShowPassword] = useState(false);
-
-    const validateField = (name, value) => {
-
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-
-        switch (name) {
-
-            case "email":
-                if (!value.trim()) return "Email is required";
-
-
-                if (!emailRegex.test(value)) {
-                    return "Please provide a valid email";
-                }
-
-                return "";
-
-            case "password":
-                if (!value.trim()) return "Password is required";
-                if (!passwordRegex.test(value)) {
-                    return "Password must contain at least 8 characters, including one uppercase letter, one lowercase letter, one number, and one special character";
-                }
-                return "";
-
-            default:
-                return "";
+    const validatePassword = (value) => {
+        if (!value.trim()) return "Password is required";
+        if (!passwordRegex.test(value)) {
+            return "Password must contain at least 8 characters, including one uppercase letter, one lowercase letter, one number, and one special character";
         }
+        return "";
     };
 
     const handleChange = (e) => {
-        const { name, value } = e.target;
-
-        setLoginData((prev) => ({
-            ...prev,
-            [name]: value
-        }));
-
-        setErrors((prev) => ({
-            ...prev,
-            [name]: validateField(name, value)
-        }));
+        setPassword(e.target.value);
+        setError(validatePassword(e.target.value));
     };
 
     const validateForm = () => {
-        const newErrors = {};
-
-        Object.keys(loginData).forEach((key) => {
-            newErrors[key] = validateField(key, loginData[key]);
-        });
-
-        setErrors(newErrors);
-
-        return Object.values(newErrors).every((error) => error === "");
+        const newError = validatePassword(password);
+        setError(newError);
+        return !newError;
     };
 
     const handleSubmit = async (e) => {
@@ -83,18 +45,45 @@ const TenantLoginForm = () => {
         if (!isValid) return;
 
         try {
-            const res = await loginUser(loginData);
-            console.log("Login Data:", res);
+            const res = await loginUser({ password, emailVerifyToken });
+            console.log("Login Data :", res);
             localStorage.setItem("accessToken", res.data.accessToken);
+            localStorage.setItem("refreshToken", res.data.refreshToken);
             navigate("/dashboard");
         } catch (error) {
             console.error(error);
+            setError(error.response?.data?.message || "An error occurred while logging in");
         }
     };
 
+    const verifyToken = async () => {
+        setLoading(true);
+        try {
+            const res = await validateEmailVerificationToken(emailVerifyToken);
+            console.log("Token Validation Data:", res);
+        } catch (error) {
+            console.log("Error : ", error)
+            window.location.replace(import.meta.env.VITE_APP_BASE_URL.replace("slug", "app") + `/login`);
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        verifyToken();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
+
+    if (!emailVerifyToken) {
+        window.location.replace(import.meta.env.VITE_APP_BASE_URL.replace("slug", "app") + `/login`);
+    };
+
+    if (loading) return <Loader />;
+
     return (
         <div className="bg-white flex justify-center items-center flex-1" style={{ width: "660px" }}>
-            <div className="max-w-2xl flex px-12 flex-col w-full">
+            <div className="max-w-xl flex px-12 flex-col w-full">
                 <div className="flex mb-12 items-center gap-2">
                     <div className="size-9 rounded-lg bg-[#2b7fff] flex justify-center items-center">
                         <FileStack className="size-5 text-blue-50" />
@@ -107,70 +96,15 @@ const TenantLoginForm = () => {
                     </h1>
                     <p className="text-[#71717b] text-sm leading-5">Sign in to your account to continue</p>
                 </div>
-                <Button
-                    variant="outline"
-                    className="font-medium rounded-lg bg-white text-zinc-800 border-zinc-200 border border-solid gap-2 w-full h-11">
-                    <img src="/images/GoogleLogo.svg" alt="Google Logo" className="size-5" />
-                    Continue with Google
-                </Button>
-                <div className="flex my-6 items-center gap-4">
-                    <Separator className="flex-1" />
-                    <span className="whitespace-nowrap text-[#71717b] text-xs">or continue with email</span>
-                    <Separator className="flex-1" />
-                </div>
                 <div className="flex flex-col gap-4">
-                    <div className="flex flex-col gap-2">
-                        <Label htmlFor="email" className="font-medium text-zinc-800 text-sm leading-5">
-                            Email Address <p className="text-red-500">*</p>
-                        </Label>
-                        <Input
-                            id="email"
-                            type="email"
-                            placeholder="you@company.com"
-                            name="email"
-                            onChange={handleChange}
-                            value={loginData.email}
-                            className="rounded-lg bg-white border-zinc-200 border border-solid h-11"
-                        />
-                        {errors.email && (<p className="text-red-500 text-xs"> * {errors.email}</p>)}
-                    </div>
-                    <div className="flex flex-col gap-2">
-                        <Label htmlFor="password" className="font-medium text-zinc-800 text-sm leading-5">
-                            Password <p className="text-red-500">*</p>
-                        </Label>
-                        <div className="relative">
-                            <Input
-                                id="password"
-                                type={showPassword ? "text" : "password"}
-                                placeholder="Enter your password"
-                                name="password"
-                                onChange={handleChange}
-                                value={loginData.password}
-                                className="rounded-lg bg-white border-zinc-200 border border-solid pr-10 h-11"
-                            />
-                            <button
-                                type="button"
-                                className="top-1/2 -translate-y-1/2 text-[#71717b] absolute right-3"
-                                onClick={() => setShowPassword(!showPassword)}
-                            >
-                                {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
-                            </button>
-                        </div>
-                        {errors.password && (<p className="text-red-500 text-xs"> * {errors.password}</p>)}
-                        <a href="#" className="font-medium text-[#2b7fff] text-xs self-end">
-                            Forgot password?
-                        </a>
-                    </div>
+                    <FormField label="Password" name="password" value={password} onChange={handleChange} placeholder="Enter your password" error={error} isPasswordField={true} />
+                    <NavLink to="/forgot-password" className="text-xs text-[#2b7fff] self-end -mt-2">
+                        Forgot password?
+                    </NavLink>
                     <Button onClick={handleSubmit} className="cursor-pointer font-semibold rounded-lg bg-[#2b7fff] text-blue-50 mt-2 w-full h-11">
                         Sign In
                         <ArrowRight className="size-4 ml-1" />
                     </Button>
-                </div>
-                <div className="text-sm leading-5 flex mt-8 justify-center items-center gap-1">
-                    <span className="text-[#71717b]">Need a workspace for your team?</span>
-                    <NavLink to="/onboarding" className="font-medium text-[#2b7fff]">
-                        Register your company
-                    </NavLink>
                 </div>
             </div>
         </div>

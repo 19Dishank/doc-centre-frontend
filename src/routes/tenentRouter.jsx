@@ -1,70 +1,123 @@
-import ErrorPage from "@/pages/ErrorPage";
+/* eslint-disable react-refresh/only-export-components */
+import { lazy } from "react";
 import { createBrowserRouter } from "react-router-dom";
-import AppLayout from "@/layouts/AppLayout";
-import Dashboard from "@/pages/Dashboard";
-import Files from "@/pages/Files";
-import UploadFile from "@/pages/Upload";
-import UsersList from "@/pages/Users";
-import Roles from "@/pages/Roles";
-import BillingPage from "@/pages/BillingPage";
-import Organization from "@/pages/Organization";
-import ApiAccess from "@/pages/ApiAccess";
-import Notifications from "@/pages/Notifications";
-import DangerZone from "@/pages/DangerZone";
+import PublicRoutes from "./PublicRoutes";
+import ProtectedRoutes from "./ProtectedRoutes";
+import EmailInput from "@/components/ForgotPasswordPage/EmailInput";
+import OTPInput from "@/components/ForgotPasswordPage/OTPInput";
+import PasswordInput from "@/components/ForgotPasswordPage/PasswordInput";
+import AuthLayout from "@/layouts/AuthLayout/AuthLayout";
+import PasswordResetSuccessPage from "@/components/ForgotPasswordPage/SuccessPage";
+// import ErrorPage from "@/pages/ErrorPage";
+// import AppLayout from "@/layouts/AppLayout";
+// import Dashboard from "@/pages/Dashboard";
+// import Files from "@/pages/Files";
+// import UploadFile from "@/pages/Upload";
+// import UsersList from "@/pages/Users";
+// import Roles from "@/pages/Roles";
+// import BillingPage from "@/pages/BillingPage";
+// import Organization from "@/pages/Organization";
+// import ApiAccess from "@/pages/ApiAccess";
+// import Notifications from "@/pages/Notifications";
+// import DangerZone from "@/pages/DangerZone";
+// import LoginPage from "@/pages/LoginPage";
+// import ForgotPasswordPage from "@/pages/ForgotPasswordPage";
+
+const ErrorPage = lazy(() => import("@/pages/ErrorPage"));
+const AppLayout = lazy(() => import("@/layouts/AppLayout/AppLayout"));
+const Dashboard = lazy(() => import("@/pages/Dashboard"));
+const Files = lazy(() => import("@/pages/Files"));
+const UploadFile = lazy(() => import("@/pages/Upload"));
+const UsersList = lazy(() => import("@/pages/Users"));
+const Roles = lazy(() => import("@/pages/Roles"));
+const BillingPage = lazy(() => import("@/pages/BillingPage"));
+const Organization = lazy(() => import("@/pages/Organization"));
+const ApiAccess = lazy(() => import("@/pages/ApiAccess"));
+const Notifications = lazy(() => import("@/pages/Notifications"));
+const DangerZone = lazy(() => import("@/pages/DangerZone"));
+const LoginPage = lazy(() => import("@/pages/LoginPage"));
 
 export const tenantRouter = createBrowserRouter([
     {
         errorElement: <ErrorPage />,
         children: [
             {
-                element: <AppLayout />,
+                element: <PublicRoutes />,
                 children: [
                     {
-                        path: "/dashboard",
-                        element: <Dashboard />,
-                    },
-                    {
-                        path: "/files",
-                        element: <Files />,
-                    },
-                    {
-                        path: "/upload",
-                        element: <UploadFile />,
-                    },
-                    {
-                        path: "/users",
-                        element: <UsersList />,
-                    },
-                    {
-                        path: "/roles",
-                        element: <Roles />,
-                    },
-                    {
-                        path: "/settings",
+                        element: <AuthLayout />,
                         children: [
                             {
-                                path: "billing",
-                                element: <BillingPage />,
+                                path: "/login",
+                                element: <LoginPage />,
                             },
                             {
-                                path: "organization",
-                                element: <Organization />,
-                            },
-                            {
-                                path: "api-access",
-                                element: <ApiAccess />,
-                            },
-                            {
-                                path: "notifications",
-                                element: <Notifications />,
-                            },
-                            {
-                                path: "danger-zone",
-                                element: <DangerZone />,
+                                path: "/forgot-password",
+                                children: [
+                                    { path: "", element: <EmailInput /> },
+                                    { path: "verify", element: <OTPInput /> },
+                                    { path: "reset", element: <PasswordInput /> },
+                                    { path: "success", element: <PasswordResetSuccessPage /> },
+                                ]
                             },
                         ]
-                    },
-                ],
+                    }
+                ]
+            },
+            {
+                element: <ProtectedRoutes />,
+                children: [
+                    {
+                        element: <AppLayout />,
+                        children: [
+                            {
+                                path: "/dashboard",
+                                element: <Dashboard />,
+                            },
+                            {
+                                path: "/files",
+                                element: <Files />,
+                            },
+                            {
+                                path: "/upload",
+                                element: <UploadFile />,
+                            },
+                            {
+                                path: "/users",
+                                element: <UsersList />,
+                            },
+                            {
+                                path: "/roles",
+                                element: <Roles />,
+                            },
+                            {
+                                path: "/settings",
+                                children: [
+                                    {
+                                        path: "billing",
+                                        element: <BillingPage />,
+                                    },
+                                    {
+                                        path: "organization",
+                                        element: <Organization />,
+                                    },
+                                    {
+                                        path: "api-access",
+                                        element: <ApiAccess />,
+                                    },
+                                    {
+                                        path: "notifications",
+                                        element: <Notifications />,
+                                    },
+                                    {
+                                        path: "danger-zone",
+                                        element: <DangerZone />,
+                                    },
+                                ]
+                            },
+                        ],
+                    }
+                ]
             },
         ],
     },

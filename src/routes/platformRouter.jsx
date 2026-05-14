@@ -1,8 +1,16 @@
-import ErrorPage from "@/pages/ErrorPage";
+/* eslint-disable react-refresh/only-export-components */
+import AuthLayout from "@/layouts/AuthLayout/AuthLayout";
+import { lazy } from "react";
 import { createBrowserRouter } from "react-router-dom";
-import HomePage from "@/pages/HomePage";
-import LoginPage from "@/pages/LoginPage";
-import OnBoardingPage from "@/pages/OnBoardingPage";
+// import ErrorPage from "@/pages/ErrorPage";
+// import HomePage from "@/pages/HomePage";
+// import LoginPage from "@/pages/LoginPage";
+// import OnBoardingPage from "@/pages/OnBoardingPage";
+
+const ErrorPage = lazy(() => import("@/pages/ErrorPage"));
+const HomePage = lazy(() => import("@/pages/HomePage"));
+const LoginPage = lazy(() => import("@/pages/LoginPage"));
+const OnBoardingPage = lazy(() => import("@/pages/OnBoardingPage"));
 
 export const platformRouter = createBrowserRouter([
     {
@@ -13,16 +21,21 @@ export const platformRouter = createBrowserRouter([
                 element: <HomePage />,
             },
             {
-                path: "/onboarding",
-                element: <OnBoardingPage />,
-            },
-            {
-                path: "/onboarding/activate",
-                element: <OnBoardingPage />,
-            },
-            {
-                path: "/login",
-                element: <LoginPage />,
+                element: <AuthLayout />,
+                children: [
+                    {
+                        path: "/login",
+                        element: <LoginPage />,
+                    },
+                    {
+                        path: "/onboarding",
+                        element: <OnBoardingPage />,
+                    },
+                    {
+                        path: "/onboarding/activate",
+                        element: <OnBoardingPage />,
+                    },
+                ]
             },
         ],
     },

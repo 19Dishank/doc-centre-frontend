@@ -1,18 +1,19 @@
 import { ArrowRight, FileStack } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { NavLink } from "react-router-dom";
 import { useState } from "react";
-import { verifyUser } from "@/api/auth";
 import FormField from "../ui/form-field";
 import { emailRegex } from "@/constants";
-import { toastNotification } from "@/helper/toastNotification";
+import { generateOTP } from "@/api/auth";
+import { useNavigate } from "react-router-dom";
 
-const PlatformLoginForm = () => {
+const EmailInput = () => {
 
     const [email, setEmail] = useState("");
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
-    
+
+    const navigate = useNavigate();
+
     const validateEmail = (value) => {
         if (!value.trim()) return "Email is required";
         if (!emailRegex.test(value)) {
@@ -35,15 +36,14 @@ const PlatformLoginForm = () => {
 
         setLoading(true);
         try {
-            const res = await verifyUser({ email });
-            console.log("Verification Data:", res);
-            window.location.replace(import.meta.env.VITE_APP_BASE_URL.replace("slug", res.data.slug) + `/login?t=${res.data.emailVerifyToken}`);
+            await generateOTP({ email });
+            navigate(`/forgot-password/verify`, { state: { email } });
         } catch (error) {
-            console.error(error);
-            toastNotification( error?.response?.data?.message || "An error occurred while verifying the email. Please try again.", "error");
+            console.log("Error : ", error)
         } finally {
             setLoading(false);
         }
+
     };
 
     return (
@@ -55,28 +55,25 @@ const PlatformLoginForm = () => {
                     </div>
                     <span className="font-semibold text-[#2b7fff] text-lg leading-7 tracking-tight">DocuCentral</span>
                 </div>
+
                 <div className="flex mb-8 flex-col gap-2">
                     <h1 className="font-bold text-zinc-900 tracking-tight" style={{ fontSize: "28px", lineHeight: "1.2" }}>
-                        Welcome back
+                        Forgot your password?
                     </h1>
-                    <p className="text-[#71717b] text-sm leading-5">Sign in to your account to continue</p>
+                    <p className="text-[#71717b] text-sm leading-5">Enter your email address and we'll send OTP to your email</p>
                 </div>
                 <div className="flex flex-col gap-4">
                     <FormField label="Email Address" name="email" value={email} onChange={handleChange} placeholder="you@company.com" error={error} />
-                    <Button onClick={handleSubmit} className="cursor-pointer font-semibold rounded-lg bg-[#2b7fff] text-blue-50 mt-2 w-full h-11" disabled={loading}>
-                        {loading ? "Signing In..." : "Sign In"}
-                        <ArrowRight className="size-4 ml-1" />
+                    <Button onClick={handleSubmit} disabled={loading} className={`cursor-pointer font-semibold rounded-lg bg-[#2b7fff] text-blue-50 mt-2 w-full h-11 ${loading ? "opacity-70" : "hover:bg-[#2b7fff]/90"}`}>
+                        {loading
+                            ? <span>Sending...</span>
+                            : (<><span>Send OTP</span> <ArrowRight className="size-4 ml-1" /></>)
+                        }
                     </Button>
-                </div>
-                <div className="text-sm leading-5 flex mt-8 justify-center items-center gap-1">
-                    <span className="text-[#71717b]">Need a workspace for your team?</span>
-                    <NavLink to="/onboarding" className="font-medium text-[#2b7fff]">
-                        Register your company
-                    </NavLink>
                 </div>
             </div>
         </div>
     );
 };
 
-export default PlatformLoginForm;
+export default EmailInput;

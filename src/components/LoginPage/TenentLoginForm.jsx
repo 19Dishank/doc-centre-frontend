@@ -6,11 +6,14 @@ import { loginUser, validateEmailVerificationToken } from "@/api/auth";
 import FormField from "../ui/form-field";
 import { passwordRegex } from "@/constants";
 import Loader from "../ui/loader";
+import { setTokens } from "@/helper/tokens";
+import { useAuthContext } from "@/contexts/AuthContext";
 
 const TenantLoginForm = () => {
 
     const [searchParams] = useSearchParams();
     const emailVerifyToken = searchParams.get("t") || "";
+    const { setIsAuthenticated } = useAuthContext();
 
     const navigate = useNavigate();
 
@@ -47,8 +50,8 @@ const TenantLoginForm = () => {
         try {
             const res = await loginUser({ password, emailVerifyToken });
             console.log("Login Data :", res);
-            localStorage.setItem("accessToken", res.data.accessToken);
-            localStorage.setItem("refreshToken", res.data.refreshToken);
+            setTokens(res.data.accessToken, res.data.refreshToken);
+            setIsAuthenticated(true);
             navigate("/dashboard");
         } catch (error) {
             console.error(error);

@@ -2,10 +2,6 @@
 import AuthLayout from "@/layouts/AuthLayout/AuthLayout";
 import { lazy } from "react";
 import { createBrowserRouter } from "react-router-dom";
-// import ErrorPage from "@/pages/ErrorPage";
-// import HomePage from "@/pages/HomePage";
-// import LoginPage from "@/pages/LoginPage";
-// import OnBoardingPage from "@/pages/OnBoardingPage";
 
 const ErrorPage = lazy(() => import("@/pages/ErrorPage"));
 const HomePage = lazy(() => import("@/pages/HomePage"));

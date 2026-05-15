@@ -7,7 +7,7 @@ import { Textarea } from "../ui/textarea";
 
 const InviteUserModal = ({ setIsOpen }) => {
     return (
-        <div className="bg-zinc-950/40 flex absolute inset-0 justify-center items-center">
+        <div className="bg-zinc-950/40 flex absolute inset-0 justify-center items-center z-100 backdrop-blur">
             <Card className="shadow-2xl p-6 gap-4 w-120">
                 <CardHeader className="p-0 flex justify-between items-start gap-1 border-b border-zinc-200">
                     <div className="flex flex-col gap-1">

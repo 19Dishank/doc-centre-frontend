@@ -1,6 +1,6 @@
 import {
     AlertTriangle, Bell, Building2, CreditCard,
-    FileText, Key, LayoutDashboard, Lock, Settings, Upload, Users, X
+    FileText, Key, LayoutDashboard, Lock, Settings, Upload, Users
 } from "lucide-react";
 import { useState } from "react";
 import { NavLink } from "react-router-dom";
@@ -17,10 +17,10 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
     ];
 
     const settingsSubItems = [
-        { name: "Billing", icon: <CreditCard className="size-4" />, path: "/settings/billing" },
         { name: "Organization", icon: <Building2 className="size-4" />, path: "/settings/organization" },
-        { name: "API Access", icon: <Key className="size-4" />, path: "/settings/api-access" },
+        { name: "Billing", icon: <CreditCard className="size-4" />, path: "/settings/billing" },
         { name: "Notifications", icon: <Bell className="size-4" />, path: "/settings/notifications" },
+        { name: "API Access", icon: <Key className="size-4" />, path: "/settings/api-access" },
         { name: "Danger Zone", icon: <AlertTriangle className="size-4" />, path: "/settings/danger-zone" },
     ];
 
@@ -43,10 +43,6 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
                 <div className="flex p-4 flex-col gap-6 h-full">
                     <div className="flex px-2 py-1 items-center justify-between">
                         <img src="/images/DocCentral.svg" alt="" />
-                        {/* Close button for mobile */}
-                        <button onClick={() => setIsOpen(false)} className="lg:hidden p-1">
-                            <X className="size-5 text-zinc-500" />
-                        </button>
                     </div>
 
                     <nav className="flex flex-col gap-1 overflow-y-auto">

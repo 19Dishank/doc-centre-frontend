@@ -2,6 +2,7 @@ import axios from 'axios';
 import { toastNotification } from './toastNotification';
 import { getSubdomain } from './getSubdomain';
 import { refreshAccessToken } from '@/api/auth';
+import { clearTokens, getTokens } from './tokens';
 
 const axiosInstance = axios.create({
     baseURL: import.meta.env.VITE_API_URL,
@@ -14,14 +15,10 @@ const axiosInstance = axios.create({
 
 axiosInstance.interceptors.request.use(
     (config) => {
+        const { accessToken } = getTokens();;
 
-        
-        
-        const token = localStorage.getItem('accessToken');
-        console.log("Old Access Token : ", token);
-
-        if (token) {
-            config.headers['Authorization'] = `Bearer ${token}`;
+        if (accessToken) {
+            config.headers['Authorization'] = `Bearer ${accessToken}`;
         }
 
         if (config.data) {
@@ -73,14 +70,13 @@ axiosInstance.interceptors.response.use(
             }
         } else {
             const status = response.status;
-            console.log("Original Request : ", originalRequest.url);
             if (status === 500) {
                 return toastNotification('Internal Server Error. Please contact support.', "error");
             } else if (status === 404) {
                 return toastNotification('Requested resource not found.', "error");
             } else if (status === 401 && !originalRequest._retry) {
 
-                if(originalRequest.url.includes('/auth') && !originalRequest.url.includes('/auth/me') && !originalRequest.url.includes('/auth/refresh-access-token')) {
+                if (originalRequest.url.includes('/auth') && !originalRequest.url.includes('/auth/me') && !originalRequest.url.includes('/auth/refresh-access-token')) {
                     return Promise.reject(error);
                 }
 
@@ -111,8 +107,7 @@ axiosInstance.interceptors.response.use(
 
                     return await axiosInstance(originalRequest);
                 } catch (refreshError) {
-                    localStorage.removeItem('accessToken');
-                    localStorage.removeItem('refreshToken');
+                    clearTokens();
                     processQueue(refreshError, null);
                     return Promise.reject(refreshError);
                 } finally {

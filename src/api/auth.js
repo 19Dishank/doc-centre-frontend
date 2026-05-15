@@ -1,10 +1,10 @@
 import axiosInstance from "@/helper/axiosInstance";
 import { toastNotification } from "@/helper/toastNotification";
+import { clearTokens, getTokens } from "@/helper/tokens";
 
 export const refreshAccessToken = async () => {
     try {
-        console.log("Refreshing Access Token")
-        const refreshToken = localStorage.getItem('refreshToken');
+        const { refreshToken } = getTokens();
         const response = await axiosInstance.post(
             `/auth/refresh-access-token`,
             { refreshToken }
@@ -156,8 +156,7 @@ export const logoutUser = async () => {
         console.error("Error logging out:", error);
         throw error;
     } finally {
-        localStorage.removeItem('accessToken');
-        localStorage.removeItem('refreshToken');
+        clearTokens();
         window.location.replace(import.meta.env.VITE_APP_BASE_URL.replace("slug", "app") + `/login`);
     }
 };

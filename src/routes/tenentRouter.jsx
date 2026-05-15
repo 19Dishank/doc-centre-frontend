@@ -3,11 +3,7 @@ import { lazy } from "react";
 import { createBrowserRouter } from "react-router-dom";
 import PublicRoutes from "./PublicRoutes";
 import ProtectedRoutes from "./ProtectedRoutes";
-import EmailInput from "@/components/ForgotPasswordPage/EmailInput";
-import OTPInput from "@/components/ForgotPasswordPage/OTPInput";
-import PasswordInput from "@/components/ForgotPasswordPage/PasswordInput";
 import AuthLayout from "@/layouts/AuthLayout/AuthLayout";
-import PasswordResetSuccessPage from "@/components/ForgotPasswordPage/SuccessPage";
 // import ErrorPage from "@/pages/ErrorPage";
 // import AppLayout from "@/layouts/AppLayout";
 // import Dashboard from "@/pages/Dashboard";
@@ -36,6 +32,10 @@ const ApiAccess = lazy(() => import("@/pages/ApiAccess"));
 const Notifications = lazy(() => import("@/pages/Notifications"));
 const DangerZone = lazy(() => import("@/pages/DangerZone"));
 const LoginPage = lazy(() => import("@/pages/LoginPage"));
+const EmailInput = lazy(() => import("@/components/ForgotPasswordPage/EmailInput"));
+const OTPInput = lazy(() => import("@/components/ForgotPasswordPage/OTPInput"));
+const PasswordInput = lazy(() => import("@/components/ForgotPasswordPage/PasswordInput"));
+const PasswordResetSuccessPage = lazy(() => import("@/components/ForgotPasswordPage/SuccessPage"));
 
 export const tenantRouter = createBrowserRouter([
     {

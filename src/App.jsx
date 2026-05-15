@@ -17,7 +17,7 @@ const router = isPlatform ? platformRouter : tenantRouter;
 export default function App() {
   return (
     <Suspense fallback={<Loader styles={"min-h-screen"} />}>
-      <RouterProvider router={router} />
+        <RouterProvider router={router} />
     </Suspense>
   );
 }

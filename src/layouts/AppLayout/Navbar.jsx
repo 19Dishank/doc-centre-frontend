@@ -48,7 +48,7 @@ const Navbar = ({ setIsSidebarOpen }) => {
                 </Button>
 
                 <div className="relative">
-                    <Button variant="ghost" size="icon" className="size-9">
+                    <Button variant="ghost" size="icon" className="size-9 cursor-pointer">
                         <Bell className="size-4" />
                     </Button>
                     <span className="size-2 rounded-full bg-[#e7000b] absolute right-2 top-2 border-2 border-white" />
@@ -69,7 +69,7 @@ const Navbar = ({ setIsSidebarOpen }) => {
                             </div>
                             <Button
                                 variant="ghost"
-                                className="w-full justify-start text-sm text-red-600 hover:bg-red-50 hover:text-red-700"
+                                className="cursor-pointer w-full justify-start text-sm text-red-600 hover:bg-red-50 hover:text-red-700"
                                 onClick={logoutUser}
                             >
                                 <LogOut className="mr-2 size-4" /> Logout

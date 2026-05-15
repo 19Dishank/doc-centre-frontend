@@ -9,3 +9,5 @@ export const getUsers = async () => {
         throw error;
     }
 }
+
+export const inviteUser = () => { }

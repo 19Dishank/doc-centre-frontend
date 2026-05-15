@@ -60,8 +60,6 @@ export default function UsersList() {
   const formateTime = (time) => {
     const date = new Date(time);
     const now = new Date();
-    console.log("Date : ", date);
-    console.log("Now : ", now);
     const diff = now.getTime() - date.getTime();
     if (diff < 5 * 60 * 1000) return "Active Now";
     if (diff < 60 * 60 * 1000) return `${Math.floor(diff / (60 * 1000))} minutes ago`;

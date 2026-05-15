@@ -23,7 +23,6 @@ const OnBoardingForm = () => {
     const [errors, setErrors] = useState(initialData);
     const [loading, setLoading] = useState(false);
 
-    console.log("Regasfad", registrationData)
     const validateField = (name, value) => {
 
         switch (name) {

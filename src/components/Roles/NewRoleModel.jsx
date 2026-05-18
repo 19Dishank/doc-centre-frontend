@@ -4,43 +4,37 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
-import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "../ui/select";
-import { useEffect, useState } from "react";
-import { emailRegex } from "@/constants";
+import { useState } from "react";
 import { toastNotification } from "@/helper/toastNotification";
 import { inviteUser } from "@/api/user";
-import { getRoles } from "@/api/role";
 
-const InviteUserModal = ({ setIsOpen }) => {
+const NewRoleModel = ({ setIsOpen }) => {
 
     const initialData = {
-        email: "",
-        role: "",
-        message: "",
+        name: "",
+        description: "",
     };
 
     const [invitationData, setInvitationData] = useState(initialData);
     const [errors, setErrors] = useState(initialData);
-    const [roles, setRoles] = useState([]);
 
     const validateField = (name, value) => {
 
         switch (name) {
 
-            case "email":
-                if (!value.trim()) return "Email is required";
+            case "name":
+                if (!value.trim()) return "Name is required";
+                return "";
 
-
-                if (!emailRegex.test(value)) {
-                    return "Please provide a valid email";
-                }
-
+            case "description":
+                if (!value.trim()) return "Description is required";
                 return "";
 
             default:
                 return "";
         }
     };
+
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -55,6 +49,8 @@ const InviteUserModal = ({ setIsOpen }) => {
             [name]: validateField(name, value)
         }));
     };
+
+    console.log("errors", errors)
 
     const validateForm = () => {
         const newErrors = {};
@@ -79,35 +75,20 @@ const InviteUserModal = ({ setIsOpen }) => {
             console.log("Response Data:", res);
             toastNotification(`User invited successfully! Email is sent to ${invitationData.email}`, "success");
             setInvitationData(initialData);
-            setIsOpen(false);
         } catch (error) {
             console.error("Error inviting user:", error);
             toastNotification(error?.response?.data?.message || "An error occurred while inviting the user. Please try again.", "error");
         }
     };
 
-    const fetchRoles = async () => {
-        try {
-            const res = await getRoles();
-            setRoles(res.data.roles);
-        } catch (error) {
-            console.error("Error fetching roles:", error);
-        }
-    }
-
-    useEffect(() => {
-        // eslint-disable-next-line react-hooks/set-state-in-effect
-        fetchRoles();
-    }, []);
-
     return (
         <div className="bg-zinc-950/40 flex absolute inset-0 justify-center items-center z-100 backdrop-blur">
             <Card className="shadow-2xl p-6 gap-4 w-120">
                 <CardHeader className="p-0 flex justify-between items-start gap-1 border-b border-zinc-200">
                     <div className="flex flex-col gap-1">
-                        <CardTitle className="font-semibold text-lg leading-7">Invite New User</CardTitle>
+                        <CardTitle className="font-semibold text-lg leading-7">Add New Role</CardTitle>
                         <CardDescription className="text-sm leading-5">
-                            Send an invitation to join your workspace.
+                            Create a new role for your workspace.
                         </CardDescription>
                     </div>
                     <Button variant="ghost" size="icon" className="size-8 -mr-1 -mt-1 hover:bg-zinc-100 rounded-full" onClick={() => setIsOpen(false)}>
@@ -116,32 +97,16 @@ const InviteUserModal = ({ setIsOpen }) => {
                 </CardHeader>
                 <CardContent className="flex p-0 flex-col gap-4">
                     <div className="flex flex-col gap-2">
-                        <Label className="font-medium text-sm leading-5">Email address <p className="text-red-500">*</p></Label>
-                        <Input placeholder="Enter email address" name="email" value={invitationData.email} onChange={handleChange} />
-                        {errors.email && <p className="text-red-500 text-xs"> * {errors.email}</p>}
-                    </div>
-                    <div className="flex flex-col gap-2">
-                        <Label className="font-medium text-sm leading-5">Role</Label>
-                        <Select name="role" value={invitationData.role} onValueChange={(value) => setInvitationData((prev) => ({ ...prev, role: value }))}>
-                            <SelectTrigger className="w-full">
-                                <SelectValue placeholder="Select a role" />
-                            </SelectTrigger>
-                            <SelectContent position="popper" className="z-999">
-                                <SelectGroup>
-                                    <SelectLabel>Select Role</SelectLabel>
-                                    {roles.map((role) => (
-                                        <SelectItem key={role._id} value={role._id}>{role.name}</SelectItem>
-                                    ))}
-                                </SelectGroup>
-                            </SelectContent>
-                        </Select>
+                        <Label className="font-medium text-sm leading-5">Role <p className="text-red-500">*</p></Label>
+                        <Input placeholder="Enter role name" name="name" value={invitationData.name} onChange={handleChange} />
+                        {errors.name && <p className="text-red-500 text-xs"> * {errors.name}</p>}
                     </div>
                     <div className="flex flex-col gap-2">
                         <Label className="font-medium text-sm leading-5">
-                            Message
-                            <span className="font-normal text-[#71717b]">(optional)</span>
+                            Description <p className="text-red-500">*</p> 
                         </Label>
-                        <Textarea placeholder="Add a personal note to your invitation…" rows={3} name="message" value={invitationData.message} onChange={handleChange} />
+                        <Textarea placeholder="Add a description for the role…" rows={3} name="description" value={invitationData.description} onChange={handleChange} />
+                        {errors.description && <p className="text-red-500 text-xs"> * {errors.description}</p>}
                     </div>
                 </CardContent>
                 <CardFooter className="justify-end gap-2 bg-white px-0">
@@ -157,4 +122,4 @@ const InviteUserModal = ({ setIsOpen }) => {
     );
 };
 
-export default InviteUserModal;
+export default NewRoleModel;

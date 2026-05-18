@@ -1,14 +1,17 @@
 import { FileStack } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
-import { setPassword, validateSecureToken } from "@/api/auth";
-import { Navigate, useNavigate, useSearchParams } from "react-router-dom";
+import { completeOnboarding, setPassword, validateMemberToken, validateSecureToken } from "@/api/auth";
+import { Navigate, useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import FormField from "../ui/form-field";
 import { passwordRegex } from "@/constants";
 import Loader from "../ui/loader";
 import ResendLink from "./ResendLink";
 
 const SetPasswordForm = () => {
+
+    const { pathname } = useLocation();
+    const isOnboardingFlow = pathname === "/onboarding/activate";
 
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
@@ -24,7 +27,6 @@ const SetPasswordForm = () => {
     const [tokenStatus, setTokenStatus] = useState("validating");
 
     const validateField = (name, value) => {
-
 
         switch (name) {
             case "password":
@@ -80,8 +82,9 @@ const SetPasswordForm = () => {
         if (!isValid) return;
 
         try {
-            const res = await setPassword({ ...setPasswordData, token });
-            console.log("Set Password Data:", res);
+            isOnboardingFlow
+                ? await completeOnboarding({ ...setPasswordData, token })
+                : await setPassword({ ...setPasswordData, token });
             navigate("/login");
         } catch (error) {
             console.error(error);
@@ -90,7 +93,9 @@ const SetPasswordForm = () => {
 
     const validateToken = async () => {
         try {
-            const res = await validateSecureToken(token);
+            const res = isOnboardingFlow
+                ? await validateSecureToken(token)
+                : await validateMemberToken(token);
             console.log("Token validation response:", res);
             setTokenStatus(res.data.status);
         } catch (error) {
@@ -103,12 +108,12 @@ const SetPasswordForm = () => {
     useEffect(() => {
         // eslint-disable-next-line react-hooks/set-state-in-effect
         validateToken();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    if(tokenStatus === "validating") return <Loader />;
-    if(tokenStatus === "invalid") return <Navigate to="/onboarding" />;
-    if(tokenStatus === "expired") return <ResendLink />;
+    if (tokenStatus === "validating") return <Loader />;
+    if (tokenStatus === "invalid") return <Navigate to="/onboarding" />;
+    if (tokenStatus === "expired") return <ResendLink />;
 
     return (
         <div className="bg-white flex p-12 flex-col justify-center items-center flex-1">

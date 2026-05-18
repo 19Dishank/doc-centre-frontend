@@ -10,4 +10,13 @@ export const getUsers = async () => {
     }
 }
 
-export const inviteUser = () => { }
+export const inviteUser = async (invitationData) => {
+    try {
+        console.log("Invitation Data", invitationData)
+        const response = await axiosInstance.post("/members/invite", invitationData);
+        return response.data;
+    } catch (error) {
+        console.error("Error inviting user:", error);
+        throw error;
+    }
+}

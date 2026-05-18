@@ -39,8 +39,7 @@ export default function UploadFile() {
 
       <div className="flex flex-col xl:flex-row gap-6">
         
-        <div className="flex-2 flex flex-col gap-6">
-          
+        <div className="flex-1 flex flex-col gap-6">
           {/* Dropzone */}
           <div className="rounded-xl bg-white border-zinc-200 border-2 border-dashed p-8 md:p-12 transition-colors hover:border-blue-400">
             <div className="text-center flex flex-col items-center gap-4">

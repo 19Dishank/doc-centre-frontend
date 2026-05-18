@@ -4,7 +4,8 @@ import {
   Plus,
   Search,
   Trash2,
-  Filter
+  Filter,
+  User,
 } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
@@ -25,6 +26,7 @@ import { useEffect, useState } from "react"
 import InviteUserModal from "@/components/Users/InviteUserModal"
 import PaginationBar from "@/components/ui/pagination-bar"
 import { getUsers } from "@/api/user"
+import Loader from "@/components/ui/loader"
 
 export default function UsersList() {
 
@@ -32,14 +34,18 @@ export default function UsersList() {
   const [isOpen, setIsOpen] = useState(false);
   const [usersData, setUsersData] = useState([]);
   const [tableRows, setTableRows] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const fetchUsers = async () => {
+    setLoading(true);
     try {
       const res = await getUsers();
       setUsersData(res.data.users);
       setTableRows(res.data.users.slice(0, rowsPerPage));
     } catch (error) {
       console.log("Error : ", error)
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -119,51 +125,61 @@ export default function UsersList() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {tableRows.map(user => (
-                <TableRow key={user.id} className="hover:bg-zinc-50/50">
-                  <TableCell>
-                    <div className="flex items-center gap-3">
-                      <img
-                        className="size-8 rounded-full shrink-0"
-                        src={`https://ui-avatars.com/api/?name=${user.firstName} ${user.lastName}&background=random`}
-                        alt={`${user.firstName} ${user.lastName}`}
-                      />
-                      <div className="flex flex-col min-w-0">
-                        <span className="font-medium text-sm leading-5 truncate">{user.firstName} {user.lastName}</span>
-                        <span className="text-[#71717b] text-xs leading-4 truncate sm:block">{user.email}</span>
-                      </div>
-                    </div>
-                  </TableCell>
-
-                  <TableCell>
-                    <Badge className={`font-medium rounded-full ${getStyles(user.role)}`}>
-                      {user.role}
-                    </Badge>
-                  </TableCell>
-
-                  <TableCell className="sm:table-cell">
-                    <div className="flex items-center gap-2">
-                      <span className="size-2 rounded-full bg-green-500" />
-                      <span className="text-sm leading-5">{user.status}</span>
-                    </div>
-                  </TableCell>
-
-                  <TableCell className="text-[#71717b] text-xs leading-4 lg:table-cell whitespace-nowrap">
-                    {formateTime(user.lastActivateAt)}
-                  </TableCell>
-
-                  <TableCell>
-                    <div className="flex justify-end items-center gap-1">
-                      <Button variant="ghost" size="icon" className="size-8">
-                        <Pencil className="size-4 text-zinc-500" />
-                      </Button>
-                      <Button variant="ghost" size="icon" className="size-8 text-red-500 hover:text-red-600 hover:bg-red-50">
-                        <Trash2 className="size-4" />
-                      </Button>
-                    </div>
+              {loading
+                ? <TableRow>
+                  <TableCell className="p-10 bg-white" colSpan={5}>
+                    <Loader />
                   </TableCell>
                 </TableRow>
-              ))}
+                : tableRows.map(user => (
+                  <TableRow key={user.id} className="hover:bg-zinc-50/50">
+                    <TableCell>
+                      <div className="flex items-center gap-3">
+                        {(user.firstName && user.lastName)
+                          ? (<img
+                            className="size-8 rounded-full shrink-0"
+                            src={`https://ui-avatars.com/api/?name=${user.firstName} ${user.lastName}&background=random`}
+                            alt={`${user.firstName} ${user.lastName}`}
+                          />)
+                          : <User className="size-8 p-1.5 rounded-full bg-[#2b7fff] font-light text-zinc-900 text-xs" />
+                        }
+                        <div className="flex flex-col min-w-0">
+                          <span className="font-medium text-sm leading-5 truncate">{user.firstName} {user.lastName}</span>
+                          <span className="text-[#71717b] text-xs leading-4 truncate sm:block">{user.email}</span>
+                        </div>
+                      </div>
+                    </TableCell>
+
+                    <TableCell>
+                      <Badge className={`font-medium rounded-full ${getStyles(user.role.name)}`}>
+                        {user.role.name}
+                      </Badge>
+                    </TableCell>
+
+                    <TableCell className="sm:table-cell">
+                      <div className="flex items-center gap-2">
+                        <span className="size-2 rounded-full bg-green-500" />
+                        <span className="text-sm leading-5">{user.status}</span>
+                      </div>
+                    </TableCell>
+
+                    <TableCell className="text-[#71717b] text-xs leading-4 lg:table-cell whitespace-nowrap">
+                      {formateTime(user.lastActivateAt)}
+                    </TableCell>
+
+                    <TableCell>
+                      <div className="flex justify-end items-center gap-1">
+                        <Button variant="ghost" size="icon" className="size-8">
+                          <Pencil className="size-4 text-zinc-500" />
+                        </Button>
+                        <Button variant="ghost" size="icon" className="size-8 text-red-500 hover:text-red-600 hover:bg-red-50">
+                          <Trash2 className="size-4" />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))
+              }
             </TableBody>
           </Table>
         </div>

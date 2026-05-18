@@ -36,6 +36,7 @@ const EmailInput = lazy(() => import("@/components/ForgotPasswordPage/EmailInput
 const OTPInput = lazy(() => import("@/components/ForgotPasswordPage/OTPInput"));
 const PasswordInput = lazy(() => import("@/components/ForgotPasswordPage/PasswordInput"));
 const PasswordResetSuccessPage = lazy(() => import("@/components/ForgotPasswordPage/SuccessPage"));
+const UserSettings = lazy(() => import("@/pages/UserSettings"));
 
 export const tenantRouter = createBrowserRouter([
     {
@@ -100,6 +101,10 @@ export const tenantRouter = createBrowserRouter([
                                     {
                                         path: "organization",
                                         element: <Organization />,
+                                    },
+                                    {
+                                        path: "user",
+                                        element: <UserSettings />,
                                     },
                                     {
                                         path: "api-access",

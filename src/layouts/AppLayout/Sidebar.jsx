@@ -1,6 +1,6 @@
 import {
     AlertTriangle, Bell, Building2, CreditCard,
-    FileText, Key, LayoutDashboard, Lock, Settings, Upload, Users
+    FileText, Key, LayoutDashboard, Lock, Settings, Upload, User, Users
 } from "lucide-react";
 import { useState } from "react";
 import { NavLink } from "react-router-dom";
@@ -17,6 +17,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
     ];
 
     const settingsSubItems = [
+        { name: "User", icon: <User className="size-4" />, path: "/settings/user" },
         { name: "Organization", icon: <Building2 className="size-4" />, path: "/settings/organization" },
         { name: "Billing", icon: <CreditCard className="size-4" />, path: "/settings/billing" },
         { name: "Notifications", icon: <Bell className="size-4" />, path: "/settings/notifications" },

@@ -16,7 +16,13 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useState } from "react";
+import NewRoleModel from "@/components/Roles/NewRoleModel";
+
 export default function Roles() {
+
+  const [isOpen, setIsOpen] = useState(false);
+
   return (
     <main className="flex-1 overflow-hidden">
       <div className="flex mb-6 flex-col gap-1">
@@ -29,7 +35,7 @@ export default function Roles() {
         <Card className="shrink-0 p-0 gap-0 w-70">
           <div className="border-zinc-200 border-t-0 border-r-0 border-b border-l-0 border-solid flex p-4 justify-between items-center">
             <span className="font-semibold text-sm leading-5">Roles</span>
-            <Button size="sm" className="bg-[#2b7fff] text-blue-50 text-xs leading-4 px-2 h-7">
+            <Button size="sm" className="bg-[#2b7fff] text-blue-50 text-xs leading-4 px-2 h-7" onClick={() => setIsOpen(true)}>
               <Plus className="size-3" />
               New Role
             </Button>
@@ -47,7 +53,7 @@ export default function Roles() {
                 <MoreHorizontal className="size-4" />
               </Button>
             </div>
-            <div className="border-transparent border-t-border cursor-pointer border-black/1 border-t-1 border-r-0 border-b-0 border-l-2 border-solid flex p-4 items-center gap-3">
+            <div className="border-t-border cursor-pointer border-black/1 border-t border-r-0 border-b-0 border-l-2 border-solid flex p-4 items-center gap-3">
               <div className="size-8 rounded-lg bg-purple-100 flex justify-center items-center">
                 <Pencil className="size-4 text-purple-600" />
               </div>
@@ -59,7 +65,7 @@ export default function Roles() {
                 <MoreHorizontal className="size-4" />
               </Button>
             </div>
-            <div className="border-transparent border-t-border cursor-pointer border-black/1 border-t-1 border-r-0 border-b-0 border-l-2 border-solid flex p-4 items-center gap-3">
+            <div className="border-t-border cursor-pointer border-black/1 border-t border-r-0 border-b-0 border-l-2 border-solid flex p-4 items-center gap-3">
               <div className="size-8 rounded-lg bg-zinc-100 flex justify-center items-center">
                 <Eye className="size-4 text-[#71717b]" />
               </div>
@@ -71,7 +77,7 @@ export default function Roles() {
                 <MoreHorizontal className="size-4" />
               </Button>
             </div>
-            <div className="border-transparent border-t-border cursor-pointer border-black/1 border-t-1 border-r-0 border-b-0 border-l-2 border-solid flex p-4 items-center gap-3">
+            <div className="border-transparent border-t-border cursor-pointer border-t border-r-0 border-b-0 border-l-2 border-solid flex p-4 items-center gap-3">
               <div className="size-8 rounded-lg bg-teal-100 flex justify-center items-center">
                 <Code className="size-4 text-teal-600" />
               </div>
@@ -245,6 +251,8 @@ export default function Roles() {
           </CardFooter>
         </Card>
       </div>
+
+      {isOpen && <NewRoleModel setIsOpen={setIsOpen} />}
     </main>
   );
 }

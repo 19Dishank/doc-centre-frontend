@@ -10,139 +10,152 @@ import { Textarea } from "@/components/ui/textarea";
 
 export default function Organization() {
   return (
-    <main className="relative flex-1 overflow-auto">
-      <div className="max-w-4xl flex flex-col gap-6">
-        <div className="flex flex-col gap-1">
-          <h1 className="font-semibold text-2xl leading-8 tracking-tight">Organization</h1>
-          <p className="text-[#71717b] text-sm leading-5">Manage your organization profile and preferences.</p>
-        </div>
-        <Card className="shadow-sm p-6 gap-6">
-          <CardHeader className="p-0 gap-1">
-            <div className="flex items-center gap-2">
-              <div className="size-8 rounded-md bg-[#2b7fff]/10 flex justify-center items-center">
-                <Building2 className="size-4 text-[#2b7fff]" />
-              </div>
-              <CardTitle className="font-semibold text-base leading-6">Organization Details</CardTitle>
+    <div className="w-full max-w-4xl mx-auto">
+      {/* Header section with responsive spacing */}
+      <div className="flex flex-col gap-1 mb-6">
+        <h1 className="font-semibold text-2xl leading-8 tracking-tight text-zinc-950">Organization</h1>
+        <p className="text-zinc-500 text-sm leading-5">Manage your organization profile and preferences.</p>
+      </div>
+
+      <Card className="shadow-sm p-4 sm:p-6 flex flex-col gap-6">
+        <CardHeader className="p-0 gap-1">
+          <div className="flex items-center gap-2">
+            <div className="size-8 rounded-md bg-[#2b7fff]/10 flex justify-center items-center shrink-0">
+              <Building2 className="size-4 text-[#2b7fff]" />
             </div>
-            <CardDescription className="text-[#71717b] text-sm leading-5">
-              Basic information about your organization.
-            </CardDescription>
-          </CardHeader>
-          <Separator />
-          <CardContent className="flex p-0 flex-col gap-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="flex flex-col gap-2">
-                <Label htmlFor="orgname" className="text-sm leading-5">
-                  Organization Name
-                </Label>
-                <Input id="orgname" defaultValue="Acme Corp" className="h-10" />
-              </div>
-              <div className="flex flex-col gap-2">
-                <Label
-                  htmlFor="org"
-                  className="font-medium uppercase text-zinc-950 tracking-wider"
-                  style={{
-                    fontSize: "11px",
-                    lineHeight: "16px",
-                    letterSpacing: "0.06em",
-                  }}>
-                  Slug
-                </Label>
-                <div className="rounded-md bg-white border-zinc-200 border border-solid flex h-10 overflow-hidden">
-                  <input
-                    id="slug"
-                    defaultValue="acmecorp"
-                    className="bg-transparent outline-none text-sm leading-5 px-3"
-                  />
-                  <span className="bg-zinc-100 text-[#71717b] text-sm leading-5 border-zinc-200 border-t-0 border-r flex-1 border-b-0 border-l-0 border-solid flex px-3 items-center">
-                    .cdms.com
-                  </span>
-                </div>
-              </div>
-              <div className="flex flex-col gap-2">
-                <Label htmlFor="industry" className="text-sm leading-5">
-                  Industry
-                </Label>
-                <Select defaultValue="tech">
-                  <SelectTrigger id="industry" className="h-10">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="tech">Technology</SelectItem>
-                    <SelectItem value="finance">Finance</SelectItem>
-                    <SelectItem value="health">Healthcare</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="flex flex-col gap-2">
-                <Label htmlFor="website" className="text-sm leading-5">
-                  Website
-                </Label>
-                <Input id="website" defaultValue="https://acmecorp.com" className="h-10" />
-              </div>
-            </div>
-            <div className="grid grid-cols-3 gap-4">
-              <div className="flex flex-col gap-2">
-                <Label className="text-sm leading-5">Created</Label>
-                <div className="rounded-md bg-zinc-100/50 text-sm leading-5 border-zinc-200 border border-solid flex px-3 items-center gap-2 h-10">
-                  <Calendar className="size-4 text-[#71717b]" />
-                  <span>Jan 12, 2023</span>
-                </div>
-              </div>
-              <div className="flex flex-col gap-2">
-                <Label className="text-sm leading-5">Member Count</Label>
-                <div className="rounded-md bg-zinc-100/50 text-sm leading-5 border-zinc-200 border border-solid flex px-3 items-center gap-2 h-10">
-                  <Users className="size-4 text-[#71717b]" />
-                  <span>27 members</span>
-                </div>
-              </div>
-              <div className="flex flex-col gap-2">
-                <Label className="text-sm leading-5">Current Plan</Label>
-                <div className="rounded-md bg-zinc-100/50 border-zinc-200 border border-solid flex px-2 justify-between items-center h-10">
-                  <Badge className="bg-[#2b7fff] text-blue-50 px-2 py-1 gap-1">
-                    <Zap className="size-3" />
-                    Pro Plan
-                  </Badge>
-                  <a className="cursor-pointer font-medium text-[#2b7fff] text-xs leading-4 pr-1">Upgrade</a>
-                </div>
-              </div>
-            </div>
+            <CardTitle className="font-semibold text-base leading-6">Organization Details</CardTitle>
+          </div>
+          <CardDescription className="text-zinc-500 text-sm leading-5">
+            Basic information about your organization.
+          </CardDescription>
+        </CardHeader>
+        
+        <Separator />
+        
+        <CardContent className="flex p-0 flex-col gap-6">
+          {/* Main Inputs Grid - Stacks on mobile, splits into 2 columns from 'sm' screens up */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="flex flex-col gap-2">
-              <Label htmlFor="desc" className="text-sm leading-5">
-                Organization Description
+              <Label htmlFor="orgname" className="text-sm leading-5 text-zinc-950 font-medium">
+                Organization Name
               </Label>
-              <Textarea
-                id="desc"
-                placeholder="Tell us a little about your organization, what you do, and your team..."
-                className="min-h-24 resize-none"
-              />
+              <Input id="orgname" defaultValue="Acme Corp" className="h-10 w-full" />
             </div>
-            <Separator />
+
+            {/* Slug Field Fixes: Flex layout changes to ensure the suffix label acts responsively */}
             <div className="flex flex-col gap-2">
-              <Label className="text-sm leading-5">Organization Logo</Label>
-              <div className="flex items-center gap-4">
-                <div className="size-16 rounded-lg bg-[#2b7fff]/10 border-[#2b7fff]/20 border border-solid flex justify-center items-center">
-                  <span className="font-semibold text-[#2b7fff] text-lg leading-7">AC</span>
-                </div>
-                <Button variant="outline" className="gap-2 h-9">
+              <Label htmlFor="slug" className="text-xs uppercase font-medium tracking-wider text-zinc-500">
+                Slug
+              </Label>
+              <div className="rounded-md bg-white border border-zinc-200 flex h-10 overflow-hidden focus-within:ring-1 focus-within:ring-ring">
+                <input
+                  id="slug"
+                  defaultValue="acmecorp"
+                  className="bg-transparent outline-none text-sm leading-5 px-3 flex-1 min-w-0"
+                />
+                <span className="bg-zinc-100 text-[#71717b] text-sm leading-5 border-l border-zinc-200 px-3 flex items-center shrink-0">
+                  .cdms.com
+                </span>
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="industry" className="text-sm leading-5 text-zinc-950 font-medium">
+                Industry
+              </Label>
+              <Select defaultValue="tech">
+                <SelectTrigger id="industry" className="h-10 w-full">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="tech">Technology</SelectItem>
+                  <SelectItem value="finance">Finance</SelectItem>
+                  <SelectItem value="health">Healthcare</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="website" className="text-sm leading-5 text-zinc-950 font-medium">
+                Website
+              </Label>
+              <Input id="website" defaultValue="https://acmecorp.com" className="h-10 w-full" />
+            </div>
+          </div>
+
+          {/* Metadata Row Grid - Stacks on mobile, 2 columns on small screens, 3 columns from 'md' screens up */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+            <div className="flex flex-col gap-2">
+              <Label className="text-sm leading-5 text-zinc-950 font-medium">Created</Label>
+              <div className="rounded-md bg-zinc-100/50 text-sm leading-5 border border-zinc-200 flex px-3 items-center gap-2 h-10 text-zinc-700">
+                <Calendar className="size-4 text-zinc-400 shrink-0" />
+                <span className="truncate">Jan 12, 2023</span>
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <Label className="text-sm leading-5 text-zinc-950 font-medium">Member Count</Label>
+              <div className="rounded-md bg-zinc-100/50 text-sm leading-5 border border-zinc-200 flex px-3 items-center gap-2 h-10 text-zinc-700">
+                <Users className="size-4 text-zinc-400 shrink-0" />
+                <span className="truncate">27 members</span>
+              </div>
+            </div>
+
+            {/* Plan Info box: spans across full-width on mobile tablet variations if layout breaks, wraps cleanly */}
+            <div className="flex flex-col gap-2 sm:col-span-2 md:col-span-1">
+              <Label className="text-sm leading-5 text-zinc-950 font-medium">Current Plan</Label>
+              <div className="rounded-md bg-zinc-100/50 border border-zinc-200 flex px-3 justify-between items-center h-10 gap-2">
+                <Badge className="bg-[#2b7fff] text-blue-50 px-2 py-0.5 gap-1 select-none shrink-0">
+                  <Zap className="size-3" />
+                  Pro Plan
+                </Badge>
+                <a className="cursor-pointer font-semibold text-[#2b7fff] text-xs hover:underline shrink-0">Upgrade</a>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="desc" className="text-sm leading-5 text-zinc-950 font-medium">
+              Organization Description
+            </Label>
+            <Textarea
+              id="desc"
+              placeholder="Tell us a little about your organization, what you do, and your team..."
+              className="min-h-24 resize-none w-full"
+            />
+          </div>
+
+          <Separator />
+
+          {/* Logo Upload Section - Reconfigures flex properties on small screens */}
+          <div className="flex flex-col gap-3">
+            <Label className="text-sm leading-5 text-zinc-950 font-medium">Organization Logo</Label>
+            <div className="flex flex-wrap items-center gap-4">
+              <div className="size-16 rounded-lg bg-[#2b7fff]/10 border border-[#2b7fff]/20 flex justify-center items-center shrink-0">
+                <span className="font-semibold text-[#2b7fff] text-lg">AC</span>
+              </div>
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4 flex-1 min-w-[200px]">
+                <Button variant="outline" className="gap-2 h-9 w-full sm:w-auto shrink-0">
                   <Upload className="size-4" />
                   Upload Logo
                 </Button>
-                <span className="text-[#71717b] text-xs leading-4">PNG, JPG up to 2MB</span>
+                <span className="text-zinc-500 text-xs whitespace-nowrap">PNG, JPG up to 2MB</span>
               </div>
             </div>
-          </CardContent>
-          <CardFooter className="px-0 bg-white justify-end gap-2">
-            <Button variant="outline" className="h-9">
-              Cancel
-            </Button>
-            <Button className="bg-[#2b7fff] text-blue-50 gap-2 h-9">
-              <Check className="size-4" />
-              Save Changes
-            </Button>
-          </CardFooter>
-        </Card>
-      </div>
-    </main>
+          </div>
+        </CardContent>
+
+        {/* Footer Action Buttons - full width stacking on mobile */}
+        <CardFooter className="px-0 pt-2 bg-white flex flex-col-reverse sm:flex-row justify-end gap-2">
+          <Button variant="outline" className="h-9 w-full sm:w-auto">
+            Cancel
+          </Button>
+          <Button className="bg-[#2b7fff] text-blue-50 gap-2 h-9 w-full sm:w-auto">
+            <Check className="size-4" />
+            Save Changes
+          </Button>
+        </CardFooter>
+      </Card>
+    </div>
   );
 }

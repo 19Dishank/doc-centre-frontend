@@ -39,17 +39,15 @@ const toastStyles = {
 
 const AUTO_CLOSE = 4000;
 
-// eslint-disable-next-line react-refresh/only-export-components
 const ToastContent = ({ message, type, closeToast, toastProps }) => {
   const style = toastStyles[type];
   const Icon = style.icon;
 
   const [progress, setProgress] = useState(100);
-  const [isPaused, setIsPaused] = useState(false);
+  const isPaused = toastProps.isPaused; 
 
-  const duration = toastProps.autoClose;
+  const duration = toastProps.autoClose || AUTO_CLOSE;
   const timeLeft = useRef(duration);
-  // eslint-disable-next-line react-hooks/purity
   const lastTick = useRef(Date.now());
   const raf = useRef(null);
 
@@ -63,29 +61,27 @@ const ToastContent = ({ message, type, closeToast, toastProps }) => {
         const percent = (timeLeft.current / duration) * 100;
         setProgress(percent);
 
-        // If time is up, the parent toastify usually handles it, 
-        // but we can ensure it closes here if needed.
         if (timeLeft.current <= 0) {
           cancelAnimationFrame(raf.current);
+          closeToast();
           return;
         }
       }
-
+      // Keep tracking time baseline accurately
       lastTick.current = Date.now();
       raf.current = requestAnimationFrame(tick);
     };
 
+    lastTick.current = Date.now();
     raf.current = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf.current);
-  }, [isPaused, duration]);
+  }, [isPaused, duration, closeToast]);
 
   return (
     <div
-      onMouseEnter={() => setIsPaused(true)}
-      onMouseLeave={() => {
-        lastTick.current = Date.now(); // Reset tick baseline so it doesn't "jump"
-        setIsPaused(false);
-      }}
+      // FIX: Bind react-toastify's native hover listeners directly to your custom layout
+      onMouseEnter={toastProps.onMouseEnter}
+      onMouseLeave={toastProps.onMouseLeave}
       className={`rounded-xl border shadow-sm overflow-hidden flex flex-col min-w-[300px] max-w-[380px] ${style.container}`}
     >
       <div className="flex items-center gap-3 px-3.5 py-3">
@@ -130,7 +126,7 @@ export const toastNotification = (message, type = "success") => {
       autoClose: AUTO_CLOSE,
       hideProgressBar: true,
       closeButton: false,
-      pauseOnHover: true, // This allows the internal Toastify timer to pause
+      pauseOnHover: true, 
       draggable: true,
       className: "!bg-transparent !shadow-none !p-0 !min-h-0 !w-fit",
       bodyClassName: "!p-0",

@@ -19,7 +19,7 @@ export const refreshAccessToken = async () => {
 export const createTenant = async (tenantData) => {
     try {
         const response = await axiosInstance.post(
-            `/tenant/register`,
+            `/tenants/register`,
             tenantData
         );
         if (response.success) {
@@ -44,10 +44,35 @@ export const validateSecureToken = async (token) => {
     }
 };
 
-export const setPassword = async (passwordData) => {
+// eslint-disable-next-line no-unused-vars
+export const validateMemberToken = async (token) => {
+    // try {
+    //     const response = await axiosInstance.get(`/members/validate/member?token=${token}`);
+    //     return response.data;
+    // } catch (error) {
+    //     console.error("Error validating member token:", error);
+    //     throw error;
+    // }
+    return { data: { status: "valid" } };
+};
+
+export const completeOnboarding = async (passwordData) => {
     try {
         const response = await axiosInstance.post(
             `/auth/complete-onboarding`,
+            passwordData
+        );
+        return response.data;
+    } catch (error) {
+        console.error("Error completing onboarding:", error);
+        throw error;
+    }
+};
+
+export const setPassword = async (passwordData) => {
+    try {
+        const response = await axiosInstance.post(
+            `/members/set-password`,
             passwordData
         );
         return response.data;
@@ -56,6 +81,7 @@ export const setPassword = async (passwordData) => {
         throw error;
     }
 };
+
 
 export const verifyUser = async (email) => {
     try {

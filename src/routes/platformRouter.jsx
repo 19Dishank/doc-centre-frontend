@@ -7,6 +7,7 @@ const ErrorPage = lazy(() => import("@/pages/ErrorPage"));
 const HomePage = lazy(() => import("@/pages/HomePage"));
 const LoginPage = lazy(() => import("@/pages/LoginPage"));
 const OnBoardingPage = lazy(() => import("@/pages/OnBoardingPage"));
+const UserInvite = lazy(() => import("@/pages/UserInvite"));
 
 export const platformRouter = createBrowserRouter([
     {
@@ -30,6 +31,10 @@ export const platformRouter = createBrowserRouter([
                     {
                         path: "/onboarding/activate",
                         element: <OnBoardingPage />,
+                    },
+                    {
+                        path: "/users/invite",
+                        element: <UserInvite />,
                     },
                 ]
             },

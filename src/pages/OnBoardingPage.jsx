@@ -1,6 +1,9 @@
 import { useSearchParams } from "react-router-dom";
-import ActivateForm from "@/components/RegistrationPage/SetPasswordForm";
-import OnBoardingForm from "@/components/RegistrationPage/OnBoardingForm";
+import { lazy, Suspense } from "react";
+import Loader from "@/components/ui/loader";
+
+const OnBoarding = lazy(() => import("@/components/RegistrationPage/OnBoarding"));
+const Activate = lazy(() => import("@/components/RegistrationPage/Activate"));
 
 export default function OnBoardingPage() {
 
@@ -8,8 +11,8 @@ export default function OnBoardingPage() {
   const token = searchParams.get('token');
 
   return (
-    <>
-      {token ? <ActivateForm /> : <OnBoardingForm />}
-    </>
+    <Suspense fallback={<Loader />}>
+      {token ? <Activate /> : <OnBoarding />}
+    </Suspense>
   );
 }

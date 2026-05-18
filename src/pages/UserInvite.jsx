@@ -1,4 +1,4 @@
-import SetPasswordForm from "@/components/RegistrationPage/SetPasswordForm"
+import SetPasswordForm from "@/components/RegistrationPage/Activate"
 
 const UserInvite = () => {
   return (

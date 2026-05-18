@@ -141,7 +141,7 @@ export default function UsersList() {
                             src={`https://ui-avatars.com/api/?name=${user.firstName} ${user.lastName}&background=random`}
                             alt={`${user.firstName} ${user.lastName}`}
                           />)
-                          : <User className="size-8 p-1.5 rounded-full bg-[#2b7fff] font-light text-zinc-900 text-xs" />
+                          : <User className="size-8 p-1.5 rounded-full bg-[#2b7fff] text-white text-xs" />
                         }
                         <div className="flex flex-col min-w-0">
                           <span className="font-medium text-sm leading-5 truncate">{user.firstName} {user.lastName}</span>

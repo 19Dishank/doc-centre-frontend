@@ -26,7 +26,7 @@ const FormField = ({ label, name, value, onChange, placeholder, error, isPasswor
                     value={value}
                     id={name}
                     placeholder={placeholder}
-                    className="rounded-lg border border-zinc-200 border-solid h-10 disabled:bg-zinc-50 disabled:cursor-not-allowed focus:border-[#2b7fff] focus:ring-2 focus:ring-blue-100 outline-none transition-all w-full pr-10"
+                    className={`rounded-lg border border-zinc-200 border-solid h-10 disabled:bg-zinc-50 disabled:cursor-not-allowed  outline-none transition-all w-full pr-10 ${error ? "border-red-500 focus:border-red-500! focus:ring-red-100!" : "border-zinc-200 focus:border-[#2b7fff] focus:ring-blue-100"}`}
                     type={isPasswordField && !showPassword ? "password" : "text"}
                     disabled={disabled}
                 />

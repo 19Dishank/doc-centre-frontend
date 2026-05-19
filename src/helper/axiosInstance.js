@@ -4,14 +4,14 @@ import { getSubdomain } from './getSubdomain';
 import { refreshAccessToken } from '@/api/auth';
 import { clearTokens, getTokens } from './tokens';
 
-const axiosInstance = axios.create({
-    baseURL: import.meta.env.VITE_API_URL,
-    withCredentials: true,
-    headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
-    }
-});
+const axiosInstance =
+    axios.create({
+        baseURL: import.meta.env.VITE_API_URL,
+        withCredentials: true,
+        headers: {
+            Accept: 'application/json'
+        }
+    });
 
 axiosInstance.interceptors.request.use(
     (config) => {
@@ -21,7 +21,7 @@ axiosInstance.interceptors.request.use(
             config.headers['Authorization'] = `Bearer ${accessToken}`;
         }
 
-        if (config.data) {
+        if ( config.data && Object.entries(config.data).length > 0) {
 
             const slug = getSubdomain();
 
@@ -39,6 +39,23 @@ axiosInstance.interceptors.request.use(
 
 let isRefreshing = false;
 let failedQueue = [];
+
+const isAuthRoute = [
+    "/auth/refresh-access-token",
+    "/tenants/register",
+    "/auth/validate-secure-token",
+    "/auth/complete-onboarding",
+    "/members/set-password",
+    "/auth/verify-email",
+    "/auth/validate-login-token",
+    "/auth/login",
+    "/auth/forgot-password",
+    "/auth/resend-otp",
+    "/auth/verify-forgot-password-otp",
+    "/auth/reset-password",
+    "/auth/logout",
+    "/members/set-password"
+]
 
 const processQueue = (error, token = null) => {
     failedQueue.forEach((prom) => {
@@ -72,11 +89,9 @@ axiosInstance.interceptors.response.use(
             const status = response.status;
             if (status === 500) {
                 return toastNotification('Internal Server Error. Please contact support.', "error");
-            } else if (status === 404) {
-                return toastNotification('Requested resource not found.', "error");
             } else if (status === 401 && !originalRequest._retry) {
 
-                if (originalRequest.url.includes('/auth') && !originalRequest.url.includes('/auth/me') && !originalRequest.url.includes('/auth/refresh-access-token')) {
+                if (isAuthRoute.includes(originalRequest.url)) {
                     return Promise.reject(error);
                 }
 

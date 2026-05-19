@@ -1,37 +1,62 @@
 import { loginUser } from "@/api/auth";
 import { Button } from "@/components/ui/button";
 import FormField from "@/components/ui/form-field";
-import { passwordRegex } from "@/constants";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { setTokens } from "@/helper/tokens";
 import { ArrowRight } from "lucide-react";
 import { useState } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate, useSearchParams } from "react-router-dom";
 
-const TenantLoginForm = ({ emailVerifyToken }) => {
+const TenantLoginForm = () => {
 
-    const [password, setPassword] = useState("");
-    const [error, setError] = useState("");
-    const { setIsAuthenticated } = useAuthContext();
+    const {setIsAuthenticated} = useAuthContext();
     const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
+    const email = searchParams.get("email") || "";
 
-    const validatePassword = (value) => {
-        if (!value.trim()) return "Password is required";
-        if (!passwordRegex.test(value)) {
-            return "Password must contain at least 8 characters, including one uppercase letter, one lowercase letter, one number, and one special character";
+    const [loginData, setLoginData] = useState({ email: email, password: "" });
+    const [errors, setErrors] = useState({ email: "", password: "" });
+
+    const validateField = (name, value) => {
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        switch (name) {
+
+            case "email":
+                if (!value.trim()) return "Email is required";
+                if (!emailRegex.test(value)) return "Please provide a valid email";
+                return "";
+
+            default:
+                return "";
         }
-        return "";
     };
 
     const handleChange = (e) => {
-        setPassword(e.target.value);
-        setError(validatePassword(e.target.value));
+        const { name, value } = e.target;
+
+        setLoginData((prev) => ({
+            ...prev,
+            [name]: value
+        }));
+
+        setErrors((prev) => ({
+            ...prev,
+            [name]: validateField(name, value)
+        }));
     };
 
     const validateForm = () => {
-        const newError = validatePassword(password);
-        setError(newError);
-        return !newError;
+        const newErrors = {};
+
+        Object.keys(loginData).forEach((key) => {
+            newErrors[key] = validateField(key, loginData[key]);
+        });
+
+        setErrors(newErrors);
+
+        return Object.values(newErrors).every((error) => error === "");
     };
 
     const handleSubmit = async (e) => {
@@ -42,20 +67,20 @@ const TenantLoginForm = ({ emailVerifyToken }) => {
         if (!isValid) return;
 
         try {
-            const res = await loginUser({ password, emailVerifyToken });
-            console.log("Login Data :", res);
+            const res = await loginUser(loginData);
+            console.log("Login Data:", res);
             setTokens(res.data.accessToken, res.data.refreshToken);
-            setIsAuthenticated(true);
             navigate("/dashboard");
+            setIsAuthenticated(true);
         } catch (error) {
             console.error(error);
-            setError(error.response?.data?.message || "An error occurred while logging in");
         }
     };
 
     return (
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-            <FormField label="Password" name="password" value={password} onChange={handleChange} placeholder="Enter your password" error={error} isPasswordField={true} />
+            <FormField label="Email Id" name="email" value={loginData.email} onChange={handleChange} placeholder="Enter your email" error={errors.email} disabled={!!email} />
+            <FormField label="Password" name="password" value={loginData.password} onChange={handleChange} placeholder="Enter your password" error={errors.password} isPasswordField={true} />
             <NavLink to="/forgot-password" className="text-xs text-[#2b7fff] self-end -mt-2">
                 Forgot password?
             </NavLink>

@@ -7,11 +7,11 @@ import { ArrowRight } from "lucide-react";
 import { useState } from "react";
 
 const PlatformLoginForm = () => {
-    
+
     const [email, setEmail] = useState("");
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
-    
+
     const validateEmail = (value) => {
         if (!value.trim()) return "Email is required";
         if (!emailRegex.test(value)) {
@@ -36,10 +36,10 @@ const PlatformLoginForm = () => {
         try {
             const res = await verifyUser({ email });
             console.log("Verification Data:", res);
-            window.location.replace(import.meta.env.VITE_APP_BASE_URL.replace("slug", res.data.slug) + `/login?t=${res.data.emailVerifyToken}`);
+            window.location.replace(import.meta.env.VITE_APP_BASE_URL.replace("slug", res.data.slug) + `/login?email=${email}`);
         } catch (error) {
             console.error(error);
-            toastNotification( error?.response?.data?.message || "An error occurred while verifying the email. Please try again.", "error");
+            toastNotification(error?.response?.data?.message || "An error occurred while verifying the email. Please try again.", "error");
         } finally {
             setLoading(false);
         }

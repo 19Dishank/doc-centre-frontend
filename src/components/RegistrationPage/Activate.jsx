@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { validateMemberToken, validateSecureToken } from "@/api/auth";
-import { Navigate, useLocation, useNavigate, useSearchParams } from "react-router-dom";
+import { Navigate, useLocation, useSearchParams } from "react-router-dom";
 import Loader from "../ui/loader";
 import ResendLink from "./ResendLink";
 import SetPasswordForm from "./Forms/SetPasswordForm";
@@ -11,7 +11,6 @@ const Activate = () => {
     const { pathname } = useLocation();
     const isOnboardingFlow = pathname === "/onboarding/activate";
 
-    const navigate = useNavigate();
     const [searchParams] = useSearchParams();
     const token = searchParams.get('token');
 
@@ -26,7 +25,7 @@ const Activate = () => {
             setTokenStatus(res.data.status);
         } catch (error) {
             console.error("Invalid or expired token:", error);
-            navigate("/onboarding");
+            // navigate("/onboarding");
             setTokenStatus("invalid");
         }
     };

@@ -36,7 +36,9 @@ export const createTenant = async (tenantData) => {
 
 export const validateSecureToken = async (token) => {
     try {
+        console.log("Validating secure token:", token);
         const response = await axiosInstance.get(`/auth/validate-secure-token?token=${token}`);
+        console.log("Response : ", response)
         return response.data;
     } catch (error) {
         console.error("Error validating secure token:", error);
@@ -81,7 +83,6 @@ export const setPassword = async (passwordData) => {
         throw error;
     }
 };
-
 
 export const verifyUser = async (email) => {
     try {

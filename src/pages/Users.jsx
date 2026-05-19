@@ -119,7 +119,7 @@ export default function UsersList() {
               <TableRow>
                 <TableHead className="uppercase text-[11px] tracking-wide font-bold">User</TableHead>
                 <TableHead className="uppercase text-[11px] tracking-wide font-bold">Role</TableHead>
-                <TableHead className="uppercase text-[11px] tracking-wide font-bold sm:table-cell">Status</TableHead>
+                <TableHead className="uppercase text-[11px] tracking-wide font-bold sm:table-cell">Account Status</TableHead>
                 <TableHead className="uppercase text-[11px] tracking-wide font-bold lg:table-cell">Last Active</TableHead>
                 <TableHead className="uppercase text-[11px] tracking-wide font-bold text-right">Actions</TableHead>
               </TableRow>

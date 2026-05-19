@@ -5,15 +5,6 @@ const PasswordResetSuccessPage = () => {
     return (
         <div className="bg-white flex justify-center items-center flex-1" style={{ width: "660px" }}>
             <div className="max-w-xl flex px-12 flex-col w-full">
-                {/* Logo Section */}
-                <div className="flex mb-12 items-center gap-2">
-                    <div className="size-9 rounded-lg bg-[#2b7fff] flex justify-center items-center">
-                        <FileStack className="size-5 text-blue-50" />
-                    </div>
-                    <span className="font-semibold text-[#2b7fff] text-lg leading-7 tracking-tight">
-                        DocuCentral
-                    </span>
-                </div>
 
                 {/* Content Section */}
                 <div className="flex mb-8 flex-col gap-2">

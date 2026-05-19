@@ -118,7 +118,7 @@ const OnBoardingForm = () => {
     };
 
     return (
-        <form className="flex flex-col gap-4">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
             <div className="grid grid-cols-2 gap-4">
                 <FormField label="First Name" name="firstName" value={registrationData.firstName} onChange={handleChange} placeholder="Jane" error={errors.firstName} />
                 <FormField label="Last Name" name="lastName" value={registrationData.lastName} onChange={handleChange} placeholder="Doe" error={errors.lastName} />
@@ -128,9 +128,8 @@ const OnBoardingForm = () => {
             <FormField label="Organization Slogan" name="orgSlogan" value={registrationData.orgSlogan} onChange={handleChange} placeholder="Acme Corp" error={errors.orgSlogan} />
             <FormField label="Slug" name="slug" value={registrationData.slug} onChange={handleChange} placeholder="acme-corp" error={errors.slug} />
             <Button
-                onClick={handleSubmit}
-                className="mt-2 cursor-pointer font-semibold rounded-lg bg-[#2b7fff] text-blue-50 w-full disabled:cursor-not-allowed"
-                style={{ height: "44px" }}
+                type="submit"
+                className="mt-2 cursor-pointer h-11 font-semibold rounded-lg bg-[#2b7fff] text-blue-50 w-full disabled:cursor-not-allowed"
                 disabled={loading}
             >
                 {loading ? "Creating Account..." : "Create Account"}

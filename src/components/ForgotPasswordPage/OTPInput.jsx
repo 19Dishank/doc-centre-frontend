@@ -1,4 +1,3 @@
-import { FileStack } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useState, useRef, useEffect } from "react";
 import { resendOTP, verifyOTP } from "@/api/auth";
@@ -98,12 +97,6 @@ const OTPInput = () => {
     return (
         <div className="bg-white flex justify-center items-center flex-1" style={{ width: "660px" }}>
             <div className="max-w-xl flex px-12 flex-col w-full">
-                <div className="flex mb-12 items-center gap-2">
-                    <div className="size-9 rounded-lg bg-[#2b7fff] flex justify-center items-center">
-                        <FileStack className="size-5 text-blue-50" />
-                    </div>
-                    <span className="font-semibold text-[#2b7fff] text-lg leading-7 tracking-tight">DocuCentral</span>
-                </div>
 
                 <div className="flex mb-8 flex-col gap-2">
                     <h1 className="font-bold text-zinc-900 tracking-tight" style={{ fontSize: "28px", lineHeight: "1.2" }}>

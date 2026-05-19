@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { FileStack, MailCheck } from "lucide-react";
+import { MailCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import FormField from "../ui/form-field";
 // Assuming you have a resend function in your auth api
@@ -33,17 +33,6 @@ const ResendLink = () => {
     return (
         <div className="bg-white flex p-12 flex-col justify-center items-center flex-1">
             <div className="max-w-xl flex flex-col gap-8 w-full">
-                
-                {/* Branding - Matching image_ade227.jpg */}
-                <div className="flex items-center gap-2">
-                    <div className="size-8 rounded-lg bg-[#2b7fff] flex justify-center items-center">
-                        <FileStack className="size-5 text-blue-50" />
-                    </div>
-                    <span className="font-bold text-[#2b7fff] text-lg leading-7 tracking-tight">
-                        DocuCentral
-                    </span>
-                </div>
-
                 {!isSent ? (
                     <>
                         <div className="flex flex-col gap-2">

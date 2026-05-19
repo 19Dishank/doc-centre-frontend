@@ -1,3 +1,4 @@
+import Logo from "@/components/ui/logo";
 import {
     AlertTriangle, Bell, Building2, CreditCard,
     FileText, Key, LayoutDashboard, Lock, Settings, Upload, User, Users
@@ -42,9 +43,8 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
                 lg:translate-x-0 lg:static lg:inset-0
             `}>
                 <div className="flex p-4 flex-col gap-6 h-full">
-                    <div className="flex px-2 py-1 items-center justify-between">
-                        <img src="/images/DocCentral.svg" alt="" />
-                    </div>
+
+                    <Logo width={180} />
 
                     <nav className="flex flex-col gap-1 overflow-y-auto">
                         {navItems.map((item) => (

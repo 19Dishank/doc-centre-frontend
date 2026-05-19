@@ -1,10 +1,11 @@
-import { ArrowRight, FileStack } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import FormField from "../ui/form-field";
 import { emailRegex } from "@/constants";
 import { generateOTP } from "@/api/auth";
 import { useNavigate } from "react-router-dom";
+import FormContainer from "../ui/form-container";
 
 const EmailInput = () => {
 
@@ -47,32 +48,23 @@ const EmailInput = () => {
     };
 
     return (
-        <div className="bg-white flex justify-center items-center flex-1" style={{ width: "660px" }}>
-            <div className="max-w-xl flex px-12 flex-col w-full">
-                <div className="flex mb-12 items-center gap-2">
-                    <div className="size-9 rounded-lg bg-[#2b7fff] flex justify-center items-center">
-                        <FileStack className="size-5 text-blue-50" />
-                    </div>
-                    <span className="font-semibold text-[#2b7fff] text-lg leading-7 tracking-tight">DocuCentral</span>
-                </div>
-
-                <div className="flex mb-8 flex-col gap-2">
-                    <h1 className="font-bold text-zinc-900 tracking-tight" style={{ fontSize: "28px", lineHeight: "1.2" }}>
-                        Forgot your password?
-                    </h1>
-                    <p className="text-[#71717b] text-sm leading-5">Enter your email address and we'll send OTP to your email</p>
-                </div>
-                <div className="flex flex-col gap-4">
-                    <FormField label="Email Address" name="email" value={email} onChange={handleChange} placeholder="you@company.com" error={error} />
-                    <Button onClick={handleSubmit} disabled={loading} className={`cursor-pointer font-semibold rounded-lg bg-[#2b7fff] text-blue-50 mt-2 w-full h-11 ${loading ? "opacity-70" : "hover:bg-[#2b7fff]/90"}`}>
-                        {loading
-                            ? <span>Sending...</span>
-                            : (<><span>Send OTP</span> <ArrowRight className="size-4 ml-1" /></>)
-                        }
-                    </Button>
-                </div>
-            </div>
-        </div>
+        <FormContainer
+            heading="Trouble signing in?"
+            subheading="Enter your email and we'll send you a OTP to reset your password."
+            linkHelperText="Remember your password?"
+            linkText="Sign in"
+            linkUrl="/login"
+        >
+            <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+                <FormField label="Email Address" name="email" value={email} onChange={handleChange} placeholder="you@company.com" error={error} />
+                <Button type="submit" disabled={loading} className={`cursor-pointer font-semibold rounded-lg bg-[#2b7fff] text-blue-50 mt-2 w-full h-11 ${loading ? "opacity-70" : "hover:bg-[#2b7fff]/90"}`}>
+                    {loading
+                        ? <span>Sending...</span>
+                        : (<><span>Send OTP</span> <ArrowRight className="size-4 ml-1" /></>)
+                    }
+                </Button>
+            </form>
+        </FormContainer>
     );
 };
 

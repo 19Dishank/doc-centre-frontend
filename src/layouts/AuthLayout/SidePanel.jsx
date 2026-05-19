@@ -1,4 +1,5 @@
-import { Check, FileSpreadsheet, FileStack, FileText, FolderOpen, Star } from "lucide-react";
+import Logo from "@/components/ui/logo";
+import { Check, FileSpreadsheet, FileText, FolderOpen, Star } from "lucide-react";
 
 const SidePanel = () => {
   return (
@@ -7,12 +8,7 @@ const SidePanel = () => {
       style={{
         background: "linear-gradient(135deg, oklch(0.42 0.18 264) 0%, oklch(0.55 0.22 260) 100%)",
       }}>
-      <div className="relative z-10 flex items-center gap-2">
-        <div className="size-9 backdrop-blur-sm rounded-lg bg-white/15 flex justify-center items-center">
-          <FileStack className="size-5 text-white" />
-        </div>
-        <span className="font-semibold text-lg leading-7 tracking-tight">DocuCentral</span>
-      </div>
+      <Logo width={200} height={80} mode="dark" />
       <div className="relative z-10 flex flex-col items-center gap-8">
         <div className="relative flex justify-center items-center w-full" style={{ height: "320px" }}>
           <div className="size-64 blur-2xl rounded-full bg-white/5 absolute" />

@@ -2,8 +2,8 @@ import Loader from "@/components/ui/loader";
 import { getSubdomain } from "@/helper/getSubdomain";
 import { lazy, Suspense } from "react";
 
-const PlatformLoginForm = lazy(() => import("@/components/LoginPage/PlatformLoginForm"));
-const TenantLoginForm = lazy(() => import("@/components/LoginPage/TenantLoginForm"));
+const PlatformLoginForm = lazy(() => import("@/components/LoginPage/Platform"));
+const TenantLoginForm = lazy(() => import("@/components/LoginPage/Tenant"));
 
 export default function LoginPage() {
 

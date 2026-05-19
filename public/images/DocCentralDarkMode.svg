@@ -1,0 +1,25 @@
+<svg width="250" height="60" viewBox="0 0 250 60" xmlns="http://www.w3.org/2000/svg">
+  <rect x="5" y="10" width="26" height="32" rx="3" fill="#f8fafc" stroke="#e2e8f0" stroke-width="0.7"/>
+  <rect x="10" y="5" width="26" height="32" rx="3" fill="#e0f2fe" stroke="#38bdf8" stroke-width="0.7"/>
+  <rect x="15" y="0" width="26" height="32" rx="3" fill="#2563eb" stroke="#1e40af" stroke-width="0.6"/>
+  <polygon points="36,0 41,0 41,5" fill="#1e40af"/>
+
+  <text x="50" y="32" 
+        font-family="Inter, system-ui, sans-serif" 
+        font-size="28" 
+        font-weight="700" 
+        fill="#ffffff" 
+        text-anchor="start" 
+        letter-spacing="-1">DocCentral</text>
+
+  <rect x="50" y="38" width="180" height="3" rx="1.5" fill="#3b82f6"/>
+  <circle cx="235" cy="39.5" r="3.5" fill="#2563eb"/>
+
+  <text x="50" y="56" 
+        font-family="Inter, system-ui, sans-serif" 
+        font-size="8" 
+        font-weight="600" 
+        fill="rgba(255,255,255,0.7)" 
+        text-anchor="start" 
+        letter-spacing="2">YOUR DOCUMENTS. ONE PLACE.</text>
+</svg>

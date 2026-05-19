@@ -39,15 +39,17 @@ const toastStyles = {
 
 const AUTO_CLOSE = 4000;
 
+// eslint-disable-next-line react-refresh/only-export-components
 const ToastContent = ({ message, type, closeToast, toastProps }) => {
   const style = toastStyles[type];
   const Icon = style.icon;
 
   const [progress, setProgress] = useState(100);
-  const isPaused = toastProps.isPaused; 
+  const [isPaused, setIsPaused] = useState(false);
 
-  const duration = toastProps.autoClose || AUTO_CLOSE;
+  const duration = toastProps.autoClose;
   const timeLeft = useRef(duration);
+  // eslint-disable-next-line react-hooks/purity
   const lastTick = useRef(Date.now());
   const raf = useRef(null);
 
@@ -63,26 +65,26 @@ const ToastContent = ({ message, type, closeToast, toastProps }) => {
 
         if (timeLeft.current <= 0) {
           cancelAnimationFrame(raf.current);
-          closeToast();
           return;
         }
       }
-      // Keep tracking time baseline accurately
+
       lastTick.current = Date.now();
       raf.current = requestAnimationFrame(tick);
     };
 
-    lastTick.current = Date.now();
     raf.current = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf.current);
-  }, [isPaused, duration, closeToast]);
+  }, [isPaused, duration]);
 
   return (
     <div
-      // FIX: Bind react-toastify's native hover listeners directly to your custom layout
-      onMouseEnter={toastProps.onMouseEnter}
-      onMouseLeave={toastProps.onMouseLeave}
-      className={`rounded-xl border shadow-sm overflow-hidden flex flex-col min-w-[300px] max-w-[380px] ${style.container}`}
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => {
+        lastTick.current = Date.now(); 
+        setIsPaused(false);
+      }}
+      className={`rounded-xl border shadow-sm overflow-hidden flex flex-col min-w-75 max-w-95 ${style.container}`}
     >
       <div className="flex items-center gap-3 px-3.5 py-3">
         <div className={`size-7 rounded-lg flex items-center justify-center text-white shrink-0 ${style.iconBg}`}>
@@ -101,7 +103,7 @@ const ToastContent = ({ message, type, closeToast, toastProps }) => {
         </button>
       </div>
 
-      <div className="h-[3px] w-full bg-black/5">
+      <div className="h-0.75 w-full bg-black/5">
         <div
           className={`h-full transition-none ${style.progress}`}
           style={{ width: `${progress}%` }}

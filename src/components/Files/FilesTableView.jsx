@@ -58,7 +58,7 @@ const FilesTableFormat = ({ parentId, createNewFolder, setCreateNewFolder, setPa
                                     <Loader />
                                 </TableCell>
                             </TableRow>
-                            : (tableRows.length > 0 || !createNewFolder)
+                            : (tableRows.length > 0 || createNewFolder)
                                 ? <>
                                     {createNewFolder && (
                                         <TableRow className="hover:bg-zinc-50/50 transition-colors">

@@ -19,6 +19,11 @@ export default function Files() {
   const [navigationBar, setNavigationBar] = useState([{ name: "My Files", parentId: "" }]);
   const [createNewFolder, setCreateNewFolder] = useState(false);
 
+  const handleNavigationClick = (parentId, index) => {
+    setParentId(parentId)
+    setNavigationBar(prev => prev.slice(0, index + 1))
+  }
+
   const onChangeFile = async (event) => {
     const file = event.target.files[0];
     await upload({ file, parentId });
@@ -57,7 +62,7 @@ export default function Files() {
           {/* <span className="cursor-pointer font-medium text-[#2b7fff]">My Files</span> */}
           {navigationBar.map((item, index) => {
             return (
-              <span key={item.parentId} className="flex items-center gap-2" onClick={() => setParentId(item.parentId)}>
+              <span key={item.parentId} className="flex items-center gap-2" onClick={() => handleNavigationClick(item.parentId, index)}>
                 <span className="cursor-pointer font-medium text-[#2b7fff] last:font-semibold last:text-zinc-950">{item.name}</span>
                 {index < navigationBar.length - 1 && <ChevronRight className="size-4 text-[#71717b]" />}
               </span>

@@ -26,7 +26,7 @@ export default defineConfig({
 
     proxy: {
       "/api": {
-        target: 'http://192.168.100.117:3000',
+        target: 'https://7qzvqdrz-3000.inc1.devtunnels.ms',
         changeOrigin: true
       },
     },

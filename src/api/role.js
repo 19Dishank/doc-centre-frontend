@@ -1,6 +1,6 @@
 import axiosInstance from "@/helper/axiosInstance";
 
-export const getRoles = async () => {
+export const fetchRoles = async () => {
     try {
         const response = await axiosInstance.get("/roles");
         return response.data;

@@ -1,11 +1,7 @@
 import {
-  Code,
-  Eye,
   FileText,
   Lock,
-  MoreHorizontal,
   Pencil,
-  Plus,
   Save,
   Settings,
   Shield,
@@ -18,6 +14,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useState } from "react";
 import NewRoleModel from "@/components/Roles/NewRoleModel";
+import AvailableRoles from "@/components/Roles/AvailableRoles";
 
 export default function Roles() {
 
@@ -32,65 +29,7 @@ export default function Roles() {
         </p>
       </div>
       <div className="flex gap-6">
-        <Card className="shrink-0 p-0 gap-0 w-70">
-          <div className="border-zinc-200 border-t-0 border-r-0 border-b border-l-0 border-solid flex p-4 justify-between items-center">
-            <span className="font-semibold text-sm leading-5">Roles</span>
-            <Button size="sm" className="bg-[#2b7fff] text-blue-50 text-xs leading-4 px-2 h-7" onClick={() => setIsOpen(true)}>
-              <Plus className="size-3" />
-              New Role
-            </Button>
-          </div>
-          <div className="flex flex-col">
-            <div className="cursor-pointer bg-blue-50 border-[#2b7fff] border-t-0 border-r-0 border-b-0 border-l-2 border-solid flex p-4 items-center gap-3">
-              <div className="size-8 rounded-lg bg-[#2b7fff]/10 flex justify-center items-center">
-                <Shield className="size-4 text-[#2b7fff]" />
-              </div>
-              <div className="flex-1">
-                <div className="font-medium text-sm leading-5">Admin</div>
-                <div className="text-[#71717b] text-xs leading-4">5 members</div>
-              </div>
-              <Button variant="ghost" size="icon" className="size-7">
-                <MoreHorizontal className="size-4" />
-              </Button>
-            </div>
-            <div className="border-t-border cursor-pointer border-black/1 border-t border-r-0 border-b-0 border-l-2 border-solid flex p-4 items-center gap-3">
-              <div className="size-8 rounded-lg bg-purple-100 flex justify-center items-center">
-                <Pencil className="size-4 text-purple-600" />
-              </div>
-              <div className="flex-1">
-                <div className="font-medium text-sm leading-5">Editor</div>
-                <div className="text-[#71717b] text-xs leading-4">8 members</div>
-              </div>
-              <Button variant="ghost" size="icon" className="size-7">
-                <MoreHorizontal className="size-4" />
-              </Button>
-            </div>
-            <div className="border-t-border cursor-pointer border-black/1 border-t border-r-0 border-b-0 border-l-2 border-solid flex p-4 items-center gap-3">
-              <div className="size-8 rounded-lg bg-zinc-100 flex justify-center items-center">
-                <Eye className="size-4 text-[#71717b]" />
-              </div>
-              <div className="flex-1">
-                <div className="font-medium text-sm leading-5">Viewer</div>
-                <div className="text-[#71717b] text-xs leading-4">14 members</div>
-              </div>
-              <Button variant="ghost" size="icon" className="size-7">
-                <MoreHorizontal className="size-4" />
-              </Button>
-            </div>
-            <div className="border-transparent border-t-border cursor-pointer border-t border-r-0 border-b-0 border-l-2 border-solid flex p-4 items-center gap-3">
-              <div className="size-8 rounded-lg bg-teal-100 flex justify-center items-center">
-                <Code className="size-4 text-teal-600" />
-              </div>
-              <div className="flex-1">
-                <div className="font-medium text-sm leading-5">API User</div>
-                <div className="text-[#71717b] text-xs leading-4">3 members</div>
-              </div>
-              <Button variant="ghost" size="icon" className="size-7">
-                <MoreHorizontal className="size-4" />
-              </Button>
-            </div>
-          </div>
-        </Card>
+        <AvailableRoles />
         <Card className="p-6 flex-1 gap-4">
           <CardHeader className="p-0 gap-2">
             <div className="flex justify-between items-center">

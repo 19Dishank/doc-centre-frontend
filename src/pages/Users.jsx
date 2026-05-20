@@ -75,6 +75,8 @@ export default function UsersList() {
     if (diff < 365 * 24 * 60 * 60 * 1000) return `${Math.floor(diff / (30 * 24 * 60 * 60 * 1000))} months ago`;
   }
 
+  console.log("isOpen", isOpen)
+
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">

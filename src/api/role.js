@@ -19,3 +19,33 @@ export const createNewRole = async (data) => {
         throw error;
     }
 }
+
+export const fetchPermissionsCatalog = async () => {
+    try {
+        const response = await axiosInstance.get("/permissions/catalog");
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching permissions catalog:", error);
+        throw error;
+    }
+}
+
+export const updateRolePermissions = async (roleId, permissionIds) => {
+    try {
+        const response = await axiosInstance.put(`/roles/permissions/${roleId}`, { permissionIds });
+        return response.data;
+    } catch (error) {
+        console.error("Error updating role permissions:", error);
+        throw error;
+    }
+}
+
+export const deleteRole = async (roleId) => {
+    try {
+        const response = await axiosInstance.delete(`/roles/${roleId}`);
+        return response.data;
+    } catch (error) {
+        console.error("Error deleting role:", error);
+        throw error;
+    }
+}

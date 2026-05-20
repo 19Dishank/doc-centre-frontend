@@ -9,7 +9,7 @@ import { useEffect, useState } from "react";
 import { emailRegex } from "@/constants";
 import { toastNotification } from "@/helper/toastNotification";
 import { inviteUser } from "@/api/user";
-import { getRoles } from "@/api/role";
+import { fetchRoles } from "@/api/role";
 
 const InviteUserModal = ({ setIsOpen }) => {
 
@@ -86,9 +86,9 @@ const InviteUserModal = ({ setIsOpen }) => {
         }
     };
 
-    const fetchRoles = async () => {
+    const gethRoles = async () => {
         try {
-            const res = await getRoles();
+            const res = await fetchRoles();
             setRoles(res.data.roles);
         } catch (error) {
             console.error("Error fetching roles:", error);
@@ -97,7 +97,7 @@ const InviteUserModal = ({ setIsOpen }) => {
 
     useEffect(() => {
         // eslint-disable-next-line react-hooks/set-state-in-effect
-        fetchRoles();
+        gethRoles();
     }, []);
 
     return (

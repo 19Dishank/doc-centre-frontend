@@ -8,7 +8,7 @@ import { useState } from "react";
 import { toastNotification } from "@/helper/toastNotification";
 import { createNewRole } from "@/api/role";
 
-const NewRoleModel = ({ setIsOpen }) => {
+const NewRoleModel = ({ setIsOpen, getAvailableRoles }) => {
 
     const initialData = {
         name: "",
@@ -74,6 +74,7 @@ const NewRoleModel = ({ setIsOpen }) => {
             const res = await createNewRole(invitationData);
             console.log("Response Data:", res);
             toastNotification(`Role created successfully!`, "success");
+            getAvailableRoles();
             setInvitationData(initialData);
         } catch (error) {
             console.error("Error creating role:", error);

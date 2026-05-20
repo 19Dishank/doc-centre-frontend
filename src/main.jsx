@@ -4,12 +4,15 @@ import "./index.css";
 import App from "./App.jsx";
 import { ToastContainer } from "react-toastify";
 import AuthProvider from "./contexts/AuthContext";
+import PermissionsCatalogProvider from "./contexts/PermissionsCatalogContext";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <AuthProvider>
-      <App />
-      <ToastContainer />
+      <PermissionsCatalogProvider>
+        <App />
+        <ToastContainer />
+      </PermissionsCatalogProvider>
     </AuthProvider>
   </StrictMode>
 );

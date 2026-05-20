@@ -7,8 +7,12 @@ import Loader from "../ui/loader";
 import { formatSize } from "@/helper/formatSize";
 import { deleteFile, upload } from "@/api/file";
 import { Input } from "../ui/input";
+import { useState } from "react";
+import ConfirmationModal from "../ConfirmationModel";
 
 const FilesTableFormat = ({ parentId, createNewFolder, setCreateNewFolder, setParentId, tableColumns, tableRows, loading, setNavigationBar, getFiles }) => {
+
+    const [currFileId, setCurrFileId] = useState(null);
 
     const handleClick = (parentId, type, name) => {
         if (type === "folder") {
@@ -19,6 +23,7 @@ const FilesTableFormat = ({ parentId, createNewFolder, setCreateNewFolder, setPa
 
     const handleDelete = async (fileId) => {
         await deleteFile(fileId);
+        setCurrFileId(null);
         getFiles();
     }
 
@@ -33,6 +38,7 @@ const FilesTableFormat = ({ parentId, createNewFolder, setCreateNewFolder, setPa
     };
 
     return (
+        <>
         <Card className="p-0 overflow-hidden border-zinc-200">
             <div className="overflow-x-auto w-full">
                 <Table className="min-w-200 lg:min-w-full">
@@ -112,7 +118,7 @@ const FilesTableFormat = ({ parentId, createNewFolder, setCreateNewFolder, setPa
                                                     <Button variant="ghost" size="icon" className="size-8 hidden lg:inline-flex cursor-pointer">
                                                         <Pencil className="size-3.5 text-[#71717b]" />
                                                     </Button>
-                                                    <Button onClick={() => handleDelete(file._id)} variant="ghost" size="icon" className="size-8 text-red-400 hover:text-red-600 hover:bg-red-50 cursor-pointer">
+                                                    <Button onClick={() => setCurrFileId(file._id)} variant="ghost" size="icon" className="size-8 text-red-400 hover:text-red-600 hover:bg-red-50 cursor-pointer">
                                                         <Trash2 className="size-3.5" />
                                                     </Button>
                                                 </div>
@@ -130,6 +136,17 @@ const FilesTableFormat = ({ parentId, createNewFolder, setCreateNewFolder, setPa
                 </Table>
             </div>
         </Card>
+
+        {currFileId && (
+            <ConfirmationModal
+                heading="Delete File"
+                subheading="Are you sure you want to delete this file? This action cannot be undone."
+                onConfirm={() => handleDelete(currFileId)}
+                onCancel={() => setCurrFileId(null)}
+                type="danger"
+            />
+        )}
+        </>
     );
 };
 

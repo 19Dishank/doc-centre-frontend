@@ -6,7 +6,7 @@ import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
 import { useState } from "react";
 import { toastNotification } from "@/helper/toastNotification";
-import { inviteUser } from "@/api/user";
+import { createNewRole } from "@/api/role";
 
 const NewRoleModel = ({ setIsOpen }) => {
 
@@ -71,13 +71,15 @@ const NewRoleModel = ({ setIsOpen }) => {
 
         try {
             console.log("Sending req : ", invitationData)
-            const res = await inviteUser(invitationData);
+            const res = await createNewRole(invitationData);
             console.log("Response Data:", res);
-            toastNotification(`User invited successfully! Email is sent to ${invitationData.email}`, "success");
+            toastNotification(`Role created successfully!`, "success");
             setInvitationData(initialData);
         } catch (error) {
-            console.error("Error inviting user:", error);
-            toastNotification(error?.response?.data?.message || "An error occurred while inviting the user. Please try again.", "error");
+            console.error("Error creating role:", error);
+            toastNotification(error?.response?.data?.message || "An error occurred while creating the role. Please try again.", "error");
+        } finally {
+            setIsOpen(false);
         }
     };
 
@@ -114,7 +116,7 @@ const NewRoleModel = ({ setIsOpen }) => {
                         Cancel
                     </Button>
                     <Button className="font-semibold bg-[#2b7fff] text-blue-50" onClick={handleSubmit}>
-                        Send Invite
+                        Create Role
                     </Button>
                 </CardFooter>
             </Card>

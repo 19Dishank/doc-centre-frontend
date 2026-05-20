@@ -9,3 +9,13 @@ export const fetchRoles = async () => {
         throw error;
     }
 }
+
+export const createNewRole = async (data) => {
+    try {
+        const response = await axiosInstance.post("/roles", data);
+        return response.data;
+    } catch (error) {
+        console.error("Error creating role:", error);
+        throw error;
+    }
+}

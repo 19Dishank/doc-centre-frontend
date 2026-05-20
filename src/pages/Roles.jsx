@@ -12,13 +12,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useState } from "react";
-import NewRoleModel from "@/components/Roles/NewRoleModel";
 import AvailableRoles from "@/components/Roles/AvailableRoles";
 
 export default function Roles() {
-
-  const [isOpen, setIsOpen] = useState(false);
 
   return (
     <main className="flex-1 overflow-hidden">
@@ -191,7 +187,6 @@ export default function Roles() {
         </Card>
       </div>
 
-      {isOpen && <NewRoleModel setIsOpen={setIsOpen} />}
     </main>
   );
 }

@@ -1,7 +1,6 @@
 import {
   ChevronDown,
   FolderPlus,
-  MoreHorizontal,
   Plus,
   Search,
   Filter,
@@ -12,8 +11,12 @@ import { Input } from "@/components/ui/input";
 import FilesTableFormat from "@/components/Files/FilesTableView";
 import { fetchFiles, upload } from "@/api/file";
 import { useEffect, useState } from "react";
+import { PERMISSIONS } from "@/helper/permissions";
+import { usePermissions } from "@/hooks/usePermissions";
 
 export default function Files() {
+
+  const { permissionCheck } = usePermissions();
 
   const [parentId, setParentId] = useState("");
   const [navigationBar, setNavigationBar] = useState([{ name: "My Files", parentId: "" }]);
@@ -47,8 +50,8 @@ export default function Files() {
   }
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     getFiles();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [parentId]);
 
   console.log(tableRows);
@@ -70,30 +73,22 @@ export default function Files() {
           })}
         </div>
 
-        <div className="flex items-center gap-2 overflow-x-auto lg:overflow-visible pb-1 lg:pb-0">
-          <Button size="sm" className="bg-[#2b7fff] text-blue-50">
-            <label htmlFor="file-input" className="cursor-pointer gap-1 flex items-center">
-              <Plus className="size-4" />
-              Upload
-              <input id="file-input" type="file" className="hidden" onChange={onChangeFile} />
-            </label>
-          </Button>
-          <Button size="sm" variant="outline" className="gap-1 shrink-0" onClick={() => setCreateNewFolder(true)}>
-            <FolderPlus className="size-4" />
-            <span className="hidden sm:inline">New Folder</span>
-          </Button>
-          {/* <div className="rounded-lg bg-white border-zinc-200 border border-solid flex shrink-0 p-px">
-            <Button variant="ghost" size="sm" className={`px-2 ${!isTableView ? "text-[#2b7fff] bg-[#2b7fff]/10" : ""}`} onClick={() => setIsTableView(false)}>
-              <LayoutGrid className="size-4" />
+        {permissionCheck(PERMISSIONS.UPLOAD_DOCUMENT) && (
+          <div className="flex items-center gap-2 overflow-x-auto lg:overflow-visible pb-1 lg:pb-0">
+            <Button size="sm" className="bg-[#2b7fff] text-blue-50">
+              <label htmlFor="file-input" className="cursor-pointer gap-1 flex items-center">
+                <Plus className="size-4" />
+                Upload
+                <input id="file-input" type="file" className="hidden" onChange={onChangeFile} />
+              </label>
             </Button>
-            <Button variant="ghost" size="sm" className={`px-2 ${isTableView ? "text-[#2b7fff] bg-[#2b7fff]/10" : ""}`} onClick={() => setIsTableView(true)}>
-              <List className="size-4" />
+            <Button size="sm" variant="outline" className="gap-1 shrink-0" onClick={() => setCreateNewFolder(true)}>
+              <FolderPlus className="size-4" />
+              <span className="hidden sm:inline">New Folder</span>
             </Button>
-          </div> */}
-          <Button variant="outline" size="sm" className="shrink-0 px-2 lg:hidden">
-            <MoreHorizontal className="size-4" />
-          </Button>
-        </div>
+          </div>
+        )}
+
       </div>
 
       <div className="flex flex-col gap-3 md:flex-row md:items-center">

@@ -2,6 +2,7 @@ import { loginUser } from "@/api/auth";
 import { Button } from "@/components/ui/button";
 import FormField from "@/components/ui/form-field";
 import { useAuthContext } from "@/contexts/AuthContext";
+import { toastNotification } from "@/helper/toastNotification";
 import { setTokens } from "@/helper/tokens";
 import { ArrowRight } from "lucide-react";
 import { useState } from "react";
@@ -9,13 +10,14 @@ import { NavLink, useNavigate, useSearchParams } from "react-router-dom";
 
 const TenantLoginForm = () => {
 
-    const {setIsAuthenticated} = useAuthContext();
+    const { setIsAuthenticated } = useAuthContext();
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
     const email = searchParams.get("email") || "";
 
     const [loginData, setLoginData] = useState({ email: email, password: "" });
     const [errors, setErrors] = useState({ email: "", password: "" });
+    const [loading, setLoading] = useState(false);
 
     const validateField = (name, value) => {
 
@@ -66,15 +68,17 @@ const TenantLoginForm = () => {
 
         if (!isValid) return;
 
-        try {
-            const res = await loginUser(loginData);
-            console.log("Login Data:", res);
+        setLoading(true);
+        const res = await loginUser(loginData);
+        console.log("Login Data:", res);
+        if (res.success) {
             setTokens(res.data.accessToken, res.data.refreshToken);
             navigate("/dashboard");
             setIsAuthenticated(true);
-        } catch (error) {
-            console.error(error);
+        } else {
+            toastNotification(res?.data?.message || "Login failed. Please try again.", "error");
         }
+        setLoading(false);
     };
 
     return (
@@ -84,8 +88,8 @@ const TenantLoginForm = () => {
             <NavLink to="/forgot-password" className="text-xs text-[#2b7fff] self-end -mt-2">
                 Forgot password?
             </NavLink>
-            <Button type="submit" className="cursor-pointer font-semibold rounded-lg bg-[#2b7fff] text-blue-50 mt-2 w-full h-11">
-                Sign In
+            <Button type="submit" className="cursor-pointer font-semibold rounded-lg bg-[#2b7fff] text-blue-50 mt-2 w-full h-11" disabled={loading}>
+                {loading ? "Signing In..." : "Sign In"}
                 <ArrowRight className="size-4 ml-1" />
             </Button>
         </form>

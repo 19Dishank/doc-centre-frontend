@@ -1,171 +1,180 @@
-import { FileText, Lock, Save, Settings, Shield, ShieldAlert, Trash2, Users } from "lucide-react";
-import { Card, CardContent, CardFooter, CardHeader } from "../ui/card";
+import { FileText, Lock, Save, Settings, Shield, ShieldAlert, Users } from "lucide-react";
 import { Button } from "../ui/button";
 import { Checkbox } from "../ui/checkbox";
 import { usePermissionsCatalog } from "@/contexts/PermissionsCatalogContext";
-import { useEffect, useState } from "react";
-import { deleteRole, updateRolePermissions } from "@/api/role";
+import { useEffect, useState, useMemo } from "react";
+import { updateRolePermissions } from "@/api/role";
 import { toastNotification } from "@/helper/toastNotification";
-import ConfirmationModal from "../ConfirmationModel";
 
 const Permissions = ({ currentRoleId, currentRole, getAvailableRoles }) => {
-
-    const { permissionsCatalog } = usePermissionsCatalog();
+    const { permissionsCatalog = [] } = usePermissionsCatalog();
     const [permissions, setPermissions] = useState([]);
-    const [isOpen, setIsOpen] = useState(false);
+    const [isSaving, setIsSaving] = useState(false);
 
     useEffect(() => {
         // eslint-disable-next-line react-hooks/set-state-in-effect
-        setPermissions(currentRole?.permissions || [])
-    }, [currentRole])
+        setPermissions(currentRole?.permissions || []);
+    }, [currentRole]);
+
+    const totalCatalogPermissionsCount = useMemo(() => {
+        return permissionsCatalog.reduce((acc, cat) => acc + cat.permissions.length, 0);
+    }, [permissionsCatalog]);
 
     const getModuleIcon = (moduleName) => {
+        const iconClasses = "size-4 text-blue-600";
         switch (moduleName) {
-            case "User":
-                return <Users className="size-4 text-[#2b7fff]" />;
-            case "Document":
-                return <FileText className="size-4 text-[#2b7fff]" />;
-            case "Settings":
-                return <Settings className="size-4 text-[#71717b]" />;
-            case "Role":
-                return <Lock className="size-4 text-[#2b7fff]" />;
-            default:
-                return <FileText className="size-4 text-[#2b7fff]" />;
+            case "User": return <Users className={iconClasses} />;
+            case "Document": return <FileText className={iconClasses} />;
+            case "Settings": return <Settings className="size-4 text-slate-500" />;
+            case "Role": return <Lock className={iconClasses} />;
+            default: return <FileText className={iconClasses} />;
         }
     };
 
-    const handlePermissionChange = (permissionId, checked) => {
-        setPermissions((prev) => {
-            if (checked) {
-                return [...prev, permissionId];
+    const handlePermissionChange = (permissionId, checked, module, name) => {
+
+        if (!name.startsWith("View")) {
+            const viewPermissionId = permissionsCatalog
+                .find(cat => cat.module === module)
+                ?.permissions.find(perm => perm.name.startsWith("View"))?.permissionId;
+            console.log("Found with viewPermissionId", viewPermissionId)
+            if (checked && viewPermissionId && !permissions.includes(viewPermissionId)) {
+                setPermissions((prev) => [...prev, viewPermissionId]);
+            } else if (!checked && viewPermissionId) {
+                setPermissions((prev) => prev.filter((perm) => perm !== viewPermissionId));
             }
-            return prev.filter((perm) => perm !== permissionId);
-        });
-    }
+        } else {
+            if (!checked) {
+                const relatedPermissions = permissionsCatalog
+                    .find(cat => cat.module === module)
+                    ?.permissions.filter(perm => perm.name !== name)
+                    .map(perm => perm.permissionId) || [];
+                setPermissions((prev) => prev.filter((perm) => !relatedPermissions.includes(perm)));
+            }
+        }
 
-    const permArray = permissions || [];
-    const roleArray = currentRole?.permissions || [];
+        setPermissions((prev) =>
+            checked ? [...prev, permissionId] : prev.filter((perm) => perm !== permissionId)
+        );
+    };
 
-    const hasChanges = permArray.length !== roleArray.length ||
-        (() => {
-            const roleSet = new Set(roleArray);
-            return !permArray.every(p => roleSet.has(p));
-        })();
-
+    const hasChanges = useMemo(() => {
+        const roleArray = currentRole?.permissions || [];
+        if (permissions.length !== roleArray.length) return true;
+        const roleSet = new Set(roleArray);
+        return !permissions.every(p => roleSet.has(p));
+    }, [permissions, currentRole]);
 
     const updatePermissions = async () => {
         try {
+            setIsSaving(true);
             await updateRolePermissions(currentRoleId, permissions);
-            getAvailableRoles();
-            toastNotification("Permissions updated successfully!", "success");
+            await getAvailableRoles();
+            toastNotification("Permissions saved successfully!", "success");
         } catch (error) {
-            toastNotification("Error updating permissions!", "error");
-            console.error("Error updating permissions:", error);
+            toastNotification(error?.response?.data?.message || "Failed to update profile permissions.", "error");
+            console.error(error);
+        } finally {
+            setIsSaving(false);
         }
-    }
+    };
 
-    const handleDeleteRole = async () => {
-        try {
-            await deleteRole(currentRoleId);
-            getAvailableRoles();
-            setIsOpen(false);
-            toastNotification("Role deleted successfully!", "success");
-        } catch (error) {
-            toastNotification("Error deleting role!", "error");
-            console.error("Error deleting role:", error);
-        }
-    }
+    console.log("currentRole", currentRole)
 
     return (
         <>
             {!currentRoleId ? (
-                <div className="flex flex-col items-center justify-center w-full h-64 border border-dashed rounded-xl border-zinc-200 bg-zinc-50/50 p-6 text-center transition-all">
-                    {/* Icon Container */}
-                    <div className="flex items-center justify-center w-12 h-12 rounded-full bg-zinc-100 text-zinc-400 mb-4">
-                        <ShieldAlert className="w-6 h-6" />
+                <div className="flex-1 flex flex-col items-center justify-center h-full border-2 border-dashed rounded-2xl border-slate-200 bg-slate-50/50 p-8 text-center min-h-87.5">
+                    <div className="flex items-center justify-center size-12 rounded-2xl bg-amber-50 text-amber-600 mb-4 shadow-sm">
+                        <ShieldAlert className="size-6 stroke-2" />
                     </div>
-
-                    {/* Typography */}
-                    <h3 className="text-sm font-semibold text-zinc-700 mb-1">
-                        No Role Selected
-                    </h3>
-                    <p className="text-xs text-zinc-500 max-w-xs leading-normal">
-                        Select a role from the left panel to view and manage its permissions.
+                    <h3 className="text-sm font-semibold text-slate-800 mb-1">No Role Selected</h3>
+                    <p className="text-xs text-slate-500 max-w-xs leading-relaxed">
+                        Select a security profile role from the left panel to modify granular app capability grants.
                     </p>
                 </div>
             ) : (
-                <Card className="p-6 flex-1 gap-4">
-                    <CardHeader className="p-0 gap-2">
-                        <div className="flex justify-between items-center">
-                            <div className="flex items-center gap-2">
-                                <div className="size-9 rounded-lg bg-[#2b7fff]/10 flex justify-center items-center">
-                                    <Shield className="size-5 text-[#2b7fff]" />
+                <div className="flex-1 h-full flex flex-col border border-slate-200 bg-white shadow-sm overflow-hidden rounded-xl min-h-0">
+                    <div className="px-5 py-4 flex border-b border-slate-200 shrink-0 gap-0">
+                        <div className="flex gap-4">
+                            <div className="flex gap-3">
+                                <div className="size-10 rounded-xl bg-blue-600 text-white flex justify-center items-center shadow-md shadow-blue-200">
+                                    <Shield className="size-5 stroke-[2.2]" />
                                 </div>
-                                <span className="font-semibold text-lg leading-7">{currentRole?.name || 'Admin'}</span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                                <Button
-                                    onClick={() => setIsOpen(true)}
-                                    variant="outline"
-                                    size="sm"
-                                    className="text-[#e7000b] border-[#e7000b] border-0 border-solid h-8 cursor-pointer">
-                                    <Trash2 className="size-3" />
-                                    Delete Role
-                                </Button>
+                                <div>
+                                    <h2 className="font-bold text-lg text-slate-900 tracking-tight leading-none">
+                                        {currentRole?.name} Permissions
+                                    </h2>
+                                    <p className="text-xs text-slate-500 mt-1 max-w-xl font-medium leading-relaxed">
+                                        {currentRole?.description || "Configure access controls for this profile structure."}
+                                    </p>
+                                </div>
                             </div>
                         </div>
-                        <p className="italic text-[#71717b] text-sm leading-5">
-                            {currentRole?.description || 'Full access to all system features and settings.'}
-                        </p>
-                    </CardHeader>
-                    <CardContent className="flex p-0 flex-col gap-4">
-                        <div className="flex justify-between items-center">
-                            <span className="font-semibold text-base leading-6">Permissions</span>
-                            <span className="text-[#71717b] text-xs leading-4">16 of 16 enabled</span>
+                    </div>
+
+                    <div className="flex-1 overflow-y-auto p-5 space-y-5 custom-scrollbar min-h-0">
+                        <div className="flex justify-between items-center bg-slate-50 p-3 rounded-xl border border-slate-200 shrink-0">
+                            <span className="font-bold text-xs uppercase tracking-wider text-slate-700">
+                                System Feature Control Logs
+                            </span>
+                            <span className="text-xs font-semibold px-2.5 py-1 bg-blue-50 text-blue-700 rounded-full border border-blue-100 shadow-sm">
+                                {permissions.length} of {totalCatalogPermissionsCount} flags active
+                            </span>
                         </div>
-                        <div className="grid grid-cols-2 gap-3">
-                            {permissionsCatalog.map((category) => {
-                                return (
-                                    <div className="rounded-lg border-zinc-200 border border-solid flex p-4 flex-col gap-2">
-                                        <div className="flex mb-1 items-center gap-2">
+
+                        <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+                            {permissionsCatalog.map((category) => (
+                                <div
+                                    key={category.module}
+                                    className="rounded-xl border border-slate-200 bg-white p-4 flex flex-col gap-3 shadow-sm hover:border-slate-300 transition-colors"
+                                >
+                                    <div className="flex items-center gap-2 pb-2 border-b border-slate-100 mb-1">
+                                        <div className="p-1.5 bg-blue-50 rounded-lg">
                                             {getModuleIcon(category.module)}
-                                            <span className="font-semibold text-sm leading-5">{category.module}</span>
                                         </div>
+                                        <span className="font-bold text-sm text-slate-800 tracking-wide">
+                                            {category.module} Management
+                                        </span>
+                                    </div>
+
+                                    <div className="space-y-2.5">
                                         {category.permissions.map(({ permissionId, name }) => (
-                                            <div className="flex items-center gap-2" key={permissionId}>
+                                            <div
+                                                className="flex items-center gap-3 p-1.5 rounded-lg hover:bg-slate-50/80 transition-colors"
+                                                key={permissionId}
+                                            >
                                                 <Checkbox
-                                                    onCheckedChange={(checked) => handlePermissionChange(permissionId, checked)}
+                                                    onCheckedChange={(checked) => handlePermissionChange(permissionId, checked, category.module, name)}
                                                     checked={permissions?.includes(permissionId)}
-                                                    className="disabled:cursor-not-allowed"
+                                                    className="size-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600"
                                                     id={permissionId}
                                                 />
-                                                <label htmlFor={permissionId} className="text-sm leading-5">
+                                                <label
+                                                    htmlFor={permissionId}
+                                                    className="text-xs font-medium text-slate-600 cursor-pointer select-none flex-1 hover:text-slate-900 transition-colors"
+                                                >
                                                     {name}
                                                 </label>
                                             </div>
                                         ))}
                                     </div>
-                                )
-                            })}
+                                </div>
+                            ))}
                         </div>
-                    </CardContent>
-                    <CardFooter className="px-0 gap-2 bg-white">
-                        <Button disabled={!hasChanges} onClick={updatePermissions} className="bg-[#2b7fff] text-blue-50 w-fit ml-auto">
-                            <Save className="size-4" />
-                            Save Changes
-                        </Button>
-                    </CardFooter>
-                </Card>
-            )}
+                    </div>
 
-            {isOpen && (
-                <ConfirmationModal
-                    heading="Delete Role"
-                    subheading="Are you sure you want to delete this role? This action cannot be undone."
-                    onConfirm={handleDeleteRole}
-                    onCancel={() => setIsOpen(false)}
-                    type="danger"
-                />
+                    <div className="p-4 border-t border-slate-200 justify-end bg-slate-50/50 shrink-0">
+                        <Button
+                            disabled={!hasChanges || isSaving}
+                            onClick={updatePermissions}
+                            className="bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium px-4 h-9 gap-1.5 shadow-sm rounded-lg transition-all"
+                        >
+                            <Save className="size-3.5" />
+                            {isSaving ? "Saving Config..." : "Save Changes"}
+                        </Button>
+                    </div>
+                </div>
             )}
         </>
     );

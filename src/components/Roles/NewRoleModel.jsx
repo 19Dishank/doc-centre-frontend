@@ -6,17 +6,19 @@ import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
 import { useState } from "react";
 import { toastNotification } from "@/helper/toastNotification";
-import { createNewRole } from "@/api/role";
+import { createNewRole, updateRole } from "@/api/role";
 
-const NewRoleModel = ({ setIsOpen, getAvailableRoles }) => {
+const NewRoleModel = ({ setIsOpen, getAvailableRoles, currentRole }) => {
 
-    const initialData = {
+    const [invitationData, setInvitationData] = useState({
+        name: currentRole?.name || "",
+        description: currentRole?.description || "",
+    });
+
+    const [errors, setErrors] = useState({
         name: "",
         description: "",
-    };
-
-    const [invitationData, setInvitationData] = useState(initialData);
-    const [errors, setErrors] = useState(initialData);
+    });
 
     const validateField = (name, value) => {
 
@@ -50,8 +52,6 @@ const NewRoleModel = ({ setIsOpen, getAvailableRoles }) => {
         }));
     };
 
-    console.log("errors", errors)
-
     const validateForm = () => {
         const newErrors = {};
 
@@ -70,15 +70,16 @@ const NewRoleModel = ({ setIsOpen, getAvailableRoles }) => {
         if (!isValid) return;
 
         try {
-            console.log("Sending req : ", invitationData)
-            const res = await createNewRole(invitationData);
+            const res = currentRole
+                ? await updateRole(currentRole._id, invitationData)
+                : await createNewRole(invitationData);
             console.log("Response Data:", res);
-            toastNotification(`Role created successfully!`, "success");
+            toastNotification(`Role ${currentRole ? "updated" : "created"} successfully!`, "success");
             getAvailableRoles();
-            setInvitationData(initialData);
+            setInvitationData({ name: "", description: "" });
         } catch (error) {
             console.error("Error creating role:", error);
-            toastNotification(error?.response?.data?.message || "An error occurred while creating the role. Please try again.", "error");
+            toastNotification(error?.response?.data?.message || `An error occurred while ${currentRole ? "updating" : "creating"} the role. Please try again.`, "error");
         } finally {
             setIsOpen(false);
         }
@@ -89,9 +90,11 @@ const NewRoleModel = ({ setIsOpen, getAvailableRoles }) => {
             <Card className="shadow-2xl p-6 gap-4 w-120">
                 <CardHeader className="p-0 flex justify-between items-start gap-1 border-b border-zinc-200">
                     <div className="flex flex-col gap-1">
-                        <CardTitle className="font-semibold text-lg leading-7">Add New Role</CardTitle>
+                        <CardTitle className="font-semibold text-lg leading-7">
+                            {currentRole ? "Edit Role" : "Add New Role"}
+                        </CardTitle>
                         <CardDescription className="text-sm leading-5">
-                            Create a new role for your workspace.
+                            {currentRole ? "Update the details of your role." : "Create a new role for your workspace."}
                         </CardDescription>
                     </div>
                     <Button variant="ghost" size="icon" className="size-8 -mr-1 -mt-1 hover:bg-zinc-100 rounded-full" onClick={() => setIsOpen(false)}>
@@ -106,7 +109,7 @@ const NewRoleModel = ({ setIsOpen, getAvailableRoles }) => {
                     </div>
                     <div className="flex flex-col gap-2">
                         <Label className="font-medium text-sm leading-5">
-                            Description <p className="text-red-500">*</p> 
+                            Description <p className="text-red-500">*</p>
                         </Label>
                         <Textarea placeholder="Add a description for the role…" rows={3} name="description" value={invitationData.description} onChange={handleChange} />
                         {errors.description && <p className="text-red-500 text-xs"> * {errors.description}</p>}
@@ -117,7 +120,7 @@ const NewRoleModel = ({ setIsOpen, getAvailableRoles }) => {
                         Cancel
                     </Button>
                     <Button className="font-semibold bg-[#2b7fff] text-blue-50" onClick={handleSubmit}>
-                        Create Role
+                        {currentRole ? "Edit Role" : "Create Role"}
                     </Button>
                 </CardFooter>
             </Card>

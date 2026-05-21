@@ -4,14 +4,12 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 
 export default function Organization() {
   return (
     <div className="w-full max-w-4xl mx-auto">
-      {/* Header section with responsive spacing */}
       <div className="flex flex-col gap-1 mb-6">
         <h1 className="font-semibold text-2xl leading-8 tracking-tight text-zinc-950">Organization</h1>
         <p className="text-zinc-500 text-sm leading-5">Manage your organization profile and preferences.</p>
@@ -33,7 +31,6 @@ export default function Organization() {
         <Separator />
         
         <CardContent className="flex p-0 flex-col gap-6">
-          {/* Main Inputs Grid - Stacks on mobile, splits into 2 columns from 'sm' screens up */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="flex flex-col gap-2">
               <Label htmlFor="orgname" className="text-sm leading-5 text-zinc-950 font-medium">
@@ -42,7 +39,6 @@ export default function Organization() {
               <Input id="orgname" defaultValue="Acme Corp" className="h-10 w-full" />
             </div>
 
-            {/* Slug Field Fixes: Flex layout changes to ensure the suffix label acts responsively */}
             <div className="flex flex-col gap-2">
               <Label htmlFor="slug" className="text-xs uppercase font-medium tracking-wider text-zinc-500">
                 Slug
@@ -58,32 +54,8 @@ export default function Organization() {
                 </span>
               </div>
             </div>
-
-            <div className="flex flex-col gap-2">
-              <Label htmlFor="industry" className="text-sm leading-5 text-zinc-950 font-medium">
-                Industry
-              </Label>
-              <Select defaultValue="tech">
-                <SelectTrigger id="industry" className="h-10 w-full">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="tech">Technology</SelectItem>
-                  <SelectItem value="finance">Finance</SelectItem>
-                  <SelectItem value="health">Healthcare</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="flex flex-col gap-2">
-              <Label htmlFor="website" className="text-sm leading-5 text-zinc-950 font-medium">
-                Website
-              </Label>
-              <Input id="website" defaultValue="https://acmecorp.com" className="h-10 w-full" />
-            </div>
           </div>
 
-          {/* Metadata Row Grid - Stacks on mobile, 2 columns on small screens, 3 columns from 'md' screens up */}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
             <div className="flex flex-col gap-2">
               <Label className="text-sm leading-5 text-zinc-950 font-medium">Created</Label>
@@ -101,7 +73,6 @@ export default function Organization() {
               </div>
             </div>
 
-            {/* Plan Info box: spans across full-width on mobile tablet variations if layout breaks, wraps cleanly */}
             <div className="flex flex-col gap-2 sm:col-span-2 md:col-span-1">
               <Label className="text-sm leading-5 text-zinc-950 font-medium">Current Plan</Label>
               <div className="rounded-md bg-zinc-100/50 border border-zinc-200 flex px-3 justify-between items-center h-10 gap-2">
@@ -116,25 +87,24 @@ export default function Organization() {
 
           <div className="flex flex-col gap-2">
             <Label htmlFor="desc" className="text-sm leading-5 text-zinc-950 font-medium">
-              Organization Description
+              Organization Slogan
             </Label>
             <Textarea
               id="desc"
-              placeholder="Tell us a little about your organization, what you do, and your team..."
+              placeholder="Enter a catchy slogan or mission statement for your organization."
               className="min-h-24 resize-none w-full"
             />
           </div>
 
           <Separator />
 
-          {/* Logo Upload Section - Reconfigures flex properties on small screens */}
           <div className="flex flex-col gap-3">
             <Label className="text-sm leading-5 text-zinc-950 font-medium">Organization Logo</Label>
             <div className="flex flex-wrap items-center gap-4">
               <div className="size-16 rounded-lg bg-[#2b7fff]/10 border border-[#2b7fff]/20 flex justify-center items-center shrink-0">
                 <span className="font-semibold text-[#2b7fff] text-lg">AC</span>
               </div>
-              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4 flex-1 min-w-[200px]">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4 flex-1 min-w-50">
                 <Button variant="outline" className="gap-2 h-9 w-full sm:w-auto shrink-0">
                   <Upload className="size-4" />
                   Upload Logo
@@ -145,7 +115,6 @@ export default function Organization() {
           </div>
         </CardContent>
 
-        {/* Footer Action Buttons - full width stacking on mobile */}
         <CardFooter className="px-0 pt-2 bg-white flex flex-col-reverse sm:flex-row justify-end gap-2">
           <Button variant="outline" className="h-9 w-full sm:w-auto">
             Cancel

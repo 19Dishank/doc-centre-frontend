@@ -1,21 +1,23 @@
 import Logo from "@/components/ui/logo";
+import { PERMISSIONS } from "@/helper/permissions";
+import { usePermissions } from "@/hooks/usePermissions";
 import {
     AlertTriangle, Bell, Building2, CreditCard,
-    FileText, Key, LayoutDashboard, Lock, Settings, Upload, User, Users
+    FileText, Key, LayoutDashboard, Lock, Settings, User, Users
 } from "lucide-react";
 import { useState } from "react";
 import { NavLink } from "react-router-dom";
 
 const Sidebar = ({ isOpen, setIsOpen }) => {
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+    const { permissionCheck } = usePermissions();
 
     const navItems = [
-        { name: "Dashboard", icon: <LayoutDashboard className="size-4" />, path: "/dashboard" },
-        { name: "Files", icon: <FileText className="size-4" />, path: "/files" },
-        { name: "Upload", icon: <Upload className="size-4" />, path: "/upload" },
-        { name: "Users", icon: <Users className="size-4" />, path: "/users" },
-        { name: "Roles & Permissions", icon: <Lock className="size-4" />, path: "/roles" },
-    ];
+        { name: "Dashboard", icon: <LayoutDashboard className="size-4" />, path: "/dashboard", },
+        permissionCheck(PERMISSIONS.VIEW_DOCUMENT) && { name: "Files", icon: <FileText className="size-4" />, path: "/files" },
+        permissionCheck(PERMISSIONS.VIEW_USER) && { name: "Users", icon: <Users className="size-4" />, path: "/users", },
+        permissionCheck(PERMISSIONS.VIEW_ROLE) && { name: "Roles & Permissions", icon: <Lock className="size-4" />, path: "/roles" },
+    ].filter(Boolean);
 
     const settingsSubItems = [
         { name: "User", icon: <User className="size-4" />, path: "/settings/user" },

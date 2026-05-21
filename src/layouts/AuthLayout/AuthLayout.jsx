@@ -2,7 +2,7 @@
 import { Outlet } from "react-router-dom";
 import SidePanel from "./SidePanel";
 
-export default function AuthLayout() {
+export default function AuthLayout({ children }) {
   return (
     <main className="bg-white">
       <div className="flex flex-col lg:flex-row w-full min-h-screen">
@@ -10,7 +10,7 @@ export default function AuthLayout() {
           <SidePanel />
         </div>
         <div className="flex-1 flex items-center justify-center p-6 sm:p-12 lg:p-16">
-          <Outlet />
+          {children ? children : <Outlet />}
         </div>
       </div>
     </main>

@@ -32,6 +32,7 @@ const FormField = ({ label, name, value, onChange, placeholder, error, isPasswor
                 />
                 {isPasswordField && (
                     <button
+                        tabIndex={-1}
                         type="button"
                         className="top-1/2 -translate-y-1/2 text-[#71717b] absolute right-3"
                         onClick={() => setShowPassword(!showPassword)}

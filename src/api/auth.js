@@ -113,10 +113,11 @@ export const loginUser = async (credentials) => {
             `/auth/login`,
             credentials
         );
+        console.log("Login Response:", response);
         return response.data;
     } catch (error) {
         console.error("Error logging in:", error);
-        throw error;
+        return error?.response || { success: false, message: "An error occurred during login. Please try again." };
     }
 };
 
@@ -185,15 +186,5 @@ export const logoutUser = async () => {
     } finally {
         clearTokens();
         window.location.replace(import.meta.env.VITE_APP_BASE_URL.replace("slug", "app") + `/login`);
-    }
-};
-
-export const fetchMe = async () => {
-    try {
-        const response = await axiosInstance.get(`/auth/me`);
-        return response.data;
-    } catch (error) {
-        console.error("Error fetching user data:", error);
-        throw error;
     }
 };

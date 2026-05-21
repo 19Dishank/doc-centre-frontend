@@ -1,14 +1,15 @@
 import { ArrowLeft, FileSearch, LayoutDashboard } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { isRouteErrorResponse, useRouteError } from "react-router-dom";
+import { isRouteErrorResponse, useNavigate, useRouteError } from "react-router-dom";
+import { useAuthContext } from "@/contexts/AuthContext";
 
 export default function ErrorPage() {
 
+  const { isAuthenticated } = useAuthContext();
+
+  const navigate = useNavigate();
   const error = useRouteError();
-
-  console.log(error);
-
   let statusCode = 500;
 
   if (isRouteErrorResponse(error)) {
@@ -47,13 +48,13 @@ export default function ErrorPage() {
           </p>
         </div>
         <div className="flex items-center gap-3">
-          <Button variant="outline" className="gap-2">
+          <Button onClick={() => navigate(-1)} variant="outline" className="gap-2">
             <ArrowLeft className="size-4" />
             Go back
           </Button>
-          <Button className="bg-[#2b7fff] text-blue-50 gap-2">
+          <Button onClick={() => navigate(isAuthenticated ? "/dashboard" : "/")} className="bg-[#2b7fff] text-blue-50 gap-2">
             <LayoutDashboard className="size-4" />
-            Back to Dashboard
+            {isAuthenticated ? "Back to Dashboard" : "Back to Homepage"}
           </Button>
         </div>
       </div>

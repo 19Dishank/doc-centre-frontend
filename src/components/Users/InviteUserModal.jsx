@@ -22,6 +22,7 @@ const InviteUserModal = ({ setIsOpen }) => {
     const [invitationData, setInvitationData] = useState(initialData);
     const [errors, setErrors] = useState(initialData);
     const [roles, setRoles] = useState([]);
+    const [loading, setLoading] = useState(false);
 
     const validateField = (name, value) => {
 
@@ -73,6 +74,7 @@ const InviteUserModal = ({ setIsOpen }) => {
         const isValid = validateForm();
         if (!isValid) return;
 
+        setLoading(true);
         try {
             console.log("Sending req : ", invitationData)
             const res = await inviteUser(invitationData);
@@ -83,6 +85,8 @@ const InviteUserModal = ({ setIsOpen }) => {
         } catch (error) {
             console.error("Error inviting user:", error);
             toastNotification(error?.response?.data?.message || "An error occurred while inviting the user. Please try again.", "error");
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -148,8 +152,8 @@ const InviteUserModal = ({ setIsOpen }) => {
                     <Button variant="outline" onClick={() => setIsOpen(false)}>
                         Cancel
                     </Button>
-                    <Button className="font-semibold bg-[#2b7fff] text-blue-50" onClick={handleSubmit}>
-                        Send Invite
+                    <Button className="font-semibold bg-[#2b7fff] text-blue-50" onClick={handleSubmit} disabled={loading}>
+                        {loading ? "Sending..." : "Send Invite"}
                     </Button>
                 </CardFooter>
             </Card>

@@ -3,7 +3,8 @@ import { toastNotification } from "@/helper/toastNotification";
 import { useEffect } from "react";
 import { Outlet, Navigate } from "react-router-dom";
 
-const PublicRoutes = () => {
+const PublicRoute = ({ children }) => {
+
   const { isAuthenticated } = useAuthContext();
 
   useEffect(() => {
@@ -14,6 +15,6 @@ const PublicRoutes = () => {
 
   if (isAuthenticated) return <Navigate to="/dashboard" replace />;
 
-  return <Outlet />;
+  return children ? children : <Outlet />;
 };
-export default PublicRoutes;
+export default PublicRoute;

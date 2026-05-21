@@ -12,7 +12,6 @@ const PermissionsCatalogProvider = ({ children }) => {
     const getPermissionsCatalog = async () => {
         try {
             const res = await fetchPermissionsCatalog();
-            console.log(res)
             setPermissionsCatalog(res.data.permissionCatalog);
         } catch (error) {
             console.error("Error fetching permissions catalog:", error);
@@ -24,8 +23,6 @@ const PermissionsCatalogProvider = ({ children }) => {
         // eslint-disable-next-line react-hooks/set-state-in-effect
         getPermissionsCatalog();
     }, [isAuthenticated]);
-
-    console.log("Permissions Catalog : ", permissionsCatalog);
 
     return (
         <PermissionsCatalogContext.Provider value={{ permissionsCatalog }}>

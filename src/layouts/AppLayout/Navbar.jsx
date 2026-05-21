@@ -1,7 +1,7 @@
-import { fetchMe, logoutUser, refreshAccessToken } from "@/api/auth";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { logoutUser, refreshAccessToken } from "@/api/auth";
 import { Button } from "@/components/ui/button";
-import { Menu, Home, ChevronRight, Bell, LogOut } from "lucide-react";
+import { useAuthContext } from "@/contexts/AuthContext";
+import { Menu, Home, ChevronRight, Bell, LogOut, User } from "lucide-react";
 import { Fragment, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
 
@@ -9,11 +9,11 @@ const Navbar = ({ setIsSidebarOpen }) => {
     const currPath = useLocation().pathname.slice(1).split("/");
     const [open, setOpen] = useState(false);
     const dropdownRef = useRef(null);
+    const { user } = useAuthContext();
 
     return (
         <header className="bg-white border-b border-zinc-200 flex px-4 md:px-8 justify-between items-center h-16 sticky top-0 z-30">
             <div className="flex items-center gap-3">
-                {/* Mobile Menu Toggle */}
                 <button
                     onClick={() => setIsSidebarOpen(true)}
                     className="p-2 -ml-2 lg:hidden text-zinc-600 hover:bg-zinc-100 rounded-md"
@@ -21,7 +21,6 @@ const Navbar = ({ setIsSidebarOpen }) => {
                     <Menu className="size-5" />
                 </button>
 
-                {/* Breadcrumbs - Hidden on very small screens if path is long */}
                 <div className="text-sm hidden sm:flex items-center gap-2 overflow-hidden">
                     <Home className="size-4 text-[#71717b] shrink-0" />
                     <ChevronRight className="size-3 text-[#71717b] shrink-0" />
@@ -37,16 +36,6 @@ const Navbar = ({ setIsSidebarOpen }) => {
             </div>
 
             <div className="flex items-center gap-2 md:gap-4">
-                {/* Hide secondary action on mobile */}
-                <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={fetchMe}
-                    className="hidden md:flex"
-                >
-                    Fetch Me
-                </Button>
-
                 <div className="relative">
                     <Button variant="ghost" size="icon" className="size-9 cursor-pointer">
                         <Bell className="size-4" />
@@ -56,9 +45,14 @@ const Navbar = ({ setIsSidebarOpen }) => {
 
                 <div className="relative" ref={dropdownRef}>
                     <div onClick={() => setOpen(!open)} className="cursor-pointer">
-                        <Avatar className="size-9">
-                            <AvatarFallback className="font-medium bg-[#2b7fff] text-blue-50 text-xs">JD</AvatarFallback>
-                        </Avatar>
+                        {(user.firstName && user.lastName)
+                            ? (<img
+                                className="size-8 rounded-full shrink-0"
+                                src={`https://ui-avatars.com/api/?name=${user.firstName} ${user.lastName}&background=random`}
+                                alt={`${user.firstName} ${user.lastName}`}
+                            />)
+                            : <User className="size-8 p-1.5 rounded-full bg-[#2b7fff] text-white text-xs" />
+                        }
                     </div>
 
                     {open && (

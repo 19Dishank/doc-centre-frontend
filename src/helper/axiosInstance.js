@@ -54,7 +54,8 @@ const isAuthRoute = [
     "/auth/verify-forgot-password-otp",
     "/auth/reset-password",
     "/auth/logout",
-    "/members/set-password"
+    "/members/set-password",
+    "/users/change-password"
 ]
 
 const processQueue = (error, token = null) => {

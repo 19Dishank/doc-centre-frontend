@@ -27,8 +27,12 @@ import InviteUserModal from "@/components/Users/InviteUserModal"
 import PaginationBar from "@/components/ui/pagination-bar"
 import { getUsers } from "@/api/user"
 import Loader from "@/components/ui/loader"
+import { PERMISSIONS } from "@/helper/permissions"
+import { usePermissions } from "@/hooks/usePermissions"
 
 export default function UsersList() {
+
+  const { permissionCheck } = usePermissions()
 
   const rowsPerPage = 5
   const [isOpen, setIsOpen] = useState(false);
@@ -75,8 +79,6 @@ export default function UsersList() {
     if (diff < 365 * 24 * 60 * 60 * 1000) return `${Math.floor(diff / (30 * 24 * 60 * 60 * 1000))} months ago`;
   }
 
-  console.log("isOpen", isOpen)
-
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -86,13 +88,16 @@ export default function UsersList() {
             Manage team members and their access levels.
           </p>
         </div>
-        <Button
-          className="font-semibold bg-[#2b7fff] text-blue-50 gap-2 w-full sm:w-auto cursor-pointer"
-          onClick={() => setIsOpen(true)}
-        >
-          <Plus className="size-4" />
-          Invite User
-        </Button>
+
+        {permissionCheck(PERMISSIONS.INVITE_USER) && (
+          <Button
+            className="font-semibold bg-[#2b7fff] text-blue-50 gap-2 w-full sm:w-auto cursor-pointer"
+            onClick={() => setIsOpen(true)}
+          >
+            <Plus className="size-4" />
+            Invite User
+          </Button>
+        )}
       </div>
 
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
@@ -134,7 +139,7 @@ export default function UsersList() {
                   </TableCell>
                 </TableRow>
                 : tableRows.map(user => (
-                  <TableRow key={user.id} className="hover:bg-zinc-50/50">
+                  <TableRow key={user._id} className="hover:bg-zinc-50/50">
                     <TableCell>
                       <div className="flex items-center gap-3">
                         {(user.firstName && user.lastName)
@@ -171,12 +176,16 @@ export default function UsersList() {
 
                     <TableCell>
                       <div className="flex justify-end items-center gap-1">
-                        <Button variant="ghost" size="icon" className="size-8">
-                          <Pencil className="size-4 text-zinc-500" />
-                        </Button>
-                        <Button variant="ghost" size="icon" className="size-8 text-red-500 hover:text-red-600 hover:bg-red-50">
-                          <Trash2 className="size-4" />
-                        </Button>
+                        {permissionCheck(PERMISSIONS.UPDATE_USER) && (
+                          <Button variant="ghost" size="icon" className="size-8">
+                            <Pencil className="size-4 text-zinc-500" />
+                          </Button>
+                        )}
+                        {permissionCheck(PERMISSIONS.DELETE_USER) && (
+                          <Button variant="ghost" size="icon" className="size-8 text-red-500 hover:text-red-600 hover:bg-red-50">
+                            <Trash2 className="size-4" />
+                          </Button>
+                        )}
                       </div>
                     </TableCell>
                   </TableRow>

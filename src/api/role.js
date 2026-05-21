@@ -1,4 +1,5 @@
 import axiosInstance from "@/helper/axiosInstance";
+import { toastNotification } from "@/helper/toastNotification";
 
 export const fetchRoles = async () => {
     try {
@@ -46,6 +47,18 @@ export const deleteRole = async (roleId) => {
         return response.data;
     } catch (error) {
         console.error("Error deleting role:", error);
+        toastNotification(error?.response?.data?.message || "An error occurred while deleting the role.", "error");
+        throw error;
+    }
+}
+
+export const updateRole = async (roleId, data) => {
+    try {
+        const response = await axiosInstance.put(`/roles/${roleId}`, data);
+        return response.data;
+    } catch (error) {
+        console.error("Error updating role:", error);
+        toastNotification(error?.response?.data?.message || "An error occurred while updating the role.", "error");
         throw error;
     }
 }

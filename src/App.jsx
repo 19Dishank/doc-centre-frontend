@@ -12,7 +12,6 @@ import ProtectedRoute from "./routes/ProtectedRoute";
 import { protectedRoutes, publicRoutes } from "./routes/tenantRoutes";
 import { useAuthContext } from "./contexts/AuthContext";
 
-
 export default function App() {
 
   const { loading } = useAuthContext();

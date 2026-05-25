@@ -12,8 +12,6 @@ const PasswordInput = () => {
     const location = useLocation();
     const { email, token } = location?.state || "";
 
-    console.log("Location : ", location)
-
     const initialData = {
         password: "",
         confirmPassword: "",
@@ -78,8 +76,7 @@ const PasswordInput = () => {
         if (!isValid) return;
 
         try {
-            const res = await resetPassword({ ...resetPasswordData, email, token });
-            console.log("Reset Password Data:", res);
+            await resetPassword({ ...resetPasswordData, email, token });
             navigate("/forgot-password/success");
         } catch (error) {
             console.error(error);

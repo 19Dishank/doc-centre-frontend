@@ -2,12 +2,59 @@ import { Building2, Calendar, Check, Upload, Users, Zap } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
+import { fetchOrganizationDetails, updateOrganizationDetails } from "@/api/organization";
+import { useEffect, useState } from "react";
+import FormField from "@/components/ui/form-field";
+import { toastNotification } from "@/helper/toastNotification";
 
 export default function Organization() {
+
+  const [organizationDetails, setOrganizationDetails] = useState(null);
+  const [formData, setFormData] = useState({
+    orgName: "",
+    slug: "",
+    orgSlogan: "",
+    createdAt: "",
+    memberCount: 0,
+    currentPlan: "",
+    logo: null
+  });
+
+  const getOrganizationDetails = async () => {
+    try {
+      const res = await fetchOrganizationDetails();
+      setOrganizationDetails(res.data);
+      setFormData(res.data);
+    } catch (error) {
+      console.error("Failed to fetch organization details:", error);
+    }
+  }
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    getOrganizationDetails();
+  }, []);
+
+  const hasChanges = organizationDetails && (organizationDetails.orgName !== formData.orgName.trim() ||
+    organizationDetails.slug !== formData.slug.trim() ||
+    organizationDetails.orgSlogan !== formData.orgSlogan.trim());
+
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await updateOrganizationDetails(formData);
+      toastNotification("Organization details updated successfully", "success");
+      getOrganizationDetails();
+    } catch (error) {
+      toastNotification(error?.response?.data?.message || "Failed to update organization details. Please try again.", "error");
+      console.error("Error updating organization details:", error);
+    }
+  };
+
   return (
     <div className="w-full max-w-4xl mx-auto">
       <div className="flex flex-col gap-1 mb-6">
@@ -27,33 +74,27 @@ export default function Organization() {
             Basic information about your organization.
           </CardDescription>
         </CardHeader>
-        
+
         <Separator />
-        
+
         <CardContent className="flex p-0 flex-col gap-6">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="flex flex-col gap-2">
-              <Label htmlFor="orgname" className="text-sm leading-5 text-zinc-950 font-medium">
-                Organization Name
-              </Label>
-              <Input id="orgname" defaultValue="Acme Corp" className="h-10 w-full" />
-            </div>
+            <FormField
+              label="Organization Name"
+              id="name"
+              placeholder="Acme Corporation"
+              value={formData.orgName}
+              onChange={(e) => setFormData({ ...formData, orgName: e.target.value })}
+            />
 
-            <div className="flex flex-col gap-2">
-              <Label htmlFor="slug" className="text-xs uppercase font-medium tracking-wider text-zinc-500">
-                Slug
-              </Label>
-              <div className="rounded-md bg-white border border-zinc-200 flex h-10 overflow-hidden focus-within:ring-1 focus-within:ring-ring">
-                <input
-                  id="slug"
-                  defaultValue="acmecorp"
-                  className="bg-transparent outline-none text-sm leading-5 px-3 flex-1 min-w-0"
-                />
-                <span className="bg-zinc-100 text-[#71717b] text-sm leading-5 border-l border-zinc-200 px-3 flex items-center shrink-0">
-                  .cdms.com
-                </span>
-              </div>
-            </div>
+            <FormField
+              label="Organization Slug"
+              id="slug"
+              placeholder="acme-corp"
+              value={formData.slug}
+              onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
+            />
+
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
@@ -61,7 +102,7 @@ export default function Organization() {
               <Label className="text-sm leading-5 text-zinc-950 font-medium">Created</Label>
               <div className="rounded-md bg-zinc-100/50 text-sm leading-5 border border-zinc-200 flex px-3 items-center gap-2 h-10 text-zinc-700">
                 <Calendar className="size-4 text-zinc-400 shrink-0" />
-                <span className="truncate">Jan 12, 2023</span>
+                <span className="truncate">{new Date(formData.createdAt).toLocaleDateString()}</span>
               </div>
             </div>
 
@@ -69,7 +110,7 @@ export default function Organization() {
               <Label className="text-sm leading-5 text-zinc-950 font-medium">Member Count</Label>
               <div className="rounded-md bg-zinc-100/50 text-sm leading-5 border border-zinc-200 flex px-3 items-center gap-2 h-10 text-zinc-700">
                 <Users className="size-4 text-zinc-400 shrink-0" />
-                <span className="truncate">27 members</span>
+                <span className="truncate">{formData.memberCount} members</span>
               </div>
             </div>
 
@@ -78,7 +119,7 @@ export default function Organization() {
               <div className="rounded-md bg-zinc-100/50 border border-zinc-200 flex px-3 justify-between items-center h-10 gap-2">
                 <Badge className="bg-[#2b7fff] text-blue-50 px-2 py-0.5 gap-1 select-none shrink-0">
                   <Zap className="size-3" />
-                  Pro Plan
+                  {formData.currentPlan}
                 </Badge>
                 <a className="cursor-pointer font-semibold text-[#2b7fff] text-xs hover:underline shrink-0">Upgrade</a>
               </div>
@@ -93,6 +134,8 @@ export default function Organization() {
               id="desc"
               placeholder="Enter a catchy slogan or mission statement for your organization."
               className="min-h-24 resize-none w-full"
+              value={formData.orgSlogan}
+              onChange={(e) => setFormData({ ...formData, orgSlogan: e.target.value })}
             />
           </div>
 
@@ -116,10 +159,10 @@ export default function Organization() {
         </CardContent>
 
         <CardFooter className="px-0 pt-2 bg-white flex flex-col-reverse sm:flex-row justify-end gap-2">
-          <Button variant="outline" className="h-9 w-full sm:w-auto">
+          <Button onClick={() => setFormData(organizationDetails)} variant="outline" className="h-9 w-full sm:w-auto">
             Cancel
           </Button>
-          <Button className="bg-[#2b7fff] text-blue-50 gap-2 h-9 w-full sm:w-auto">
+          <Button onClick={handleSubmit} disabled={!hasChanges} className="bg-[#2b7fff] text-blue-50 gap-2 h-9 w-full sm:w-auto">
             <Check className="size-4" />
             Save Changes
           </Button>

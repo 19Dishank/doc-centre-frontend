@@ -1,5 +1,62 @@
 import axiosInstance from "@/helper/axiosInstance";
 import { getSubdomain } from "@/helper/getSubdomain";
+import axios from "axios";
+
+export const getSignedURL = async (payload) => {
+    try {
+        const response = await axiosInstance.post("/docs/presigned-upload-url", payload);
+        return response.data;
+    } catch (error) {
+        console.error("Error getting signed URL:", error);
+        throw error;
+    }
+};
+
+export const uploadOnSignedURL = async (signedURL, file) => {
+    try {
+        console.log("Signed URL : ", file.type);
+        const res = await axios.put(signedURL, file, {
+            headers: {
+                "Content-Type": file.type,
+            },
+        });
+        console.log("Upload response : ", res);
+        return res;
+    } catch (error) {
+        console.error("Error uploading file to signed URL:", error);
+        throw error;
+    }
+};
+
+export const completeUpload = async (id) => {
+    try {
+        const response = await axiosInstance.post(`/docs/${id}/complete`, {});
+        return response.data;
+    } catch (error) {
+        console.error("Error completing upload:", error);
+        throw error;
+    }
+};
+
+export const failedUpload = async (id) => {
+    try {
+        const response = await axiosInstance.post(`/docs/${id}/failed`, {});
+        return response.data;
+    } catch (error) {
+        console.error("Error marking upload as failed:", error);
+        throw error;
+    }
+};
+
+export const createFolder = async (payload) => {
+    try {
+        const response = await axiosInstance.post("/docs/folder", payload);
+        return response.data;
+    } catch (error) {
+        console.error("Error creating folder:", error);
+        throw error;
+    }
+};
 
 export const upload = async (payload) => {
     try {
@@ -25,16 +82,6 @@ export const upload = async (payload) => {
     }
 };
 
-export const deleteFile = async (fileId) => {
-    try {
-        const response = await axiosInstance.delete(`/docs/${fileId}`);
-        return response.data;
-    } catch (error) {
-        console.error("Error deleting file:", error);
-        throw error;
-    }
-};
-
 export const fetchFiles = async (parentId) => {
     try {
         const response = parentId
@@ -46,3 +93,63 @@ export const fetchFiles = async (parentId) => {
         throw error;
     }
 };
+
+export const getPresignedURLForView = async (id) => {
+    try {
+        const response = await axiosInstance.get(`/docs/${id}/view-url`);
+        return response.data;
+    } catch (error) {
+        console.error("Error getting presigned URL for view:", error);
+        throw error;
+    }
+};
+
+export const deleteFile = async (id) => {
+    try {
+        const response = await axiosInstance.delete(`/docs/${id}/document`);
+        return response.data;
+    } catch (error) {
+        console.error("Error deleting file:", error);
+        throw error;
+    }
+};
+
+export const deleteFolder = async (id) => {
+    try {
+        const response = await axiosInstance.delete(`/docs/${id}/folder`);
+        return response.data;
+    } catch (error) {
+        console.error("Error deleting folder:", error);
+        throw error;
+    }
+};
+
+export const renameFile = async (id, name) => {
+    try {
+        const response = await axiosInstance.put(`/docs/${id}/document`, { name });
+        return response.data;
+    } catch (error) {
+        console.error("Error renaming file/folder:", error);
+        throw error;
+    }
+};
+
+export const renameFolder = async (id, name) => {
+    try {
+        const response = await axiosInstance.put(`/docs/${id}/folder`, { name });
+        return response.data;
+    } catch (error) {
+        console.error("Error renaming file/folder:", error);
+        throw error;
+    }
+};
+
+export const downloadFile = async (id) => {
+    try {
+        const response = await axiosInstance.get(`/docs/${id}/download`);
+        window.open(response.data.data.url);
+    } catch (error) {
+        console.error("Error downloading file:", error);
+        throw error;
+    }
+}

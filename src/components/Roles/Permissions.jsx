@@ -5,11 +5,14 @@ import { usePermissionsCatalog } from "@/contexts/PermissionsCatalogContext";
 import { useEffect, useState, useMemo } from "react";
 import { updateRolePermissions } from "@/api/role";
 import { toastNotification } from "@/helper/toastNotification";
+import { PERMISSIONS } from "@/helper/permissions";
+import { usePermissions } from "@/hooks/usePermissions";
 
 const Permissions = ({ currentRoleId, currentRole, getAvailableRoles }) => {
     const { permissionsCatalog = [] } = usePermissionsCatalog();
     const [permissions, setPermissions] = useState([]);
     const [isSaving, setIsSaving] = useState(false);
+    const { permissionCheck } = usePermissions()
 
     useEffect(() => {
         // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -37,11 +40,8 @@ const Permissions = ({ currentRoleId, currentRole, getAvailableRoles }) => {
             const viewPermissionId = permissionsCatalog
                 .find(cat => cat.module === module)
                 ?.permissions.find(perm => perm.name.startsWith("View"))?.permissionId;
-            console.log("Found with viewPermissionId", viewPermissionId)
             if (checked && viewPermissionId && !permissions.includes(viewPermissionId)) {
                 setPermissions((prev) => [...prev, viewPermissionId]);
-            } else if (!checked && viewPermissionId) {
-                setPermissions((prev) => prev.filter((perm) => perm !== viewPermissionId));
             }
         } else {
             if (!checked) {
@@ -79,12 +79,10 @@ const Permissions = ({ currentRoleId, currentRole, getAvailableRoles }) => {
         }
     };
 
-    console.log("currentRole", currentRole)
-
     return (
         <>
             {!currentRoleId ? (
-                <div className="flex-1 flex flex-col items-center justify-center h-full border-2 border-dashed rounded-2xl border-slate-200 bg-slate-50/50 p-8 text-center min-h-87.5">
+                <div className="flex-1 h-full flex flex-col justify-center items-center text-center gap-0 shadow-none border-2 border-dashed border-slate-200 overflow-hidden rounded-xl">
                     <div className="flex items-center justify-center size-12 rounded-2xl bg-amber-50 text-amber-600 mb-4 shadow-sm">
                         <ShieldAlert className="size-6 stroke-2" />
                     </div>
@@ -145,6 +143,7 @@ const Permissions = ({ currentRoleId, currentRole, getAvailableRoles }) => {
                                                 key={permissionId}
                                             >
                                                 <Checkbox
+                                                    disabled={!permissionCheck(PERMISSIONS.ASSIGN_PERMISSION)}
                                                     onCheckedChange={(checked) => handlePermissionChange(permissionId, checked, category.module, name)}
                                                     checked={permissions?.includes(permissionId)}
                                                     className="size-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600"
@@ -164,16 +163,18 @@ const Permissions = ({ currentRoleId, currentRole, getAvailableRoles }) => {
                         </div>
                     </div>
 
-                    <div className="p-4 border-t border-slate-200 justify-end bg-slate-50/50 shrink-0">
-                        <Button
-                            disabled={!hasChanges || isSaving}
-                            onClick={updatePermissions}
-                            className="bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium px-4 h-9 gap-1.5 shadow-sm rounded-lg transition-all"
-                        >
-                            <Save className="size-3.5" />
-                            {isSaving ? "Saving Config..." : "Save Changes"}
-                        </Button>
-                    </div>
+                    {permissionCheck(PERMISSIONS.ASSIGN_PERMISSION) && (
+                        <div className="p-4 border-t border-slate-200 justify-end bg-slate-50/50 shrink-0">
+                            <Button
+                                disabled={!hasChanges || isSaving}
+                                onClick={updatePermissions}
+                                className="bg-blue-600 hover:bg-blue-700 cursor-pointer text-white text-xs font-medium px-4 h-9 gap-1.5 shadow-sm rounded-lg transition-all"
+                            >
+                                <Save className="size-3.5" />
+                                {isSaving ? "Saving Config..." : "Save Changes"}
+                            </Button>
+                        </div>
+                    )}
                 </div>
             )}
         </>

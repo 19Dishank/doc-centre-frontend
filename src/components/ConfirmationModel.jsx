@@ -54,7 +54,7 @@ const ConfirmationModal = ({
     };
 
     return (
-        <div className="bg-zinc-950/40 flex absolute inset-0 justify-center items-center z-100 backdrop-blur">
+        <div className="bg-zinc-950/40 flex fixed inset-0 justify-center items-center z-100 backdrop-blur">
             <Card className="shadow-2xl p-6 gap-4 w-120 flex flex-col">
                 <CardHeader className="p-0 flex flex-row justify-between items-start gap-4">
                     <div className="flex gap-3 items-start">

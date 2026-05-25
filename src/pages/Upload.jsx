@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
-import PDFPreviewer from "@/components/ui/pdf-viewer";
+import PDFPreviewer from "@/components/Files/Renderers/PDFRenderer";
 import { useState } from "react";
 import { formatSize } from "@/helper/formatSize";
 

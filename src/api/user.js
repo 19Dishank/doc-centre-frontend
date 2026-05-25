@@ -32,6 +32,16 @@ export const inviteUser = async (invitationData) => {
     }
 }
 
+export const updateUserRole = async (userId, roleId) => {
+    try {
+        const response = await axiosInstance.put(`/users/${userId}/roles/${roleId}`, {});
+        return response.data;
+    } catch (error) {
+        console.error("Error updating user:", error);
+        throw error;
+    }
+}
+
 export const updateUserProfile = async (profileData) => {
     try {
         const response = await axiosInstance.put(`/users`, profileData);

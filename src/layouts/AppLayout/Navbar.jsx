@@ -45,7 +45,7 @@ const Navbar = ({ setIsSidebarOpen }) => {
 
                 <div className="relative" ref={dropdownRef}>
                     <div onClick={() => setOpen(!open)} className="cursor-pointer">
-                        {(user.firstName && user.lastName)
+                        {(user?.firstName && user?.lastName)
                             ? (<img
                                 className="size-8 rounded-full shrink-0"
                                 src={`https://ui-avatars.com/api/?name=${user.firstName} ${user.lastName}&background=random`}

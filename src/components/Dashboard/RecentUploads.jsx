@@ -32,7 +32,7 @@ const RecentUploads = () => {
     };
 
     return (
-        <Card className="flex flex-col h-full">
+        <Card className="flex flex-col h-full pt-0">
             <CardHeader className="p-5 flex-row justify-between items-center border-b">
                 <h2 className="font-semibold text-base">Recent Uploads</h2>
                 <a href="#" className="font-medium text-[#2b7fff] text-sm flex items-center gap-1 hover:underline">

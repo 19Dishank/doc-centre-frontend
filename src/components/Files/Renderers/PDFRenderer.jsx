@@ -1,13 +1,8 @@
 import { BASE_SCALE } from "@/constants"
 import { loadPdfJs } from "@/helper/loadPdfJs"
-import {
-    AlertCircleIcon,
-    FileIcon,
-} from "lucide-react"
+import { AlertCircleIcon } from "lucide-react"
 import { useEffect, useRef, useState } from "react"
-import { Spinner } from "./spinner"
-import { formatSize } from "@/helper/formatSize"
-
+import Loader from "@/components/ui/loader"
 
 const PageCanvas = ({ pdfDoc, pageNum, scale, totalPages, showBadge }) => {
     const canvasRef = useRef(null)
@@ -25,12 +20,10 @@ const PageCanvas = ({ pdfDoc, pageNum, scale, totalPages, showBadge }) => {
             const page = await pdfDoc.getPage(pageNum)
             if (cancelled) return
 
-            // original viewport
             const viewport = page.getViewport({ scale })
 
             const wrapperWidth = wrapperRef.current.clientWidth
 
-            // fit inside container
             const fitScale = Math.min(1, wrapperWidth / viewport.width)
 
             const scaledViewport = page.getViewport({
@@ -68,7 +61,7 @@ const PageCanvas = ({ pdfDoc, pageNum, scale, totalPages, showBadge }) => {
     return (
         <div
             ref={wrapperRef}
-            className="relative rounded-sm shadow-[0_2px_12px_rgba(0,0,0,0.15)] w-full flex justify-center"
+            className=" relative rounded-sm shadow-[0_2px_12px_rgba(0,0,0,0.15)] w-full flex justify-center"
         >
             <canvas
                 ref={canvasRef}
@@ -84,19 +77,10 @@ const PageCanvas = ({ pdfDoc, pageNum, scale, totalPages, showBadge }) => {
     )
 }
 
-/**
- * PDFPreviewer
- *
- * Props:
- * @param {File}     file       - The PDF File object to display
- * @param {string}   fileName   - Display name of the file
- * @param {string}   fileSize   - Pre-formatted file size string (e.g. "1.2 MB")
- * @param {Function} onClose    - Called when the user clicks the close (×) button
- * @param {Function} onDownload - Called when the user clicks the download button
- *                                (falls back to creating an object URL from `file` if omitted)
- */
-
-export default function PDFPreviewer({ file }) {
+export default function PDFRenderer({
+    file,
+    pdfUrl,
+}) {
     const [pdfDoc, setPdfDoc] = useState(null)
     const [totalPages, setTotalPages] = useState(0)
     const [error, setError] = useState(null)
@@ -104,11 +88,8 @@ export default function PDFPreviewer({ file }) {
 
     const hasDoc = !!pdfDoc && !loading && !error
 
-    const fileName = file?.name || "Unknown.pdf"
-    const fileSize = file ? formatSize(file.size) : null
-
     useEffect(() => {
-        if (!file) return
+        if (!file && !pdfUrl) return
 
         let cancelled = false
 
@@ -118,16 +99,40 @@ export default function PDFPreviewer({ file }) {
 
             try {
                 const pdfjsLib = await loadPdfJs()
-                const arrayBuffer = await file.arrayBuffer()
-                const doc = await pdfjsLib.getDocument({ data: arrayBuffer }).promise
+
+                let documentSource = null
+
+                // Local file support
+                if (file) {
+                    const arrayBuffer = await file.arrayBuffer()
+
+                    documentSource = {
+                        data: arrayBuffer,
+                    }
+                }
+
+                // Cloud URL support
+                else if (pdfUrl) {
+                    documentSource = {
+                        url: pdfUrl,
+                    }
+                }
+
+                const doc = await pdfjsLib
+                    .getDocument(documentSource)
+                    .promise
 
                 if (cancelled) return
 
                 setPdfDoc(doc)
                 setTotalPages(doc.numPages)
-            } catch {
+            } catch (err) {
+                console.error(err)
+
                 if (!cancelled) {
-                    setError("Failed to load PDF. Please make sure the file is a valid PDF.")
+                    setError(
+                        "Failed to load PDF. Please make sure the file or URL is valid."
+                    )
                 }
             } finally {
                 if (!cancelled) setLoading(false)
@@ -135,38 +140,37 @@ export default function PDFPreviewer({ file }) {
         }
 
         load()
-        return () => { cancelled = true }
-    }, [file])
+
+        return () => {
+            cancelled = true
+        }
+    }, [file, pdfUrl])
 
     return (
-        <div className="font-sans w-full mx-auto">
-            <div className="rounded-xl border border-border bg-card text-card-foreground overflow-hidden shadow-sm w-full">
+        <>
+            <div className="min-h-80 flex flex-col items-center gap-4 p-6 max-h-150 w-full overflow-y-auto bg-muted/20">
 
-                <div className="flex items-center justify-between px-4 py-2.5 border-b border-border bg-muted/60 gap-3 flex-wrap">
-                    <div className="flex items-center gap-2 min-w-0">
-                        <FileIcon />
-                        <span
-                            className="text-[13px] font-medium text-foreground truncate max-w-50"
-                            title={fileName}
-                        >
-                            {fileName}
-                        </span>
+                {loading && <Loader />}
+
+                {error && (
+                    <div className="flex flex-col items-center justify-center min-h-80 gap-3 text-center px-4">
+                        <AlertCircleIcon />
+
+                        <p className="text-sm text-destructive font-medium">
+                            Failed to load PDF
+                        </p>
+
+                        <p className="text-xs text-muted-foreground max-w-xs">
+                            {error}
+                        </p>
                     </div>
-                </div>
+                )}
 
-                <div className="flex flex-col items-center gap-4 p-6 min-h-100 max-h-160 w-full overflow-y-auto bg-muted/20">
-
-                    {loading && <Spinner />}
-
-                    {error && (
-                        <div className="flex flex-col items-center justify-center min-h-80 gap-3 text-center px-4">
-                            <AlertCircleIcon />
-                            <p className="text-sm text-destructive font-medium">Failed to load PDF</p>
-                            <p className="text-xs text-muted-foreground max-w-xs">{error}</p>
-                        </div>
-                    )}
-
-                    {hasDoc && Array.from({ length: totalPages }, (_, i) => i + 1).map((n) => (
+                {hasDoc &&
+                    Array.from(
+                        { length: totalPages },
+                        (_, i) => i + 1
+                    ).map((n) => (
                         <PageCanvas
                             key={`page-${n}`}
                             pdfDoc={pdfDoc}
@@ -176,14 +180,7 @@ export default function PDFPreviewer({ file }) {
                             showBadge={totalPages > 1}
                         />
                     ))}
-                </div>
-
-                <div className="px-4 py-1.5 text-right border-t border-border bg-muted/60">
-                    {hasDoc && fileSize && (
-                        <span className="text-xs text-muted-foreground">PDF · {fileSize}</span>
-                    )}
-                </div>
             </div>
-        </div>
+        </>
     )
 }

@@ -26,7 +26,6 @@ const Role = ({ currentRoleId, handleRoleChange, role, getAvailableRoles }) => {
     };
 
     const handleDeleteRole = async () => {
-        console.log("Deleting role:", role._id);
         setShowModel(true);
         try {
             await deleteRole(role._id);

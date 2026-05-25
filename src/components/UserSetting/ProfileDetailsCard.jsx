@@ -15,10 +15,12 @@ const ProfileDetailsCard = () => {
 
     const { user, getUserDetails } = useAuthContext();
 
-    const [profileData, setProfileData] = useState({
-        firstName: user.firstName,
-        lastName: user.lastName,
-    });
+    const initialProfileData = {
+        firstName: user.firstName || "",
+        lastName: user.lastName || "",
+    };
+
+    const [profileData, setProfileData] = useState(initialProfileData);
 
     const hasChanges = profileData.firstName !== user.firstName || profileData.lastName !== user.lastName;
 
@@ -27,7 +29,7 @@ const ProfileDetailsCard = () => {
         setProfileData((prev) => ({ ...prev, [name]: value }));
     };
 
-    const handleProfileSubmit = async (e) => {
+    const handleProfileDetails = async (e) => {
         e.preventDefault();
         try {
             const res = await updateUserProfile(profileData);
@@ -55,7 +57,7 @@ const ProfileDetailsCard = () => {
             </CardHeader>
 
             <CardContent className="p-0">
-                <form onSubmit={handleProfileSubmit} className="space-y-5">
+                <form onSubmit={handleProfileDetails} className="space-y-5">
 
                     <div className="flex items-center gap-4 pb-4 border-zinc-200 border-b">
                         {(user.firstName && user.lastName)
@@ -120,8 +122,11 @@ const ProfileDetailsCard = () => {
                         </div>
                     </div>
 
-                    <div className="flex flex-col sm:flex-row justify-end pt-2">
-                        <Button type="submit" className="bg-[#2b7fff] text-blue-50 px-4 h-10 text-sm w-full sm:w-auto gap-2" disabled={!hasChanges} >
+                    <div className="cursor-pointer px-0 pt-2 bg-white flex flex-col-reverse sm:flex-row justify-end gap-2">
+                        <Button type="button" onClick={() => setProfileData(initialProfileData)} variant="outline" className="h-9 w-full sm:w-auto">
+                            Cancel
+                        </Button>
+                        <Button type="submit" className="cursor-pointer bg-[#2b7fff] text-blue-50 gap-2 h-9 w-full sm:w-auto" disabled={!hasChanges} >
                             <Save className="size-4" />
                             Save Profile Changes
                         </Button>

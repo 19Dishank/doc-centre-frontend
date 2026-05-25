@@ -6,10 +6,12 @@ import {
     FileText, Key, LayoutDashboard, Lock, Settings, User, Users
 } from "lucide-react";
 import { useState } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 
 const Sidebar = ({ isOpen, setIsOpen }) => {
-    const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+
+    const location = useLocation();
+    const [isSettingsOpen, setIsSettingsOpen] = useState(location.pathname.startsWith("/settings"));
     const { permissionCheck } = usePermissions();
 
     const navItems = [
@@ -25,7 +27,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
         { name: "Billing", icon: <CreditCard className="size-4" />, path: "/settings/billing" },
         { name: "Notifications", icon: <Bell className="size-4" />, path: "/settings/notifications" },
         { name: "API Access", icon: <Key className="size-4" />, path: "/settings/api-access" },
-        { name: "Danger Zone", icon: <AlertTriangle className="size-4" />, path: "/settings/danger-zone" },
+        { name: "Danger Zone", icon: <AlertTriangle className="size-4" />, path: "/settings/danger-zone", styles: "hover:bg-red-50! hover:text-red-700" },
     ];
 
     return (
@@ -81,7 +83,8 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
                                             onClick={() => window.innerWidth < 1024 && setIsOpen(false)}
                                             className={({ isActive }) => `
                                                 font-medium rounded-lg text-sm flex px-4 py-2.5 items-center gap-2 
-                                                ${isActive ? 'bg-zinc-100 text-[#18181b]' : 'text-[#71717b] hover:bg-zinc-100/50'}
+                                                ${isActive ? 'bg-zinc-100 text-[#18181b]' + subItem.styles : 'text-[#71717b] hover:bg-zinc-100/50'}
+                                                ${subItem.styles || ''}
                                             `}
                                         >
                                             {subItem.icon}

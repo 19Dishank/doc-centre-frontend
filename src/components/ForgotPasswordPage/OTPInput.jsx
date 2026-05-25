@@ -17,7 +17,6 @@ const OTPInput = () => {
     const inputRefs = useRef([]);
     const location = useLocation();
     const { email } = location?.state || "";
-    console.log("Location : ", location);
 
     const handleChange = (element, index) => {
         if (isNaN(element.value)) return false;
@@ -89,7 +88,6 @@ const OTPInput = () => {
         } catch (error) {
             console.log(error.response?.data?.message || "Error resending OTP. Please try again.");
         }
-        console.log("OTP Resent");
     };
 
     if (!email) return <Navigate to="/forgot-password" />;

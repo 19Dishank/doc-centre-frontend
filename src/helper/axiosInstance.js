@@ -2,7 +2,7 @@ import axios from 'axios';
 import { toastNotification } from './toastNotification';
 import { getSubdomain } from './getSubdomain';
 import { refreshAccessToken } from '@/api/auth';
-import { clearTokens, getTokens } from './tokens';
+import { clearTokens, getTokens, setTokens } from './tokens';
 
 const axiosInstance =
     axios.create({
@@ -17,19 +17,28 @@ axiosInstance.interceptors.request.use(
     (config) => {
         const { accessToken } = getTokens();;
 
+        console.log("REQUEST DATA:", {
+            type: typeof config.data,
+            isFormData: config.data instanceof FormData,
+            constructor: config.data?.constructor?.name,
+            data: config.data
+        });
+
         if (accessToken) {
-            config.headers['Authorization'] = `Bearer ${accessToken}`;
+            config.headers = config.headers || {};
+            config.headers.Authorization = `Bearer ${accessToken}`;
         }
 
-        if ( config.data && Object.entries(config.data).length > 0) {
+        const isPlainObject =
+            config.data &&
+            typeof config.data === "object" &&
+            config.data.constructor === Object;
 
+        if (isPlainObject) {
             const slug = getSubdomain();
-
-            config.data = {
-                ...config.data,
-                slug: slug !== "app" ? slug : config?.data?.slug || undefined,
-            };
+            config.data.slug = slug !== "app" ? slug : config.data.slug;
         }
+
         return config;
     },
     (error) => {
@@ -54,7 +63,6 @@ const isAuthRoute = [
     "/auth/verify-forgot-password-otp",
     "/auth/reset-password",
     "/auth/logout",
-    "/members/set-password",
     "/users/change-password"
 ]
 
@@ -75,21 +83,29 @@ axiosInstance.interceptors.response.use(
     },
     async (error) => {
 
-        console.log("Axios Response Error Intercepted:", JSON.parse(JSON.stringify(error)));
+        console.log("Axios Error:", {
+            message: error.message,
+            status: error.response?.status,
+            data: error.response?.data,
+            url: error.config?.url,
+        });
 
         const { config, response } = error;
         const originalRequest = config;
 
         if (!response) {
-            if (error.code === 'ECONNABORTED' || error.message.includes('timeout')) {
-                return toastNotification('Server timed out. Please try again.', "error");
+            if (error.code === 'ECONNABORTED' || error?.message?.includes('timeout')) {
+                toastNotification('Server timed out. Please try again.', "error");
+                return Promise.reject(error);
             } else {
-                return toastNotification('Network error. Please check if your Express server is running.', "error");
+                toastNotification('Network error. Please check if your Express server is running.', "error");
+                return Promise.reject(error);
             }
         } else {
             const status = response.status;
             if (status === 500) {
-                return toastNotification('Internal Server Error. Please contact support.', "error");
+                toastNotification('Internal Server Error. Please contact support.', "error");
+                return Promise.reject(error);
             } else if (status === 401 && !originalRequest._retry) {
 
                 if (isAuthRoute.includes(originalRequest.url)) {
@@ -116,14 +132,18 @@ axiosInstance.interceptors.response.use(
                     console.log("New Access Token : ", res);
                     axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${res.data.accessToken}`;
                     originalRequest.headers['Authorization'] = `Bearer ${res.data.accessToken}`;
-                    localStorage.setItem('accessToken', res.data.accessToken);
-                    localStorage.setItem('refreshToken', res.data.refreshToken);
+                    setTokens(res.data.accessToken, res.data.refreshToken);
 
                     processQueue(null, res.data.accessToken);
 
                     return await axiosInstance(originalRequest);
                 } catch (refreshError) {
-                    clearTokens();
+                    const status = refreshError?.response?.status;
+                    if (status === 401 || status === 403) {
+                        clearTokens();
+                        window.location.replace(import.meta.env.VITE_APP_BASE_URL.replace("slug", "app") + `/login`);
+                        toastNotification('Session expired. Please log in again.', "error");
+                    }
                     processQueue(refreshError, null);
                     return Promise.reject(refreshError);
                 } finally {

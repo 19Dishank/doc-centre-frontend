@@ -41,10 +41,9 @@ export default function ErrorPage() {
           </Badge>
         </div>
         <div className="text-center flex flex-col items-center gap-3">
-          <h1 className="font-semibold text-3xl leading-9 tracking-tight">We couldn't find that document</h1>
+          <h1 className="font-semibold text-3xl leading-9 tracking-tight">We couldn't find that page</h1>
           <p className="max-w-lg text-[#71717b] text-base leading-6">
-            The page or file you're looking for may have been moved, deleted, or perhaps it never existed. Try one
-            of the suggestions below to get back on track.
+            The page you are looking for might have been removed, had its name changed, or is temporarily unavailable.
           </p>
         </div>
         <div className="flex items-center gap-3">

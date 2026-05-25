@@ -9,10 +9,11 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import FilesTableFormat from "@/components/Files/FilesTableView";
-import { fetchFiles, upload } from "@/api/file";
+import { completeUpload, failedUpload, fetchFiles, getSignedURL, uploadOnSignedURL } from "@/api/file";
 import { useEffect, useState } from "react";
 import { PERMISSIONS } from "@/helper/permissions";
 import { usePermissions } from "@/hooks/usePermissions";
+import { toastNotification } from "@/helper/toastNotification";
 
 export default function Files() {
 
@@ -28,9 +29,37 @@ export default function Files() {
   }
 
   const onChangeFile = async (event) => {
-    const file = event.target.files[0];
-    await upload({ file, parentId });
-    getFiles();
+    try {
+      const file = event.target.files?.[0];
+      console.log("Selected file for upload:", file);
+      if (!file) {
+        console.log("No file selected");
+        return;
+      }
+      const payload = {
+        fileName: file.name,
+        contentType: file.type,
+        folderId: parentId ?? undefined,
+        size: file.size,
+      };
+      const getSignedURLResponse = await getSignedURL(payload);
+      const { url, documentId } = getSignedURLResponse.data;
+      const uploadResponse = await uploadOnSignedURL(url, file);
+      if (uploadResponse.status === 200) {
+        const res = await completeUpload(documentId);
+        console.log("Complete upload response :", res);
+      } else {
+        const res = await failedUpload(documentId);
+        console.log("Failed upload response :", res);
+      }
+    } catch (error) {
+      console.log("Error during file upload process:", error?.response);
+      toastNotification(error?.response?.data?.message || "File upload failed. Please try again.", "error");
+      console.error("File upload failed :", error);
+    } finally {
+      getFiles();
+      event.target.value = "";
+    }
   };
 
   const [tableRows, setTableRows] = useState([]);
@@ -40,8 +69,7 @@ export default function Files() {
     try {
       setLoading(true);
       const res = await fetchFiles(parentId);
-      console.log("Files fetched successfully:", res);
-      setTableRows(res.data.docs);
+      setTableRows([...res.data.folder,...res.data.docs]);
     } catch (error) {
       console.error("Error fetching files:", error);
     } finally {
@@ -50,11 +78,11 @@ export default function Files() {
   }
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setTableRows([]);
     getFiles();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [parentId]);
-
-  console.log(tableRows);
 
   const tableColumns = ["Name", "Type", "Size", "Modified", "Owner", "Actions"];
 

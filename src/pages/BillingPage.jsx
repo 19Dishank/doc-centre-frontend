@@ -104,133 +104,118 @@ export default function BillingPage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch">
-          {plans.map((plan, idx) => (
-            <Card
-              key={idx}
-              className={`relative overflow-hidden rounded-3xl border transition-all duration-300 ${plan.isPopular
-                  ? "border-blue-500 shadow-2xl shadow-blue-100 scale-[1.03] bg-linear-to-b from-blue-50/70 to-white"
-                  : "border-zinc-200 bg-white hover:shadow-xl hover:-translate-y-1"
-                }`}
-            >
-              {plan.isPopular && (
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(59,130,246,0.15),transparent_60%)] pointer-events-none" />
-              )}
+        <div className="w-full max-w-5xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch mt-8">
+            {plans.map((plan, idx) => (
+              <Card
+                key={idx}
+                className={`relative overflow-hidden rounded-xl border transition-all duration-300 shadow-sm ${plan.isPopular
+                    ? "border-blue-500 shadow-2xl shadow-blue-100 scale-[1.03] bg-linear-to-b from-blue-50/70 to-white"
+                    : "border-zinc-100 bg-white hover:shadow-xl hover:-translate-y-1"
+                  }`}
+              >
+                {plan.isPopular && (
+                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(59,130,246,0.15),transparent_60%)] pointer-events-none" />
+                )}
 
-              {plan.isPopular && (
-                <div className="absolute top-5 right-5">
-                  <Badge className="bg-blue-600 text-white border-none px-3 py-1 rounded-full shadow">
-                    Most Popular
-                  </Badge>
-                </div>
-              )}
+                {plan.isPopular && (
+                  <div className="absolute top-5 right-5">
+                    <Badge className="bg-blue-600 text-white border-none px-3 py-1 rounded-full shadow">
+                      Most Popular
+                    </Badge>
+                  </div>
+                )}
 
-              <div className="relative z-10 flex flex-col h-full p-5">
-                <CardHeader className="p-0 space-y-5">
-                  <div className="flex items-center gap-4">
-                    <div
-                      className={`size-12 rounded-sm flex items-center justify-center shadow-sm ${plan.isPopular
-                          ? "bg-blue-600 text-white"
-                          : "bg-zinc-100 text-zinc-600"
+                <div className="relative z-10 flex flex-col h-full p-5">
+                  <CardHeader className="p-0 space-y-5">
+                    <div className="flex items-center gap-4">
+                      <div
+                        className={`size-12 rounded-sm flex items-center justify-center shadow-sm ${plan.isPopular
+                            ? "bg-blue-600 text-white"
+                            : "bg-zinc-100 text-zinc-600"
+                          }`}
+                      >
+                        {plan.name === "Enterprise" ? (
+                          <ShieldCheck className="size-5" />
+                        ) : (
+                          <Sparkles className="size-5" />
+                        )}
+                      </div>
+
+                      <div>
+                        <h3 className="text-xl font-semibold">{plan.name}</h3>
+                        <p className="text-sm text-zinc-500 mt-1">{plan.description}</p>
+                      </div>
+                    </div>
+
+                    <div className="pt-2">
+                      <div className="flex items-end gap-1">
+                        <span className="text-5xl font-bold tracking-tight">
+                          {plan.price}
+                        </span>
+                        <span className="text-zinc-500 font-medium mb-2">/month</span>
+                      </div>
+                    </div>
+                  </CardHeader>
+
+                  <CardContent className="mt-5 p-0 flex-1">
+                    <div className="space-y-4">
+                      {plan.features.map((feature, i) => (
+                        <div key={i} className="flex items-start gap-3">
+                          <div
+                            className={`mt-0.5 flex size-5 items-center justify-center rounded-full ${plan.isPopular ? "bg-blue-100" : "bg-emerald-100"
+                              }`}
+                          >
+                            <Check
+                              className={`size-3.5 ${plan.isPopular ? "text-blue-600" : "text-emerald-600"
+                                }`}
+                            />
+                          </div>
+
+                          <span className="text-sm text-zinc-700 leading-relaxed">
+                            {feature}
+                          </span>
+                        </div>
+                      ))}
+
+                      {plan.unavailableFeatures.map((feature, i) => (
+                        <div
+                          key={i}
+                          className="flex items-start gap-3 opacity-45"
+                        >
+                          <div className="mt-0.5 flex size-5 items-center justify-center rounded-full bg-zinc-100">
+                            <X className="size-3.5 text-zinc-400" />
+                          </div>
+
+                          <span className="text-sm line-through text-zinc-500">
+                            {feature}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+
+                  <CardFooter className="border-0 bg-white px-0 mt-6">
+                    <Button
+                      variant={plan.isPopular ? "default" : "outline"}
+                      className={`h-12 w-full rounded-xl text-base font-medium transition-all ${plan.isPopular
+                          ? "bg-blue-600 hover:bg-blue-700 shadow-lg shadow-blue-200"
+                          : "border-zinc-200 hover:bg-zinc-50"
                         }`}
                     >
-                      {plan.name === "Enterprise" ? (
-                        <ShieldCheck className="size-5" />
-                      ) : (
-                        <Sparkles className="size-5" />
-                      )}
-                    </div>
-
-                    <div>
-                      <h3 className="text-xl font-semibold">
-                        {plan.name}
-                      </h3>
-                      <p className="text-sm text-zinc-500 mt-1">
-                        {plan.description}
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Price */}
-                  <div className="pt-2">
-                    <div className="flex items-end gap-1">
-                      <span className="text-5xl font-bold tracking-tight">
-                        {plan.price}
-                      </span>
-                      <span className="text-zinc-500 font-medium mb-2">
-                        /month
-                      </span>
-                    </div>
-                  </div>
-                </CardHeader>
-
-                {/* Features */}
-                <CardContent className="mt-5 p-0 flex-1">
-                  <div className="space-y-4">
-                    {plan.features.map((feature, i) => (
-                      <div
-                        key={i}
-                        className="flex items-start gap-3"
-                      >
-                        <div
-                          className={`mt-0.5 flex size-5 items-center justify-center rounded-full ${plan.isPopular
-                              ? "bg-blue-100"
-                              : "bg-emerald-100"
-                            }`}
-                        >
-                          <Check
-                            className={`size-3.5 ${plan.isPopular
-                                ? "text-blue-600"
-                                : "text-emerald-600"
-                              }`}
-                          />
-                        </div>
-
-                        <span className="text-sm text-zinc-700 leading-relaxed">
-                          {feature}
-                        </span>
-                      </div>
-                    ))}
-
-                    {plan.unavailableFeatures.map((feature, i) => (
-                      <div
-                        key={i}
-                        className="flex items-start gap-3 opacity-45"
-                      >
-                        <div className="mt-0.5 flex size-5 items-center justify-center rounded-full bg-zinc-100">
-                          <X className="size-3.5 text-zinc-400" />
-                        </div>
-
-                        <span className="text-sm line-through text-zinc-500">
-                          {feature}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-
-                {/* Footer */}
-                <CardFooter className="border-0 bg-white px-0">
-                  <Button
-                    variant={plan.isPopular ? "default" : "outline"}
-                    className={`h-12 w-full rounded-xl text-base font-medium transition-all ${plan.isPopular
-                        ? "bg-blue-600 hover:bg-blue-700 shadow-lg shadow-blue-200"
-                        : "border-zinc-200 hover:bg-zinc-50"
-                      }`}
-                  >
-                    {plan.name === "Free"
-                      ? "Get Started"
-                      : plan.name === "Pro"
-                        ? "Upgrade to Pro"
-                        : "Contact Sales"}
-                  </Button>
-                </CardFooter>
-              </div>
-            </Card>
-          ))}
+                      {plan.name === "Free"
+                        ? "Get Started"
+                        : plan.name === "Pro"
+                          ? "Upgrade to Pro"
+                          : "Contact Sales"}
+                    </Button>
+                  </CardFooter>
+                </div>
+              </Card>
+            ))}
+          </div>
         </div>
 
-        {/* FAQ */}
         <div className="rounded-3xl border border-zinc-200 bg-white p-8 shadow-sm">
           <div className="mb-8">
             <h2 className="text-2xl font-bold">

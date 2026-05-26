@@ -11,13 +11,16 @@ import FormField from "../ui/form-field";
 
 const SecurityAndCredentials = () => {
 
-    const [securityData, setSecurityData] = useState({
+    const initialData = {
         currentPassword: "",
         newPassword: "",
         confirmPassword: ""
-    });
+    }
+
+    const [securityData, setSecurityData] = useState(initialData);
 
     const [showPasswordForm, setShowPasswordForm] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     const handleSecurityChange = (e) => {
         const { name, value } = e.target;
@@ -26,9 +29,11 @@ const SecurityAndCredentials = () => {
 
     const handlePasswordSubmit = async (e) => {
         e.preventDefault();
+        setLoading(true);
         try {
             if (securityData.newPassword !== securityData.confirmPassword) {
                 toastNotification("New password and confirmation do not match.", "error");
+                setLoading(false);
                 return;
             }
             const res = await changeUserPassword({
@@ -38,11 +43,14 @@ const SecurityAndCredentials = () => {
             });
             console.log("Password change response:", res);
             setShowPasswordForm(false);
+            setSecurityData(initialData);
+            toastNotification("Password updated successfully", "success");
         } catch (error) {
             console.error("Error changing password:", error);
             toastNotification(error?.response?.data?.message || "Failed to change password. Please try again.", "error");
+        } finally {
+            setLoading(false);
         }
-
     };
 
 
@@ -79,9 +87,9 @@ const SecurityAndCredentials = () => {
                 ) : (
                     <form onSubmit={handlePasswordSubmit} className="space-y-4 pt-4 border-t border-zinc-100">
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <FormField label="Current Password" name="currentPassword" value={securityData.currentPassword} onChange={handleSecurityChange} isPasswordField={true} />
-                            <FormField label="New Password" name="newPassword" value={securityData.newPassword} onChange={handleSecurityChange} isPasswordField={true} />
-                            <FormField label="Confirm Password" name="confirmPassword" value={securityData.confirmPassword} onChange={handleSecurityChange} isPasswordField={true} />
+                            <FormField label="Current Password" name="currentPassword" placeholder="••••••••••••" value={securityData.currentPassword} onChange={handleSecurityChange} isPasswordField={true} />
+                            <FormField label="New Password" name="newPassword" placeholder="••••••••••••" value={securityData.newPassword} onChange={handleSecurityChange} isPasswordField={true} />
+                            <FormField label="Confirm Password" name="confirmPassword" placeholder="••••••••••••" value={securityData.confirmPassword} onChange={handleSecurityChange} isPasswordField={true} />
                         </div>
 
                         <div className="flex flex-col-reverse sm:flex-row justify-end gap-2 pt-2">
@@ -93,8 +101,8 @@ const SecurityAndCredentials = () => {
                             >
                                 Cancel
                             </Button>
-                            <Button type="submit" className="bg-[#2b7fff] text-blue-50 h-9 text-xs w-full sm:w-auto">
-                                Update Password
+                            <Button type="submit" className="bg-[#2b7fff] text-blue-50 h-9 text-xs w-full sm:w-auto" disabled={Object.values(securityData).some((v) => !v) || loading}>
+                                {loading ? "Updating..." : "Update Password"}
                             </Button>
                         </div>
                     </form>

@@ -47,7 +47,6 @@ export const deleteRole = async (roleId) => {
         return response.data;
     } catch (error) {
         console.error("Error deleting role:", error);
-        toastNotification(error?.response?.data?.message || "An error occurred while deleting the role.", "error");
         throw error;
     }
 }

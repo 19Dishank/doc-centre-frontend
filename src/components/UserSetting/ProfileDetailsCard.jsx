@@ -74,7 +74,7 @@ const ProfileDetailsCard = () => {
                             size="sm"
                             className="text-zinc-700 border-zinc-200 h-9 font-medium shadow-sm"
                         >
-                            Change Avatar
+                            Change Profile Picture
                         </Button>
                     </div>
 

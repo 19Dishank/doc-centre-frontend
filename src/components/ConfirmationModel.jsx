@@ -8,12 +8,11 @@ const ConfirmationModal = ({
     subheading, 
     onConfirm, 
     onCancel,
-    type = "info", // "info" | "warning" | "danger" | "success"
+    type = "info", 
     confirmText = "Confirm",
     cancelText = "Cancel"
 }) => {
 
-    // Dynamic configuration based on the theme type
     const typeConfigs = {
         info: {
             icon: <Info className="size-5 text-blue-600" />,
@@ -54,44 +53,48 @@ const ConfirmationModal = ({
     };
 
     return (
-        <div className="bg-zinc-950/40 flex fixed inset-0 justify-center items-center z-100 backdrop-blur">
-            <Card className="shadow-2xl p-6 gap-4 w-120 flex flex-col">
+        <div className="bg-zinc-950/40 flex fixed inset-0 justify-center items-center z-[100] backdrop-blur p-4">
+            <Card className="shadow-2xl p-5 sm:p-6 flex flex-col gap-4 w-full max-w-md sm:max-w-lg overflow-hidden animate-in fade-in zoom-in-95 duration-150">
                 <CardHeader className="p-0 flex flex-row justify-between items-start gap-4">
-                    <div className="flex gap-3 items-start">
-                        {/* Status Icon */}
+                    <div className="flex gap-3 items-start min-w-0">
                         <div className={`p-2 rounded-full ${currentConfig.iconBg} shrink-0`}>
                             {currentConfig.icon}
                         </div>
                         
-                        <div className="flex flex-col gap-1">
-                            <CardTitle className="font-semibold text-lg leading-7">
+                        <div className="flex flex-col gap-1 min-w-0">
+                            <CardTitle className="font-semibold text-base sm:text-lg text-zinc-950 truncate">
                                 {heading}
                             </CardTitle>
-                            <CardDescription className="text-sm leading-5 text-zinc-500">
+                            <CardDescription className="text-xs sm:text-sm leading-relaxed text-zinc-500 break-words">
                                 {subheading}
                             </CardDescription>
                         </div>
                     </div>
 
-                    {/* Top Close Button */}
                     <Button 
                         variant="ghost" 
                         size="icon" 
                         className="size-8 -mr-1 -mt-1 hover:bg-zinc-100 rounded-full shrink-0" 
                         onClick={handleCancel}
                     >
-                        <X className="size-4" />
+                        <X className="size-4 text-zinc-500" />
                     </Button>
                 </CardHeader>
 
-                {/* Optional spacing bridge if your layout relies on CardContent */}
                 <CardContent className="p-0" />
 
-                <CardFooter className="justify-end gap-2 bg-white px-0 pt-2">
-                    <Button variant="outline" onClick={handleCancel}>
+                <CardFooter className="flex justify-end gap-2 bg-white px-0 w-full">
+                    <Button 
+                        variant="outline" 
+                        onClick={handleCancel}
+                        className="text-zinc-700"
+                    >
                         {cancelText}
                     </Button>
-                    <Button className={`font-semibold ${currentConfig.buttonClass}`} onClick={handleConfirm}>
+                    <Button 
+                        className={`font-semibold ${currentConfig.buttonClass}`} 
+                        onClick={handleConfirm}
+                    >
                         {confirmText}
                     </Button>
                 </CardFooter>

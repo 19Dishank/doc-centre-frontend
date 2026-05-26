@@ -11,9 +11,11 @@ export const fetchMe = async () => {
     }
 };
 
-export const getUsers = async () => {
+export const getUsers = async ({ page, limit }) => {
     try {
-        const response = await axiosInstance.get("/users");
+        const response = await axiosInstance.get("/users", {
+            params: { page, limit }
+        });
         return response.data;
     } catch (error) {
         console.error("Error fetching users:", error);
@@ -38,6 +40,16 @@ export const updateUserRole = async (userId, roleId) => {
         return response.data;
     } catch (error) {
         console.error("Error updating user:", error);
+        throw error;
+    }
+}
+
+export const deleteUser = async (userId) => {
+    try {
+        const response = await axiosInstance.delete(`/users/${userId}`);
+        return response.data;
+    } catch (error) {
+        console.error("Error deleting user:", error);
         throw error;
     }
 }

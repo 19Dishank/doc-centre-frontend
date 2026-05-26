@@ -33,7 +33,7 @@ const Role = ({ currentRoleId, handleRoleChange, role, getAvailableRoles }) => {
             toastNotification("Role permanently deleted.", "success");
         } catch (error) {
             console.error(error);
-            toastNotification("Could not delete role.", "error");
+            toastNotification(error?.response?.data?.message || "Could not delete role.", "error");
         } finally {
             setShowModel(false);
         }

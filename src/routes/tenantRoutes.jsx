@@ -58,6 +58,7 @@ export const protectedRoutes = [
     {
         path: "/roles",
         element: <Roles />,
+        // element: <RolesTableView />,
         isRouteAccessible: PERMISSIONS.VIEW_ROLE,
     },
     {

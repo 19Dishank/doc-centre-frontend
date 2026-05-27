@@ -71,7 +71,7 @@ const SetPasswordForm = ({ isOnboardingFlow, token }) => {
             isOnboardingFlow
                 ? await completeOnboarding({ ...setPasswordData, token })
                 : await setPassword({ ...setPasswordData, token });
-            navigate("/login");
+            navigate("/onboarding/success", { state: { heading: "Password Set", subheading: "Your password has been set successfully. You can now use your new credentials to sign in.", fallbackLink: "/login" } });
         } catch (error) {
             console.error(error);
         }

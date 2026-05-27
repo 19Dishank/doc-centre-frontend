@@ -4,6 +4,7 @@ const HomePage = lazy(() => import("@/pages/HomePage"));
 const LoginPage = lazy(() => import("@/pages/LoginPage"));
 const OnBoardingPage = lazy(() => import("@/pages/OnBoardingPage"));
 const UserInvite = lazy(() => import("@/pages/UserInvite"));
+const SuccessPage = lazy(() => import("@/pages/SuccessPage"));
 
 export const platformRoutes = [
     {
@@ -21,6 +22,10 @@ export const platformRoutes = [
     {
         path: "/onboarding/activate",
         element: <OnBoardingPage />,
+    },
+    {
+        path: "/onboarding/success",
+        element: <SuccessPage />,
     },
     {
         path: "/users/invite",

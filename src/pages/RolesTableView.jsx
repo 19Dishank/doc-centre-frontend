@@ -57,12 +57,10 @@ export default function Roles() {
         let updatedPermissions = [...(role.permissions || [])];
 
         if (checked) {
-          // Add selected permission
           if (!updatedPermissions.includes(permissionId)) {
             updatedPermissions.push(permissionId);
           }
 
-          // Auto add View permission
           if (!name.startsWith("View")) {
             const viewPermissionId = permissionsCatalog
               .find((cat) => cat.module === module)
@@ -78,12 +76,10 @@ export default function Roles() {
             }
           }
         } else {
-          // Remove permission
           updatedPermissions = updatedPermissions.filter(
             (perm) => perm !== permissionId
           );
 
-          // Remove related permissions if View is unchecked
           if (name.startsWith("View")) {
             const relatedPermissions =
               permissionsCatalog
@@ -172,7 +168,7 @@ export default function Roles() {
         <Card className="p-0 border-zinc-200">
           <div className="overflow-x-auto w-full">
             <Table className="min-w-175 lg:min-w-full">
-              <TableHeader className="bg-zinc-50">
+              <TableHeader className="bg-zinc-100">
                 <TableRow>
                   <TableHead className="uppercase text-[11px] tracking-wide font-bold">
                     Permissions
@@ -195,11 +191,10 @@ export default function Roles() {
                 ) : (
                   permissionsCatalog.map((category) => (
                     <>
-                      {/* Module Header */}
                       <TableRow key={category.module}>
                         <TableCell
                           colSpan={availableRoles.length + 1}
-                          className="bg-zinc-100 font-bold text-sm text-zinc-700"
+                          className="bg-zinc-50 font-bold text-sm text-zinc-700"
                         >
                           {category.module}
                         </TableCell>

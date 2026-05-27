@@ -80,7 +80,6 @@ const DocumentPreview = ({ setIsOpen, item }) => {
         <div className="bg-zinc-950/40 flex fixed inset-0 justify-center items-center z-100 backdrop-blur">
             <div className="rounded-xl border border-border bg-card text-card-foreground overflow-hidden shadow-sm w-full max-w-3xl mx-4">
 
-                {/* Header Section */}
                 <div className="flex items-center justify-between px-4 py-2.5 border-b border-border bg-muted/60 gap-3 flex-wrap">
                     <div className="flex items-center gap-2 min-w-0">
                         {getRegistryIcon(item)}
@@ -102,7 +101,9 @@ const DocumentPreview = ({ setIsOpen, item }) => {
                         <Loader2 className="size-10 animate-spin" />
                     </div>
                 ) : (
-                    getRenderer()
+                    <div className="p-4 min-h-[70vh] flex items-center justify-center">
+                        {getRenderer()}
+                    </div>
                 )}
 
                 <div className="px-4 py-2 flex items-center justify-between border-t border-border bg-muted/60">

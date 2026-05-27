@@ -1,4 +1,4 @@
-import { ChevronDown, Plus, Search, Filter } from "lucide-react";
+import { Plus, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -21,18 +21,25 @@ import { usePermissions } from "@/hooks/usePermissions";
 
 import UserDetails from "@/components/Users/User";
 import UserModal from "@/components/Users/UserModal";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { fetchRoles } from "@/api/role";
 
 export default function UsersList() {
   const { permissionCheck } = usePermissions();
 
   const [isOpen, setIsOpen] = useState(false);
 
+  const [roles, setRoles] = useState([]);
   const [usersData, setUsersData] = useState([]);
   const [loading, setLoading] = useState(false);
-
   const [paginationData, setPaginationData] = useState(null);
-
   const [currentPage, setCurrentPage] = useState(1);
+
+  const [filters, setFilters] = useState({
+    q: "",
+    sort: "",
+    type: ""
+  });
 
   const {
     totalItems,
@@ -42,13 +49,14 @@ export default function UsersList() {
     hasPreviousPage
   } = paginationData || {};
 
-  const fetchUsers = async (page = 1) => {
+  const fetchUsers = async (page = 1, filters = {}) => {
     setLoading(true);
 
     try {
       const res = await getUsers({
         page,
-        limit: 1
+        limit: 1,
+        ...filters
       });
 
       setUsersData(res.data.users);
@@ -61,13 +69,29 @@ export default function UsersList() {
   };
 
   useEffect(() => {
+    const debounceTimeout = setTimeout(() => {
+      fetchUsers(currentPage, filters);
+    }, 500);
+    return () => clearTimeout(debounceTimeout);
+  }, [currentPage, filters]);
+
+  const getRoles = async () => {
+    try {
+      const res = await fetchRoles();
+      setRoles(res.data.roles || []);
+    } catch (error) {
+      console.error("Error fetching roles:", error);
+    }
+  };
+
+  useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    fetchUsers(currentPage);
-  }, [currentPage]);
+    getRoles();
+  }, []);
+
 
   return (
-    <div className="flex flex-col gap-6">
-      {/* Header */}
+    <div className="h-full flex flex-col gap-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex flex-col gap-1">
           <h1 className="font-semibold text-2xl leading-8">Users</h1>
@@ -88,40 +112,52 @@ export default function UsersList() {
         )}
       </div>
 
-      {/* Filters */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div className="relative w-full">
           <Search className="size-4 top-1/2 -translate-y-1/2 text-[#71717b] absolute left-3" />
 
           <Input
+            value={filters.q}
+            onChange={(e) => setFilters((prev) => ({ ...prev, q: e.target.value }))}
             placeholder="Search users…"
             className="bg-white pl-9 w-full"
           />
         </div>
 
         <div className="flex items-center gap-2 w-full md:w-auto pb-2 md:pb-0">
-          <Button
-            variant="outline"
-            size="sm"
-            className="gap-2 shrink-0"
-          >
-            <Filter className="size-3" />
-            Role
-            <ChevronDown className="size-4" />
-          </Button>
-
-          <Button
-            variant="outline"
-            size="sm"
-            className="gap-2 shrink-0"
-          >
-            Status
-            <ChevronDown className="size-4" />
-          </Button>
+          <Select name="type" value={filters.type} onValueChange={(value) => setFilters((prev) => ({ ...prev, type: value }))}>
+            <SelectTrigger id="type-select" className="w-full h-10 bg-white text-zinc-900">
+              <SelectValue placeholder="Role" />
+            </SelectTrigger>
+            <SelectContent position="popper" className="z-1000">
+              <SelectGroup>
+                <SelectLabel>Select Role</SelectLabel>
+                {roles.map((role) => (
+                  <SelectItem key={role._id} value={role._id}>
+                    {role.name}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+          <Select name="sort" value={filters.sort} onValueChange={(value) => setFilters((prev) => ({ ...prev, sort: value }))}>
+            <SelectTrigger id="sort-select" className="w-full h-10 bg-white text-zinc-900">
+              <SelectValue placeholder="Sort By" />
+            </SelectTrigger>
+            <SelectContent position="popper" className="z-1000">
+              <SelectGroup>
+                <SelectLabel>Select Option</SelectLabel>
+                {/* {sortOptions.map((option) => (
+                  <SelectItem key={option.value} value={option.value}>
+                    {option.label}
+                  </SelectItem>
+                ))} */}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
         </div>
       </div>
 
-      {/* Table */}
       <Card className="p-0 border-zinc-200">
         <div className="overflow-x-auto w-full">
           <Table className="min-w-175 lg:min-w-full">
@@ -165,6 +201,7 @@ export default function UsersList() {
                     key={user._id}
                     user={user}
                     fetchUsers={() => fetchUsers(currentPage)}
+                    roles={roles}
                   />
                 ))
               ) : (
@@ -182,22 +219,23 @@ export default function UsersList() {
         </div>
       </Card>
 
-      {/* Pagination */}
-      <PaginationBar
-        totalPages={totalPages || 0}
-        currentPage={currentPage}
-        setCurrentPage={setCurrentPage}
-        hasNextPage={hasNextPage}
-        hasPreviousPage={hasPreviousPage}
-        totalItems={totalItems}
-        limit={limit}
-      />
+      <div className="mt-auto">
+        <PaginationBar
+          totalPages={totalPages || 0}
+          currentPage={currentPage}
+          setCurrentPage={setCurrentPage}
+          hasNextPage={hasNextPage}
+          hasPreviousPage={hasPreviousPage}
+          totalItems={totalItems}
+          limit={limit}
+        />
+      </div>
 
-      {/* Modal */}
       {isOpen && (
         <UserModal
           setIsOpen={setIsOpen}
           fetchUsers={() => fetchUsers(currentPage)}
+          roles={roles}
         />
       )}
     </div>

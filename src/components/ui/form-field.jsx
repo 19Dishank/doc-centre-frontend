@@ -3,7 +3,7 @@ import { Input } from "./input";
 import { Label } from "./label";
 import { Eye, EyeOff } from "lucide-react";
 
-const FormField = ({ label, name, value, onChange, placeholder, error, isPasswordField = false, disabled }) => {
+const FormField = ({ label, name, value, onChange, placeholder, error, isPasswordField = false, disabled, type = "text", min, max }) => {
 
     const [showPassword, setShowPassword] = useState(false);
 
@@ -26,9 +26,11 @@ const FormField = ({ label, name, value, onChange, placeholder, error, isPasswor
                     value={value}
                     id={name}
                     placeholder={placeholder}
-                    className={`rounded-lg border border-zinc-200 border-solid h-10 disabled:bg-zinc-50 disabled:cursor-not-allowed  outline-none transition-all w-full pr-10 ${error ? "border-red-500 focus:border-red-500! focus:ring-red-100!" : "border-zinc-200 focus:border-[#2b7fff] focus:ring-blue-100"}`}
-                    type={isPasswordField && !showPassword ? "password" : "text"}
+                    className={`rounded-lg border border-zinc-200 border-solid h-10 disabled:bg-zinc-50 disabled:cursor-not-allowed  outline-none transition-all w-full ${isPasswordField ? "pr-10" : ""} ${error ? "border-red-500 focus:border-red-500! focus:ring-red-100!" : "border-zinc-200 focus:border-[#2b7fff] focus:ring-blue-100"}`}
+                    type={isPasswordField && !showPassword ? "password" : type}
                     disabled={disabled}
+                    min={min}
+                    max={max}
                 />
                 {isPasswordField && (
                     <button

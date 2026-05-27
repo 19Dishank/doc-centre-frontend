@@ -11,11 +11,9 @@ export const fetchMe = async () => {
     }
 };
 
-export const getUsers = async ({ page, limit }) => {
+export const getUsers = async (params) => {
     try {
-        const response = await axiosInstance.get("/users", {
-            params: { page, limit }
-        });
+        const response = await axiosInstance.get("/users", { params });
         return response.data;
     } catch (error) {
         console.error("Error fetching users:", error);

@@ -5,13 +5,12 @@ import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { Textarea } from "../ui/textarea";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { emailRegex } from "@/constants";
 import { toastNotification } from "@/helper/toastNotification";
 import { inviteUser, updateUserRole } from "@/api/user";
-import { fetchRoles } from "@/api/role";
 
-const UserModal = ({ setIsOpen, user, fetchUsers }) => {
+const UserModal = ({ setIsOpen, user, fetchUsers, roles }) => {
     const [formData, setFormData] = useState({
         email: user?.email || "",
         role: user?.role?._id || "",
@@ -19,7 +18,7 @@ const UserModal = ({ setIsOpen, user, fetchUsers }) => {
     });
 
     const [errors, setErrors] = useState({ email: "", role: "", message: "" });
-    const [roles, setRoles] = useState([]);
+  
     const [loading, setLoading] = useState(false);
 
     const validateField = (name, value) => {
@@ -66,31 +65,15 @@ const UserModal = ({ setIsOpen, user, fetchUsers }) => {
             fetchUsers();
         } catch (error) {
             console.error(`Error ${user ? "updating" : "inviting"} user:`, error);
-            toastNotification(error?.message || error?.response?.data?.message || "An error occurred. Please try again.", "error");
+            toastNotification(error?.response?.data?.message || "An error occurred. Please try again.", "error");
         } finally {
             setLoading(false);
         }
     };
 
-    const gethRoles = async () => {
-        try {
-            const res = await fetchRoles();
-            setRoles(res.data.roles || []);
-        } catch (error) {
-            console.error("Error fetching roles:", error);
-        }
-    };
-
-    useEffect(() => {
-        // eslint-disable-next-line react-hooks/set-state-in-effect
-        gethRoles();
-    }, []);
-
     return (
-        /* Added padding overlay 'p-4' so that the modal card never touches screen limits tightly on small displays */
-        <div className="bg-zinc-950/40 flex fixed inset-0 justify-center items-center z-[100] backdrop-blur p-4">
+        <div className="bg-zinc-950/40 flex fixed inset-0 justify-center items-center z-100 backdrop-blur p-4">
             
-            {/* CHANGED: Replaced 'w-120' with fluid 'w-full max-w-md' to stay perfectly responsive */}
             <Card className="shadow-2xl p-5 sm:p-6 flex flex-col gap-5 w-full max-w-md overflow-hidden animate-in fade-in zoom-in-95 duration-150">
                 <CardHeader className="p-0 flex flex-row justify-between items-start gap-4 pb-3 border-b border-zinc-100">
                     <div className="flex flex-col gap-1 min-w-0">
@@ -112,7 +95,6 @@ const UserModal = ({ setIsOpen, user, fetchUsers }) => {
                 </CardHeader>
 
                 <CardContent className="flex p-0 flex-col gap-4">
-                    {/* Email Input Field */}
                     <div className="flex flex-col gap-1.5">
                         <Label htmlFor="email" className="font-medium text-sm text-zinc-800 flex items-center gap-1">
                             Email address <span className="text-red-500 font-bold">*</span>
@@ -129,14 +111,13 @@ const UserModal = ({ setIsOpen, user, fetchUsers }) => {
                         {errors.email && <p className="text-red-500 text-xs mt-0.5 font-medium">*{errors.email}</p>}
                     </div>
 
-                    {/* Role Dropdown Selector */}
                     <div className="flex flex-col gap-1.5">
                         <Label htmlFor="role-select" className="font-medium text-sm text-zinc-800">Role</Label>
                         <Select name="role" value={formData.role} onValueChange={(value) => setFormData((prev) => ({ ...prev, role: value }))}>
                             <SelectTrigger id="role-select" className="w-full h-10 bg-white text-zinc-900">
                                 <SelectValue placeholder="Select a role" />
                             </SelectTrigger>
-                            <SelectContent position="popper" className="z-[1000]">
+                            <SelectContent position="popper" className="z-1000">
                                 <SelectGroup>
                                     <SelectLabel>Select Role</SelectLabel>
                                     {roles.map((role) => (
@@ -147,7 +128,6 @@ const UserModal = ({ setIsOpen, user, fetchUsers }) => {
                         </Select>
                     </div>
 
-                    {/* Message Area */}
                     {!user && (
                         <div className="flex flex-col gap-1.5">
                             <Label htmlFor="message" className="font-medium text-sm text-zinc-800 flex items-center gap-1">
@@ -166,13 +146,12 @@ const UserModal = ({ setIsOpen, user, fetchUsers }) => {
                     )}
                 </CardContent>
 
-                {/* Footer Buttons: Stacks on mobile viewports for easier thumb usage */}
                 <CardFooter className="flex gap-2 justify-end bg-white px-0 w-full">
                     <Button variant="outline" onClick={() => setIsOpen(false)} className=" text-zinc-700">
                         Cancel
                     </Button>
                     <Button 
-                        className="font-semibold bg-[#2b7fff] text-blue-50 shadow-sm" 
+                        className="cursor-pointer font-semibold bg-[#2b7fff] text-blue-50 shadow-sm" 
                         onClick={handleSubmit} 
                         disabled={loading}
                     >

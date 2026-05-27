@@ -16,13 +16,13 @@ const PaginationBar = ({
 }) => {
 
     const handlePreviousPage = () => {
-        if (currentPage > 1) {
+        if (hasPreviousPage) {
             setCurrentPage(currentPage - 1);
         }
     };
 
     const handleNextPage = () => {
-        if (currentPage < totalPages) {
+        if (hasNextPage) {
             setCurrentPage(currentPage + 1);
         }
     };
@@ -30,22 +30,36 @@ const PaginationBar = ({
     const displayPageNumbers = () => {
         const pageNumbers = [];
 
-        if(totalPages <= 5) {
-            for(let i = 1; i <= totalPages; i++) {
+        if (totalPages <= 5) {
+            for (let i = 1; i <= totalPages; i++) {
                 pageNumbers.push(i);
             }
         } else {
-            if(currentPage <= 3) {
-                pageNumbers.push(1, 2, 3, '...', totalPages);
-            } else if(currentPage >= totalPages - 2) {
-                pageNumbers.push(1, '...', totalPages - 2, totalPages - 1, totalPages);
+            if (currentPage <= 3) {
+                pageNumbers.push(1, 2, 3, "...", totalPages);
+            } else if (currentPage >= totalPages - 2) {
+                pageNumbers.push(
+                    1,
+                    "...",
+                    totalPages - 2,
+                    totalPages - 1,
+                    totalPages
+                );
             } else {
-                pageNumbers.push(1, '...', currentPage - 1, currentPage, currentPage + 1, '...', totalPages);
+                pageNumbers.push(
+                    1,
+                    "...",
+                    currentPage - 1,
+                    currentPage,
+                    currentPage + 1,
+                    "...",
+                    totalPages
+                );
             }
         }
 
         return pageNumbers;
-    }
+    };
 
     return (
         <div className="flex justify-between items-center">
@@ -53,26 +67,44 @@ const PaginationBar = ({
                 <PaginationContent>
 
                     <PaginationItem>
-                        <PaginationPrevious disabled={!hasPreviousPage} onClick={handlePreviousPage} />
+                        <PaginationPrevious
+                            onClick={handlePreviousPage}
+                            className={
+                                !hasPreviousPage
+                                    ? "pointer-events-none opacity-50"
+                                    : "cursor-pointer"
+                            }
+                        />
                     </PaginationItem>
 
                     {displayPageNumbers().map((page, index) => (
                         <PaginationItem key={index}>
                             <PaginationLink
-                                onClick={() => setCurrentPage(page)}
+                                onClick={() => {
+                                    if (page !== "...") {
+                                        setCurrentPage(page);
+                                    }
+                                }}
                                 className={
                                     currentPage === page
                                         ? "bg-zinc-200/80"
                                         : ""
                                 }
                             >
-                                {index + 1}
+                                {page}
                             </PaginationLink>
                         </PaginationItem>
                     ))}
 
                     <PaginationItem>
-                        <PaginationNext disabled={!hasNextPage} onClick={handleNextPage} />
+                        <PaginationNext
+                            onClick={handleNextPage}
+                            className={
+                                !hasNextPage
+                                    ? "pointer-events-none opacity-50"
+                                    : "cursor-pointer"
+                            }
+                        />
                     </PaginationItem>
 
                 </PaginationContent>

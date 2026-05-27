@@ -19,6 +19,7 @@ const PasswordInput = () => {
 
     const [resetPasswordData, setResetPasswordData] = useState(initialData);
     const [errors, setErrors] = useState(initialData);
+    const [loading, setLoading] = useState(false);
 
     const validateField = (name, value) => {
 
@@ -75,11 +76,14 @@ const PasswordInput = () => {
 
         if (!isValid) return;
 
+        setLoading(true);
         try {
             await resetPassword({ ...resetPasswordData, email, token });
-            navigate("/forgot-password/success");
+            navigate("/forgot-password/success", { state: { heading: "Password Reset Successful", subheading: "Your password has been reset successfully. You can now use your new credentials to sign in.", fallbackLink: "/login" } });
         } catch (error) {
             console.error(error);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -87,7 +91,7 @@ const PasswordInput = () => {
 
     return (
         <div className="bg-white flex p-12 flex-col justify-center items-center flex-1">
-            <div className="max-w-xl flex flex-col gap-8 w-full">
+            <div className="max-w-lg flex flex-col gap-8 w-full">
 
                 <div className="flex flex-col gap-2">
                     <h1
@@ -107,8 +111,8 @@ const PasswordInput = () => {
                     <FormField label="Confirm Password" name="confirmPassword" value={resetPasswordData.confirmPassword} onChange={handleChange} placeholder="Confirm your password" error={errors.confirmPassword} isPasswordField={true} />
                 </div>
 
-                <Button onClick={handleSubmit} className=" cursor-pointer font-semibold rounded-lg bg-[#2b7fff] text-blue-50 w-full" style={{ height: "44px" }}>
-                    Set Password
+                <Button onClick={handleSubmit} disabled={loading} className=" cursor-pointer font-semibold rounded-lg bg-[#2b7fff] text-blue-50 w-full" style={{ height: "44px" }}>
+                    {loading ? "Setting Password..." : "Set Password"}
                 </Button>
             </div>
         </div>

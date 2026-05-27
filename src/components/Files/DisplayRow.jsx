@@ -1,4 +1,4 @@
-import { Download, Eye, Pencil, Trash2, User } from "lucide-react";
+import { Download, Pencil, Share2, Trash2, User } from "lucide-react";
 import { Button } from "../ui/button";
 import { TableCell, TableRow } from "../ui/table";
 import { formatSize } from "@/helper/formatSize";
@@ -11,13 +11,15 @@ import { useState } from "react";
 import { Input } from "../ui/input";
 import { getRegistryIcon } from "@/helper/getRegistryIcon";
 import DocumentPreview from "./DocumentPreview";
+import ShareDocumentModal from "./ShareDocumentModal";
 
 const DisplayRow = ({ item, setParentId, setNavigationBar, getFiles }) => {
-
+    
     const { permissionCheck } = usePermissions();
     const [isOpen, setIsOpen] = useState(false);
     const [renameMode, setRenameMode] = useState(false);
     const [previewDocument, setPreviewDocument] = useState(null);
+    const [shareDocument, setShareDocument] = useState(null);
 
     const isFolder = !item.originalFileName;
     const parts = item?.originalFileName?.split(".");
@@ -28,8 +30,8 @@ const DisplayRow = ({ item, setParentId, setNavigationBar, getFiles }) => {
     const [name, setName] = useState(displayName);
 
     const ownerName = isFolder
-        ? item.createdBy?.firstName + " " + item.createdBy?.lastName
-        : item.uploadedBy?.firstName + " " + item.uploadedBy?.lastName
+        ? `${item.createdBy?.firstName} ${item.createdBy?.lastName}`
+        : `${item.uploadedBy?.firstName} ${item.uploadedBy?.lastName}`;
 
     const ownerEmailId = isFolder ? item.createdBy?.email : item.uploadedBy?.email;
 
@@ -101,11 +103,11 @@ const DisplayRow = ({ item, setParentId, setNavigationBar, getFiles }) => {
                 </TableCell>
 
                 <TableCell className="text-[#71717b] text-sm whitespace-nowrap">
-                    {item.updatedAt ? new Date(item.updatedAt).toLocaleDateString() : "—"}
+                    {item.createdAt ? new Date(item.createdAt).toLocaleDateString() : "—"}
                 </TableCell>
 
                 <TableCell className="text-[#71717b] text-sm truncate flex items-center gap-2 py-2.5">
-                    {(ownerName)
+                    {(!ownerName.includes("undefined"))
                         ? (<img
                             className="size-7 rounded-full"
                             src={`https://ui-avatars.com/api/?name=${ownerName}&background=random`}
@@ -113,19 +115,19 @@ const DisplayRow = ({ item, setParentId, setNavigationBar, getFiles }) => {
                         />)
                         : <User className="size-6 p-1.5 rounded-full bg-[#2b7fff] text-white text-xs" />
                     }
-                    {ownerName || ownerEmailId || "Unknown"}
+                    <span className="max-w-40 truncate">{ownerName.includes("undefined") ? ownerEmailId : ownerName}</span>
                 </TableCell>
 
                 <TableCell className="text-right pr-4">
                     <div className="flex justify-end items-center gap-0.5">
                         {permissionCheck(PERMISSIONS.SHARE_DOCUMENT) && !isFolder && (
                             <Button
-                                onClick={() => setPreviewDocument(true)}
+                                onClick={() => setShareDocument(item._id)}
                                 variant="ghost"
                                 size="icon"
                                 className="size-8 hidden sm:inline-flex cursor-pointer"
                             >
-                                <Eye className="size-3.5 text-[#71717b]" />
+                                <Share2 className="size-3.5 text-[#71717b]" />
                             </Button>
                         )}
 
@@ -171,8 +173,12 @@ const DisplayRow = ({ item, setParentId, setNavigationBar, getFiles }) => {
             )}
 
 
-            {previewDocument && (
+            {previewDocument && item?.mimeType && (
                 <DocumentPreview setIsOpen={setPreviewDocument} url={previewDocument} type={displayExtension} item={item} />
+            )}
+
+            {shareDocument && (
+                <ShareDocumentModal documentId={shareDocument} setIsOpen={setShareDocument} />
             )}
         </>
     );

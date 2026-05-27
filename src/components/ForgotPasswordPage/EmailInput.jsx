@@ -57,7 +57,7 @@ const EmailInput = () => {
         >
             <form onSubmit={handleSubmit} className="flex flex-col gap-4">
                 <FormField label="Email Address" name="email" value={email} onChange={handleChange} placeholder="you@company.com" error={error} />
-                <Button type="submit" disabled={loading} className={`cursor-pointer font-semibold rounded-lg bg-[#2b7fff] text-blue-50 mt-2 w-full h-11 ${loading ? "opacity-70" : "hover:bg-[#2b7fff]/90"}`}>
+                <Button type="submit" disabled={loading || !email} className={`cursor-pointer font-semibold rounded-lg bg-[#2b7fff] text-blue-50 mt-2 w-full h-11 ${loading ? "opacity-70" : "hover:bg-[#2b7fff]/90"}`}>
                     {loading
                         ? <span>Sending...</span>
                         : (<><span>Send OTP</span> <ArrowRight className="size-4 ml-1" /></>)

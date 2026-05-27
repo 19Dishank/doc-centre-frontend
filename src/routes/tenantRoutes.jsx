@@ -5,6 +5,7 @@ const Dashboard = lazy(() => import("@/pages/Dashboard"));
 const Files = lazy(() => import("@/pages/Files"));
 const UsersList = lazy(() => import("@/pages/Users"));
 const Roles = lazy(() => import("@/pages/Roles"));
+// const Roles = lazy(() => import("@/pages/RolesTableView"));
 const BillingPage = lazy(() => import("@/pages/BillingPage"));
 const Organization = lazy(() => import("@/pages/Organization"));
 const ApiAccess = lazy(() => import("@/pages/ApiAccess"));
@@ -14,7 +15,7 @@ const LoginPage = lazy(() => import("@/pages/LoginPage"));
 const EmailInput = lazy(() => import("@/components/ForgotPasswordPage/EmailInput"));
 const OTPInput = lazy(() => import("@/components/ForgotPasswordPage/OTPInput"));
 const PasswordInput = lazy(() => import("@/components/ForgotPasswordPage/PasswordInput"));
-const PasswordResetSuccessPage = lazy(() => import("@/components/ForgotPasswordPage/SuccessPage"));
+const SuccessPage = lazy(() => import("@/pages/SuccessPage"));
 const UserSettings = lazy(() => import("@/pages/UserSettings"));
 
 export const publicRoutes = [
@@ -36,7 +37,7 @@ export const publicRoutes = [
     },
     {
         path: "/forgot-password/success",
-        element: <PasswordResetSuccessPage />
+        element: <SuccessPage />
     }
 ]
 

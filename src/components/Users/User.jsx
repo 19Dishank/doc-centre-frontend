@@ -12,7 +12,7 @@ import ConfirmationModal from "../ConfirmationModel"
 import { toastNotification } from "@/helper/toastNotification"
 import { deleteUser } from "@/api/user"
 
-const UserDetails = ({ user : currentUser, fetchUsers }) => {
+const UserDetails = ({ user : currentUser, fetchUsers, roles }) => {
 
     const { permissionCheck } = usePermissions();
     const { user: { _id: userId } } = useAuthContext();
@@ -84,10 +84,10 @@ const UserDetails = ({ user : currentUser, fetchUsers }) => {
                 </TableCell>
 
                 <TableCell>
-                    {currentUser._id !== userId && (
+                    {(currentUser._id !== userId && currentUser?.role?.name !== "Admin") && (
                         <div className="flex justify-end items-center gap-1">
                             {permissionCheck(PERMISSIONS.UPDATE_USER) && (
-                                <Button onClick={() => setIsEditing(true)} variant="ghost" size="icon" className="size-8">
+                                <Button onClick={() => setIsEditing(true)} variant="ghost" size="icon" className="size-8 cursor-pointer">
                                     <Pencil className="size-4 text-zinc-500" />
                                 </Button>
                             )}
@@ -96,7 +96,7 @@ const UserDetails = ({ user : currentUser, fetchUsers }) => {
                                     onClick={() => setIsDeleting(true)}
                                     variant="ghost"
                                     size="icon"
-                                    className="size-8 text-red-500 hover:text-red-600 hover:bg-red-50"
+                                    className="size-8 cursor-pointer text-red-500 hover:text-red-600 hover:bg-red-50"
                                 >
                                     <Trash2 className="size-4" />
                                 </Button>
@@ -108,7 +108,7 @@ const UserDetails = ({ user : currentUser, fetchUsers }) => {
 
 
             {isEditing && (
-                <UserModal setIsOpen={setIsEditing} user={currentUser} fetchUsers={fetchUsers} />
+                <UserModal setIsOpen={setIsEditing} user={currentUser} fetchUsers={fetchUsers} roles={roles} />
             )}
 
             {isDeleting && (

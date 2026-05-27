@@ -82,11 +82,11 @@ export const upload = async (payload) => {
     }
 };
 
-export const fetchFiles = async (parentId) => {
+export const fetchFiles = async (parentId, filters) => {
     try {
         const response = parentId
-            ? await axiosInstance.get(`/docs?parentId=${parentId}`)
-            : await axiosInstance.get("/docs");
+            ? await axiosInstance.get(`/docs`, { params: { parentId, ...filters } })
+            : await axiosInstance.get(`/docs`, { params: { ...filters } });
         return response.data;
     } catch (error) {
         console.error("Error fetching files:", error);
@@ -153,3 +153,18 @@ export const downloadFile = async (id) => {
         throw error;
     }
 }
+
+export const createShareLink = async (id, payload) => {
+    try {
+        const response = await axiosInstance.post(`/docs/${id}/share`, payload);
+        return response.data;
+    } catch (error) {
+        console.error("Error creating share link:", error);
+        throw error;
+    }
+    // return {
+    //     data: {
+    //         link: "https://example.com/share-link"
+    //     }
+    // }
+};

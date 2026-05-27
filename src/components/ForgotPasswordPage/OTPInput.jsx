@@ -151,7 +151,7 @@ const OTPInput = () => {
                 <button
                     onClick={handleSubmit}
                     disabled={isVerifying || otp.some(v => v === "") || timeLeft <= 0}
-                    className="w-full py-3 px-4 bg-[#2b7fff] text-white font-semibold rounded-lg hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all mb-4"
+                    className="w-full cursor-pointer py-3 px-4 bg-[#2b7fff] text-white font-semibold rounded-lg hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all mb-4"
                 >
                     {isVerifying ? "Verifying..." : "Verify OTP"}
                 </button>

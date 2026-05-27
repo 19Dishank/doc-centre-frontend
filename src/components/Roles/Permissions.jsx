@@ -7,12 +7,14 @@ import { updateRolePermissions } from "@/api/role";
 import { toastNotification } from "@/helper/toastNotification";
 import { PERMISSIONS } from "@/helper/permissions";
 import { usePermissions } from "@/hooks/usePermissions";
+import { useAuthContext } from "@/contexts/AuthContext";
 
 const Permissions = ({ currentRoleId, currentRole, getAvailableRoles, onCancel }) => {
     const { permissionsCatalog = [] } = usePermissionsCatalog();
     const [permissions, setPermissions] = useState([]);
     const [isSaving, setIsSaving] = useState(false);
     const { permissionCheck } = usePermissions();
+    const { user } = useAuthContext();
 
     useEffect(() => {
         // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -82,7 +84,7 @@ const Permissions = ({ currentRoleId, currentRole, getAvailableRoles, onCancel }
     return (
         <>
             {!currentRoleId ? (
-                <div className="w-full h-full min-h-[350px] flex flex-col justify-center items-center text-center p-6 border-2 border-dashed border-zinc-200 overflow-hidden rounded-xl bg-white">
+                <div className="w-full h-full min-h-87.5 flex flex-col justify-center items-center text-center p-6 border-2 border-dashed border-zinc-200 overflow-hidden rounded-xl bg-white">
                     <div className="flex items-center justify-center size-12 rounded-2xl bg-amber-50 text-amber-700 mb-4 shadow-sm shrink-0">
                         <ShieldAlert className="size-6 stroke-2" />
                     </div>
@@ -92,9 +94,8 @@ const Permissions = ({ currentRoleId, currentRole, getAvailableRoles, onCancel }
                     </p>
                 </div>
             ) : (
-                <div className="w-full flex flex-col border border-zinc-200 bg-white shadow-sm overflow-hidden rounded-xl min-h-0 h-full">
-                    
-                    {/* Header: Changes flow automatically on smaller screens */}
+                <div className="w-full flex flex-col border border-zinc-200 bg-white shadow-sm overflow-hidden rounded-xl min-h-0 h-full mb-10">
+
                     <div className="px-4 py-4 sm:px-5 flex border-b border-zinc-200 shrink-0">
                         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 w-full min-w-0">
                             <div className="flex gap-3 items-center min-w-0">
@@ -115,8 +116,7 @@ const Permissions = ({ currentRoleId, currentRole, getAvailableRoles, onCancel }
                             </span>
                         </div>
                     </div>
-
-                    {/* Permissions Multi-Grid Section */}
+                
                     <div className="flex-1 overflow-y-auto p-4 sm:p-5 custom-scrollbar min-h-0 bg-zinc-50/30">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             {permissionsCatalog.map((category) => (
@@ -146,7 +146,8 @@ const Permissions = ({ currentRoleId, currentRole, getAvailableRoles, onCancel }
                                                 }}
                                             >
                                                 <Checkbox
-                                                    disabled={!permissionCheck(PERMISSIONS.ASSIGN_PERMISSION)}
+                                                    // disabled={!permissionCheck(PERMISSIONS.ASSIGN_PERMISSION)}
+                                                    disabled={(!permissionCheck(PERMISSIONS.ASSIGN_PERMISSION) || currentRoleId === user.role._id)}
                                                     onCheckedChange={(checked) => handlePermissionChange(permissionId, checked, category.module, name)}
                                                     checked={permissions?.includes(permissionId)}
                                                     className="size-4 rounded border-zinc-300 text-blue-600 focus:ring-blue-500 data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600 shrink-0"
@@ -168,13 +169,12 @@ const Permissions = ({ currentRoleId, currentRole, getAvailableRoles, onCancel }
                         </div>
                     </div>
 
-                    {/* Bottom Action Footer */}
-                    {permissionCheck(PERMISSIONS.ASSIGN_PERMISSION) && (
+                    {(permissionCheck(PERMISSIONS.ASSIGN_PERMISSION) && currentRoleId !== user.role._id) && (
                         <div className="p-4 border-t border-zinc-200 flex flex-col-reverse sm:flex-row justify-end bg-zinc-50/50 shrink-0 gap-2">
                             {onCancel && (
-                                <Button 
-                                    variant="outline" 
-                                    onClick={onCancel} 
+                                <Button
+                                    variant="outline"
+                                    onClick={onCancel}
                                     className="w-full sm:w-auto text-xs h-10 sm:h-9"
                                 >
                                     Cancel
@@ -183,7 +183,7 @@ const Permissions = ({ currentRoleId, currentRole, getAvailableRoles, onCancel }
                             <Button
                                 disabled={!hasChanges || isSaving}
                                 onClick={updatePermissions}
-                                className="bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium px-4 h-10 sm:h-9 gap-1.5 shadow-sm rounded-lg transition-all w-full sm:w-auto"
+                                className="cursor-pointer bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium px-4 h-10 sm:h-9 gap-1.5 shadow-sm rounded-lg transition-all w-full sm:w-auto"
                             >
                                 <Save className="size-3.5" />
                                 {isSaving ? "Saving Config..." : "Save Changes"}

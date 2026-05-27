@@ -42,7 +42,7 @@ export default function Roles() {
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     getAvailableRoles();
-  }, []);
+  }, [getAvailableRoles]);
 
   return (
     <div className="w-full flex flex-col h-full min-h-0">
@@ -70,9 +70,9 @@ export default function Roles() {
         </div>
       </div>
 
-      <div className="flex gap-6 w-full flex-1 min-h-0 items-start relative">
+      <div className="flex gap-6 w-full flex-1 relative">
         
-        <div className={`w-full xl:w-80 shrink-0 ${isViewingPermissionsOnMobile ? "hidden xl:block" : "block"}`}>
+        <div className={`w-full xl:w-80 ${isViewingPermissionsOnMobile ? "hidden xl:block" : "block"}`}>
           <AvailableRoles 
             currentRoleId={currentRoleId} 
             handleRoleChange={handleRoleChange} 

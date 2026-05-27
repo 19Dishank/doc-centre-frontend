@@ -85,15 +85,18 @@ const OnBoardingForm = () => {
         const file = e.target.files[0];
         if (!file) return;
 
-        // Check file type constraint (Optional but recommended)
         if (!file.type.startsWith("image/")) {
             setErrors((prev) => ({ ...prev, logo: "Please upload an image file" }));
             return;
         }
 
+        if (file.size > 1024 * 1024) {
+            setErrors((prev) => ({ ...prev, logo: "Logo must be less than 1MB" }));
+            return
+        }
+
         setSelectedFile(file);
 
-        // Generate temporary preview URL
         const previewUrl = URL.createObjectURL(file);
 
         setRegistrationData((prev) => ({
@@ -143,7 +146,7 @@ const OnBoardingForm = () => {
             const logoKey = preSignedUrlResponse.data.key;
             const uploadResponse = await uploadLogoToS3(preSignedUrlResponse.data.url, selectedFile);
 
-            if(uploadResponse.status !== 200) {
+            if (uploadResponse.status !== 200) {
                 toastNotification("Failed to upload logo. Please try again.", "error");
                 setLoading(false);
                 return;
@@ -185,11 +188,11 @@ const OnBoardingForm = () => {
                 {!registrationData.logo ? (
                     <div
                         onClick={() => fileInputRef.current?.click()}
-                        className="flex flex-col items-center justify-center border-2 border-dashed border-slate-300 rounded-lg p-6 cursor-pointer hover:bg-slate-50 transition gap-2"
+                        className={`flex flex-col items-center justify-center border-2 border-dashed rounded-lg p-6 cursor-pointer hover:bg-slate-50 transition gap-2 ${errors.logo ? "border-red-400" : "border-slate-300"}`}
                     >
                         <UploadCloud className="h-8 w-8 text-slate-400" />
                         <span className="text-sm font-medium text-slate-600">Click to upload logo</span>
-                        <span className="text-xs text-slate-400">PNG, JPG, or SVG up to 5MB</span>
+                        <span className="text-xs text-slate-400">PNG, JPG, or SVG up to 1MB</span>
                     </div>
                 ) : (
                     <div className="relative flex items-center justify-between border border-slate-200 rounded-lg p-3 bg-slate-50">
@@ -230,9 +233,7 @@ const OnBoardingForm = () => {
                     className="hidden"
                 />
 
-                {errors.logo && (
-                    <p className="text-xs font-medium text-destructive mt-1">{errors.logo}</p>
-                )}
+                {errors.logo && <p className="text-red-500 text-xs"> * {errors.logo}</p>}
             </div>
 
             <Button

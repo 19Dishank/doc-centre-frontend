@@ -87,12 +87,12 @@ const ConfirmationModal = ({
                     <Button 
                         variant="outline" 
                         onClick={handleCancel}
-                        className="text-zinc-700"
+                        className="text-zinc-700 cursor-pointer"
                     >
                         {cancelText}
                     </Button>
                     <Button 
-                        className={`font-semibold ${currentConfig.buttonClass}`} 
+                        className={`cursor-pointer font-semibold ${currentConfig.buttonClass}`} 
                         onClick={handleConfirm}
                     >
                         {confirmText}

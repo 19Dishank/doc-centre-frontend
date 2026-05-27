@@ -18,7 +18,7 @@ const AvailableRoles = ({
 
   return (
     <>
-      <div className="w-full h-full flex flex-col bg-white gap-0 border border-zinc-200 overflow-hidden rounded-xl shadow-none">
+      <div className="w-full flex flex-col bg-white gap-0 border border-zinc-200 rounded-xl shadow-none">
         <div className="flex h-14 px-4 justify-between items-center border-b border-zinc-200 shrink-0">
           <span className="font-semibold text-sm text-zinc-900 tracking-wide">
             Roles ({availableRoles.length})
@@ -35,8 +35,8 @@ const AvailableRoles = ({
             </Button>
           )}
         </div>
-        
-        <div className="flex-1 overflow-y-auto divide-y divide-zinc-100 p-3 custom-scrollbar">
+
+        <div className="flex-1 divide-y divide-zinc-100 p-3 custom-scrollbar">
           {isLoading ? (
             <div className="space-y-3">
               {[1, 2, 3].map((n) => (
@@ -54,7 +54,7 @@ const AvailableRoles = ({
               </p>
             </div>
           ) : (
-            <div className="space-y-1.5">
+            <div className="space-y-1.5"> 
               {availableRoles.map((role) => (
                 <Role
                   key={role._id}

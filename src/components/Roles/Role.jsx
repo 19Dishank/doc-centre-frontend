@@ -7,9 +7,11 @@ import ConfirmationModal from "../ConfirmationModel";
 import NewRoleModel from "./NewRoleModel";
 import { PERMISSIONS } from "@/helper/permissions";
 import { usePermissions } from "@/hooks/usePermissions";
+import { useNavigate } from "react-router-dom";
 
 const Role = ({ currentRoleId, handleRoleChange, role, getAvailableRoles }) => {
 
+    const navigate = useNavigate();
     const { permissionCheck } = usePermissions();
     const [isOpen, setIsOpen] = useState(false);
     const [showModel, setShowModel] = useState(false);
@@ -31,6 +33,7 @@ const Role = ({ currentRoleId, handleRoleChange, role, getAvailableRoles }) => {
             await deleteRole(role._id);
             await getAvailableRoles();
             toastNotification("Role permanently deleted.", "success");
+            navigate("/roles");
         } catch (error) {
             console.error(error);
             toastNotification(error?.response?.data?.message || "Could not delete role.", "error");

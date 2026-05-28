@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import FilesTableFormat from "@/components/Files/FilesTableView";
 import { completeUpload, failedUpload, fetchFiles, getSignedURL, uploadOnSignedURL } from "@/api/file";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { PERMISSIONS } from "@/helper/permissions";
 import { usePermissions } from "@/hooks/usePermissions";
 import { toastNotification } from "@/helper/toastNotification";
@@ -87,18 +87,24 @@ export default function Files() {
     }
   }
 
+  const prevParentIdRef = useRef(parentId);
+
   useEffect(() => {
+
+    const isParentIdChanged = prevParentIdRef.current !== parentId;
+    prevParentIdRef.current = parentId;
+
+    if (isParentIdChanged) {
+      getFiles();
+      return;
+    }
 
     const delayDebounceFn = setTimeout(() => {
       getFiles();
-    }, 500)
+    }, 500);
 
-    return () => clearTimeout(delayDebounceFn)
-  }, [filters])
-
-  useEffect(() => {
-    getFiles();
-  }, [parentId]);
+    return () => clearTimeout(delayDebounceFn);
+  }, [filters, parentId]);
 
   const tableColumns = ["Name", "Type", "Size", "Uploaded At", "Owner", "Actions"];
 
@@ -184,6 +190,14 @@ export default function Files() {
               </SelectGroup>
             </SelectContent>
           </Select>
+          <Button
+            variant="outline"
+            onClick={() => setFilters({ q: "", sort: "", type: "" })}
+            className="w-full md:w-auto cursor-pointer disabled:cursor-not-allowed!"
+            disabled={!filters.q && !filters.sort && !filters.type}
+          >
+            Clear Filters
+          </Button>
         </div>
       </div>
 

@@ -1,13 +1,12 @@
-import { ArrowLeft, FileSearch, LayoutDashboard } from "lucide-react";
+import { ArrowLeft, FileSearch, LayoutDashboard, AlertOctagon } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { isRouteErrorResponse, useNavigate, useRouteError } from "react-router-dom";
 import { useAuthContext } from "@/contexts/AuthContext";
+import { Card } from "@/components/ui/card";
 
 export default function ErrorPage() {
-
   const { isAuthenticated } = useAuthContext();
-
   const navigate = useNavigate();
   const error = useRouteError();
   let statusCode = 500;
@@ -16,46 +15,89 @@ export default function ErrorPage() {
     statusCode = error.status;
   }
 
-  if (statusCode !== 404) return <div>Something went wrong : "{error.message}"</div>
+  // COMPLIANCE FIX: Added a responsive, styled wrapper for non-404 catch-all errors
+  if (statusCode !== 404) {
+    return (
+      <div className="bg-zinc-50 flex flex-col min-h-screen justify-center items-center p-4 text-center">
+        <Card className="w-full max-w-md p-6 flex flex-col items-center gap-4 border-zinc-200 shadow-sm">
+          <div className="p-3 bg-red-50 rounded-full text-red-600 shrink-0 animate-bounce">
+            <AlertOctagon className="size-6" />
+          </div>
+          <div className="space-y-1.5">
+            <h1 className="font-bold text-xl text-zinc-950">Something went wrong</h1>
+            <p className="text-zinc-600 text-sm font-mono bg-zinc-100 p-3 rounded-lg break-all max-h-40 overflow-y-auto">
+              {error?.message || "An unexpected system exception occurred."}
+            </p>
+          </div>
+          <Button onClick={() => window.location.reload()} className="bg-[#2b7fff] text-blue-50 w-full">
+            Reload Page
+          </Button>
+        </Card>
+      </div>
+    );
+  }
 
   return (
-    <main className="bg-zinc-100/40 flex flex-col flex-1 h-screen justify-center items-center">
-      <div className="max-w-3xl flex flex-col items-center gap-8 w-full">
-        <div className="relative flex flex-col items-center">
-          <div className="flex absolute inset-0 justify-center items-center">
-            <div className="size-72 blur-3xl rounded-full bg-[#2b7fff]/5" />
+    <main className="bg-zinc-50/50 flex flex-col min-h-screen justify-center items-center p-4 sm:p-6 md:p-8">
+      <div className="max-w-3xl flex flex-col items-center gap-6 md:gap-8 w-full">
+        
+        <div className="relative flex flex-col items-center w-full select-none">
+          <div className="flex absolute inset-0 justify-center items-center pointer-events-none">
+            <div className="size-48 sm:size-72 blur-3xl rounded-full bg-[#2b7fff]/10" />
           </div>
-          <div className="relative flex items-center gap-4">
-            <span className="leading-none font-bold text-zinc-950 text-[160px] tracking-tighter">4</span>
-            <div className="relative size-36 flex justify-center items-center">
-              <div className="rounded-full border-[#2b7fff] border2 border-solid absolute inset-0" />
-              <div className="rounded-full bg-[#2b7fff]/10 flex absolute inset-4 justify-center items-center">
-                <FileSearch className="size-12 text-[#2b7fff]" />
+          
+          <div className="relative flex items-center justify-center gap-2 sm:gap-4 w-full">
+            <span className="leading-none font-extrabold text-zinc-950 text-[90px] sm:text-[130px] md:text-[160px] tracking-tighter">
+              4
+            </span>
+            
+            <div className="relative size-24 sm:size-32 md:size-36 flex justify-center items-center shrink-0">
+              <div className="rounded-full border-[#2b7fff] border-2 border-solid absolute inset-0 animate-pulse" />
+              <div className="rounded-full bg-[#2b7fff]/10 flex absolute inset-2.5 sm:inset-4 justify-center items-center">
+                <FileSearch className="size-8 sm:size-10 md:size-12 text-[#2b7fff]" />
               </div>
             </div>
-            <span className="leading-none font-bold text-zinc-950 text-[160px] tracking-tighter">4</span>
+            
+            <span className="leading-none font-extrabold text-zinc-950 text-[90px] sm:text-[130px] md:text-[160px] tracking-tighter">
+              4
+            </span>
           </div>
-          <Badge variant="secondary" className="relative mt-2 px-3 py-1 gap-1.5">
-            <span className="size-1.5 rounded-full bg-[#e7000b]" />
-            <span className="font-mono text-xs leading-4">ERROR 404 — PAGE NOT FOUND</span>
+          
+          <Badge variant="secondary" className="relative mt-4 px-3 py-1 gap-1.5 border border-zinc-200 bg-white">
+            <span className="size-1.5 rounded-full bg-red-600" />
+            <span className="font-mono text-[10px] sm:text-xs text-zinc-700 tracking-wider">
+              ERROR 404 — PAGE NOT FOUND
+            </span>
           </Badge>
         </div>
+
         <div className="text-center flex flex-col items-center gap-3">
-          <h1 className="font-semibold text-3xl leading-9 tracking-tight">We couldn't find that page</h1>
-          <p className="max-w-lg text-[#71717b] text-base leading-6">
+          <h1 className="font-bold text-2xl sm:text-3xl tracking-tight text-zinc-950 px-2">
+            We couldn't find that page
+          </h1>
+          <p className="max-w-md text-zinc-600 text-sm sm:text-base leading-relaxed px-4">
             The page you are looking for might have been removed, had its name changed, or is temporarily unavailable.
           </p>
         </div>
-        <div className="flex items-center gap-3">
-          <Button onClick={() => navigate(-1)} variant="outline" className="gap-2">
+
+        <div className="flex items-center justify-center gap-2 w-full max-w-xs sm:max-w-none px-4">
+          <Button 
+            onClick={() => navigate(-1)} 
+            variant="outline" 
+            className="gap-2 text-zinc-700"
+          >
             <ArrowLeft className="size-4" />
             Go back
           </Button>
-          <Button onClick={() => navigate(isAuthenticated ? "/dashboard" : "/")} className="bg-[#2b7fff] text-blue-50 gap-2">
+          <Button 
+            onClick={() => navigate(isAuthenticated ? "/dashboard" : "/")} 
+            className="bg-[#2b7fff] text-blue-50 gap-2 shadow-sm"
+          >
             <LayoutDashboard className="size-4" />
             {isAuthenticated ? "Back to Dashboard" : "Back to Homepage"}
           </Button>
         </div>
+
       </div>
     </main>
   );

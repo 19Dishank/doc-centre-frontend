@@ -19,7 +19,7 @@ import Loader from "@/components/ui/loader";
 import { PERMISSIONS } from "@/helper/permissions";
 import { usePermissions } from "@/hooks/usePermissions";
 
-import UserDetails from "@/components/Users/User";
+import UserDetails from "@/components/Users/UserDetails";
 import UserModal from "@/components/Users/UserModal";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { fetchRoles } from "@/api/role";
@@ -31,7 +31,7 @@ export default function UsersList() {
 
   const [roles, setRoles] = useState([]);
   const [usersData, setUsersData] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [paginationData, setPaginationData] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -155,31 +155,35 @@ export default function UsersList() {
               </SelectGroup>
             </SelectContent>
           </Select>
+          <Button
+            variant="outline"
+            onClick={() => setFilters({ q: "", sort: "", type: "" })}
+            className="w-full md:w-auto cursor-pointer disabled:cursor-not-allowed!"
+            disabled={!filters.q && !filters.sort && !filters.type}
+          >
+            Clear Filters
+          </Button>
         </div>
       </div>
 
       <Card className="p-0 border-zinc-200">
-        <div className="overflow-x-auto w-full">
+        <div className="w-full">
           <Table className="min-w-175 lg:min-w-full">
             <TableHeader className="bg-zinc-50">
               <TableRow>
-                <TableHead className="uppercase text-[11px] tracking-wide font-bold">
+                <TableHead className="w-[40%] text-[#71717b]! uppercase text-[11px] tracking-wide font-bold pl-4">
                   User
                 </TableHead>
 
-                <TableHead className="uppercase text-[11px] tracking-wide font-bold">
+                <TableHead className="w-[20%] text-[#71717b]! uppercase text-[11px] tracking-wide font-bold">
                   Role
                 </TableHead>
 
-                {/* <TableHead className="uppercase text-[11px] tracking-wide font-bold sm:table-cell">
-                  Account Status
-                </TableHead> */}
-
-                <TableHead className="uppercase text-[11px] tracking-wide font-bold lg:table-cell">
+                <TableHead className="w-[25%] text-[#71717b]! uppercase text-[11px] tracking-wide font-bold lg:table-cell">
                   Last Active
                 </TableHead>
 
-                <TableHead className="uppercase text-[11px] tracking-wide font-bold text-right">
+                <TableHead className="w-[15%] text-[#71717b]! uppercase text-[11px] tracking-wide font-bold text-right pr-4">
                   Actions
                 </TableHead>
               </TableRow>
@@ -219,17 +223,18 @@ export default function UsersList() {
         </div>
       </Card>
 
-      <div className="mt-auto">
-        <PaginationBar
-          totalPages={totalPages || 0}
-          currentPage={currentPage}
-          setCurrentPage={setCurrentPage}
-          hasNextPage={hasNextPage}
-          hasPreviousPage={hasPreviousPage}
-          totalItems={totalItems}
-          limit={limit}
-        />
-      </div>
+      {usersData.length > 0 && (
+        <div className="mt-auto">
+          <PaginationBar
+            totalPages={totalPages || 0}
+            currentPage={currentPage}
+            setCurrentPage={setCurrentPage}
+            hasNextPage={hasNextPage}
+            hasPreviousPage={hasPreviousPage}
+            totalItems={totalItems}
+            limit={limit}
+          />
+        </div>)}
 
       {isOpen && (
         <UserModal

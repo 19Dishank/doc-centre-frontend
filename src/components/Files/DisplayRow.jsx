@@ -13,7 +13,7 @@ import { getRegistryIcon } from "@/helper/getRegistryIcon";
 import DocumentPreview from "./DocumentPreview";
 import ShareDocumentModal from "./ShareDocumentModal";
 
-const DisplayRow = ({ item, setParentId, setNavigationBar, getFiles }) => {
+const DisplayRow = ({ item, setParentId, setNavigationBar, getFiles, getCellWidthClass }) => {
     
     const { permissionCheck } = usePermissions();
     const [isOpen, setIsOpen] = useState(false);
@@ -52,7 +52,7 @@ const DisplayRow = ({ item, setParentId, setNavigationBar, getFiles }) => {
             console.error("Error deleting :", error);
             toastNotification(error?.response?.data?.message || `Error deleting ${isFolder ? "folder" : "file"}. Please try again.`, "error");
         }
-    }
+    };
 
 
     const handleKeyDown = async (event) => {
@@ -70,7 +70,8 @@ const DisplayRow = ({ item, setParentId, setNavigationBar, getFiles }) => {
     return (
         <>
             <TableRow key={item._id} className="hover:bg-zinc-50/50 transition-colors">
-                <TableCell className="first:pl-4">
+                {/* Locked Width for Name cell */}
+                <TableCell className={`first:pl-4 ${getCellWidthClass("Name")}`}>
                     <div className="flex items-center gap-3 min-w-0">
                         {getRegistryIcon(item)}
 
@@ -94,19 +95,23 @@ const DisplayRow = ({ item, setParentId, setNavigationBar, getFiles }) => {
                     </div>
                 </TableCell>
 
-                <TableCell className="text-[#71717b] text-sm hidden md:table-cell uppercase">
+                {/* Locked Width for Type cell */}
+                <TableCell className={`text-[#71717b] text-sm table-cell uppercase ${getCellWidthClass("Type")}`}>
                     {displayExtension}
                 </TableCell>
 
-                <TableCell className="text-[#71717b] text-sm hidden md:table-cell">
+                {/* Locked Width for Size cell */}
+                <TableCell className={`text-[#71717b] text-sm table-cell ${getCellWidthClass("Size")}`}>
                     {displaySize}
                 </TableCell>
 
-                <TableCell className="text-[#71717b] text-sm whitespace-nowrap">
+                {/* Locked Width for Last Modified cell */}
+                <TableCell className={`text-[#71717b] text-sm whitespace-nowrap ${getCellWidthClass("Last Modified")}`}>
                     {item.createdAt ? new Date(item.createdAt).toLocaleDateString() : "—"}
                 </TableCell>
 
-                <TableCell className="text-[#71717b] text-sm truncate flex items-center gap-2 py-2.5">
+                {/* Locked Width for Owner cell */}
+                <TableCell className={`text-[#71717b] text-sm truncate flex items-center gap-2 py-2.5 ${getCellWidthClass("Owner")}`}>
                     {(!ownerName.includes("undefined"))
                         ? (<img
                             className="size-7 rounded-full"
@@ -118,14 +123,15 @@ const DisplayRow = ({ item, setParentId, setNavigationBar, getFiles }) => {
                     <span className="max-w-40 truncate">{ownerName.includes("undefined") ? ownerEmailId : ownerName}</span>
                 </TableCell>
 
-                <TableCell className="text-right pr-4">
+                {/* Locked Width for Actions cell */}
+                <TableCell className={`text-right pr-4 ${getCellWidthClass("Actions")}`}>
                     <div className="flex justify-end items-center gap-0.5">
                         {permissionCheck(PERMISSIONS.SHARE_DOCUMENT) && !isFolder && (
                             <Button
                                 onClick={() => setShareDocument(item._id)}
                                 variant="ghost"
                                 size="icon"
-                                className="size-8 hidden sm:inline-flex cursor-pointer"
+                                className="size-8 inline-flex cursor-pointer"
                             >
                                 <Share2 className="size-3.5 text-[#71717b]" />
                             </Button>
@@ -142,7 +148,7 @@ const DisplayRow = ({ item, setParentId, setNavigationBar, getFiles }) => {
                                 onClick={() => setRenameMode(true)}
                                 variant="ghost"
                                 size="icon"
-                                className="size-8 hidden lg:inline-flex cursor-pointer"
+                                className="size-8 inline-flex cursor-pointer"
                             >
                                 <Pencil className="size-3.5 text-[#71717b]" />
                             </Button>

@@ -85,11 +85,7 @@ const PaginationBar = ({
                                         setCurrentPage(page);
                                     }
                                 }}
-                                className={
-                                    currentPage === page
-                                        ? "bg-zinc-200/80"
-                                        : ""
-                                }
+                                className={` cursor-pointer ${currentPage === page ? "bg-zinc-200/80" : ""}`}
                             >
                                 {page}
                             </PaginationLink>

@@ -7,11 +7,9 @@ import ConfirmationModal from "../ConfirmationModel";
 import NewRoleModel from "./NewRoleModel";
 import { PERMISSIONS } from "@/helper/permissions";
 import { usePermissions } from "@/hooks/usePermissions";
-import { useNavigate } from "react-router-dom";
 
 const Role = ({ currentRoleId, handleRoleChange, role, getAvailableRoles }) => {
 
-    const navigate = useNavigate();
     const { permissionCheck } = usePermissions();
     const [isOpen, setIsOpen] = useState(false);
     const [showModel, setShowModel] = useState(false);
@@ -33,7 +31,7 @@ const Role = ({ currentRoleId, handleRoleChange, role, getAvailableRoles }) => {
             await deleteRole(role._id);
             await getAvailableRoles();
             toastNotification("Role permanently deleted.", "success");
-            navigate("/roles");
+            handleRoleChange(null);
         } catch (error) {
             console.error(error);
             toastNotification(error?.response?.data?.message || "Could not delete role.", "error");
@@ -76,7 +74,7 @@ const Role = ({ currentRoleId, handleRoleChange, role, getAvailableRoles }) => {
                             onClick={handleOptionClick}
                             variant="ghost"
                             size="icon"
-                            className={`size-8 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 ${isOpen ? 'bg-slate-100 text-slate-700' : ''}`}
+                            className={`size-8 cursor-pointer rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 ${isOpen ? 'bg-slate-100 text-slate-700' : ''}`}
                         >
                             <MoreHorizontal className="size-4" />
                         </Button>
@@ -95,7 +93,7 @@ const Role = ({ currentRoleId, handleRoleChange, role, getAvailableRoles }) => {
                                 {canUpdateRole && (
                                     <button
                                         onClick={(e) => { e.stopPropagation(); setIsOpen(false); setShowEditModel(true); }}
-                                        className="flex w-full items-center font-medium rounded-lg px-2.5 py-2 text-xs text-slate-700 transition-colors hover:bg-slate-50 hover:text-slate-900"
+                                        className="cursor-pointer flex w-full items-center font-medium rounded-lg px-2.5 py-2 text-xs text-slate-700 transition-colors hover:bg-slate-50 hover:text-slate-900"
                                     >
                                         <Edit2 className="mr-2 size-3.5 text-slate-400" />
                                         Edit Role
@@ -105,7 +103,7 @@ const Role = ({ currentRoleId, handleRoleChange, role, getAvailableRoles }) => {
                                 {canDeleteRole && (
                                     <button
                                         onClick={() => { setIsOpen(false); setShowModel(true); }}
-                                        className="flex w-full items-center font-medium rounded-lg px-2.5 py-2 text-xs text-red-600 transition-colors hover:bg-red-50"
+                                        className="cursor-pointer flex w-full items-center font-medium rounded-lg px-2.5 py-2 text-xs text-red-600 transition-colors hover:bg-red-50"
                                     >
                                         <Trash2 className="mr-2 size-3.5 text-red-400" />
                                         Delete Role

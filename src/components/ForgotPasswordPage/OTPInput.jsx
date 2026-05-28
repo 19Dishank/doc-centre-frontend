@@ -10,7 +10,14 @@ const OTPInput = () => {
     const navigate = useNavigate();
 
     const [otp, setOtp] = useState(new Array(6).fill(""));
-    const [timeLeft, setTimeLeft] = useState(120); // 120 seconds = 2 minutes
+
+    const getRemainingTime = () => {
+        const expiry = localStorage.getItem("otp_expiry");
+        const remaining = Math.floor((Number(expiry) - Date.now()) / 1000);
+        return remaining > 0 ? remaining : 0;
+    };
+
+    const [timeLeft, setTimeLeft] = useState(getRemainingTime);
     const [canResend, setCanResend] = useState(false);
     const [isVerifying, setIsVerifying] = useState(false);
 
@@ -37,6 +44,7 @@ const OTPInput = () => {
             if (res.success) {
                 navigate(`/forgot-password/reset`, { state: { email, token: res.data.resetPasswordToken } });
             };
+            localStorage.removeItem("otp_expiry");
         } catch (error) {
             setError(error.response?.data?.message || "Error verifying OTP. Please try again.");
             if (error.response?.data?.message === "Too many incorrect OTP attempts. Please resend Otp") {
@@ -59,17 +67,17 @@ const OTPInput = () => {
         if (timeLeft <= 0) {
             // eslint-disable-next-line react-hooks/set-state-in-effect
             setCanResend(true);
+            localStorage.removeItem("otp_expiry");
             return;
         }
 
         const timer = setInterval(() => {
-            setTimeLeft((prev) => prev - 1);
+            setTimeLeft(getRemainingTime());
         }, 1000);
 
         return () => clearInterval(timer);
     }, [timeLeft]);
 
-    // Format time to MM:SS
     const formatTime = (seconds) => {
         const mins = Math.floor(seconds / 60);
         const secs = seconds % 60;
@@ -82,11 +90,15 @@ const OTPInput = () => {
             const res = await resendOTP({ email });
             if (res.success) {
                 setError("");
-                setTimeLeft(120);
+                localStorage.setItem("otp_expiry", res.data.expiryTime);
+                setTimeLeft(getRemainingTime());
                 setOtp(new Array(6).fill(""));
             }
         } catch (error) {
-            console.log(error.response?.data?.message || "Error resending OTP. Please try again.");
+            console.log(
+                error.response?.data?.message ||
+                "Error resending OTP. Please try again."
+            );
         }
     };
 

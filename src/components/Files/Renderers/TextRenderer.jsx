@@ -12,7 +12,7 @@ const TextRenderer = ({ fileUrl }) => {
     }, [fileUrl]);
 
     return (
-        <div className="p-4 whitespace-pre-wrap text-sm">
+        <div className="p-4 max-h-[70vh] overflow-y-auto whitespace-pre-wrap text-sm">
             {content}
         </div>
     );

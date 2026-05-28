@@ -81,6 +81,26 @@ const Permissions = ({ currentRoleId, currentRole, getAvailableRoles, onCancel }
         }
     };
 
+    const handelSelectAllChange = (module) => {
+        const category = permissionsCatalog.find(cat => cat.module === module);
+        if (!category) return;
+        const categoryPermissionIds = category.permissions.map(perm => perm.permissionId);
+        const allSelected = categoryPermissionIds.every(id => permissions.includes(id));
+        if (allSelected) {
+            setPermissions((prev) => prev.filter(perm => !categoryPermissionIds.includes(perm)));
+        } else {
+            setPermissions((prev) => {
+                const newPermissions = [...prev];
+                categoryPermissionIds.forEach(id => {
+                    if (!newPermissions.includes(id)) {
+                        newPermissions.push(id);
+                    }
+                });
+                return newPermissions;
+            });
+        }
+    };
+
     return (
         <>
             {!currentRoleId ? (
@@ -116,7 +136,7 @@ const Permissions = ({ currentRoleId, currentRole, getAvailableRoles, onCancel }
                             </span>
                         </div>
                     </div>
-                
+
                     <div className="flex-1 overflow-y-auto p-4 sm:p-5 custom-scrollbar min-h-0 bg-zinc-50/30">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             {permissionsCatalog.map((category) => (
@@ -131,6 +151,22 @@ const Permissions = ({ currentRoleId, currentRole, getAvailableRoles, onCancel }
                                         <span className="font-bold text-sm text-zinc-900 tracking-wide">
                                             {category.module} Management
                                         </span>
+                                        <div className="ml-auto flex items-center gap-1.5">
+                                            <Checkbox
+                                                id={"select_all_" + category.module}
+                                                className="cursor-pointer size-4 rounded border-zinc-300 text-blue-600 focus:ring-blue-500 data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600 shrink-0"
+                                                disabled={(!permissionCheck(PERMISSIONS.ASSIGN_PERMISSION) || currentRoleId === user.role._id)}
+                                                checked={category.permissions.every(perm => permissions?.includes(perm.permissionId))}
+                                                onCheckedChange={() => handelSelectAllChange(category.module) }
+                                            />
+                                            <label
+                                                htmlFor={"select_all_" + category.module}
+                                                className="text-xs font-medium text-zinc-600 cursor-pointer select-none flex-1 hover:text-zinc-900 transition-colors line-clamp-1"
+                                                onClick={(e) => e.stopPropagation()}
+                                            >
+                                                Select All
+                                            </label>
+                                        </div>
                                     </div>
 
                                     <div className="space-y-2">
@@ -150,7 +186,7 @@ const Permissions = ({ currentRoleId, currentRole, getAvailableRoles, onCancel }
                                                     disabled={(!permissionCheck(PERMISSIONS.ASSIGN_PERMISSION) || currentRoleId === user.role._id)}
                                                     onCheckedChange={(checked) => handlePermissionChange(permissionId, checked, category.module, name)}
                                                     checked={permissions?.includes(permissionId)}
-                                                    className="size-4 rounded border-zinc-300 text-blue-600 focus:ring-blue-500 data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600 shrink-0"
+                                                    className="cursor-pointer size-4 rounded border-zinc-300 text-blue-600 focus:ring-blue-500 data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600 shrink-0"
                                                     id={permissionId}
                                                     onClick={(e) => e.stopPropagation()} // Stop triggering dual click events
                                                 />

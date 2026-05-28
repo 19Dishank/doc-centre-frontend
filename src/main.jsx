@@ -7,12 +7,12 @@ import AuthProvider from "./contexts/AuthContext";
 import PermissionsCatalogProvider from "./contexts/PermissionsCatalogContext";
 
 createRoot(document.getElementById("root")).render(
-  <StrictMode>
+  // <StrictMode>
     <AuthProvider>
       <PermissionsCatalogProvider>
         <App />
         <ToastContainer />
       </PermissionsCatalogProvider>
     </AuthProvider>
-  </StrictMode>
+  // </StrictMode>
 );

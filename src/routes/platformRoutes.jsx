@@ -30,5 +30,9 @@ export const platformRoutes = [
     {
         path: "/users/invite",
         element: <UserInvite />,
-    }
+    },
+    {
+        path: "/users/invite/success",
+        element: <SuccessPage />,
+    },
 ]

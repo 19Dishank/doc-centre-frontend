@@ -42,7 +42,7 @@ export default function Roles() {
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     getAvailableRoles();
-  }, [getAvailableRoles]);
+  }, []);
 
   return (
     <div className="w-full flex flex-col h-full min-h-0">

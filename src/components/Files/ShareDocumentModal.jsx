@@ -27,8 +27,9 @@ const ShareDocumentModal = ({ setIsOpen, documentId }) => {
 
             case "expiryTime":
                 if (!value) return "Expiry time is required";
-                else if (Number(value) <= 0) return "Expiry time must be greater than 0";
+                else if (Number(value) < 1) return "Expiry time must be greater than 1";
                 else if (Number(value) > 60) return "Expiry time must be less than or equal to 60 minutes";
+                else if (parseInt(value) !== Number(value)) return "Expiry time must be an integer";
 
                 return "";
 
@@ -152,6 +153,7 @@ const ShareDocumentModal = ({ setIsOpen, documentId }) => {
                                     {shareLink}
                                 </p>
                                 <Button
+                                    className='cursor-pointer'
                                     type="button"
                                     variant="outline"
                                     size="icon"

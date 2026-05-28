@@ -9,6 +9,7 @@ import { fetchOrganizationDetails, updateOrganizationDetails } from "@/api/organ
 import { useEffect, useState } from "react";
 import FormField from "@/components/ui/form-field";
 import { toastNotification } from "@/helper/toastNotification";
+import { CompanyLogo } from "@/components/ui/form-container";
 
 export default function Organization() {
 
@@ -86,7 +87,6 @@ export default function Organization() {
               value={formData.orgName}
               onChange={(e) => setFormData({ ...formData, orgName: e.target.value })}
             />
-
             <FormField
               label="Organization Slug"
               id="slug"
@@ -94,7 +94,6 @@ export default function Organization() {
               value={formData.slug}
               onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
             />
-
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
@@ -140,19 +139,20 @@ export default function Organization() {
           </div>
 
           <Separator />
-
           <div className="flex flex-col gap-3">
-            <Label className="text-sm leading-5 text-zinc-950 font-medium">Organization Logo</Label>
-            <div className="flex flex-wrap items-center gap-4">
-              <div className="size-16 rounded-lg bg-[#2b7fff]/10 border border-[#2b7fff]/20 flex justify-center items-center shrink-0">
-                <span className="font-semibold text-[#2b7fff] text-lg">AC</span>
+            <Label className="text-sm font-medium leading-5 text-zinc-950">Organization Logo</Label>
+            <div className="flex flex-row items-center gap-5">
+              <div className="flex h-14 w-32 items-center justify-center rounded-lg border border-zinc-200 bg-zinc-50 p-2 shadow-sm transition-colors hover:bg-zinc-100/80">
+                <CompanyLogo />
               </div>
-              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4 flex-1 min-w-50">
-                <Button variant="outline" className="gap-2 h-9 w-full sm:w-auto shrink-0">
-                  <Upload className="size-4" />
-                  Upload Logo
+              <div className="flex flex-col gap-1.5">
+                <Button
+                  variant="outline"
+                  className="h-9 gap-2 border-zinc-200 text-zinc-700 hover:bg-zinc-50 hover:text-zinc-900"
+                >
+                  <Upload className="size-4 text-zinc-500" /> Upload Logo
                 </Button>
-                <span className="text-zinc-500 text-xs whitespace-nowrap">PNG, JPG up to 2MB</span>
+                <span className="text-xs font-normal text-zinc-500">PNG, JPG up to 1MB</span>
               </div>
             </div>
           </div>

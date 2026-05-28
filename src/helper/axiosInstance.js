@@ -17,13 +17,6 @@ axiosInstance.interceptors.request.use(
     (config) => {
         const { accessToken } = getTokens();;
 
-        console.log("REQUEST DATA:", {
-            type: typeof config.data,
-            isFormData: config.data instanceof FormData,
-            constructor: config.data?.constructor?.name,
-            data: config.data
-        });
-
         if (accessToken) {
             config.headers = config.headers || {};
             config.headers.Authorization = `Bearer ${accessToken}`;
@@ -62,8 +55,7 @@ const isAuthRoute = [
     "/auth/resend-otp",
     "/auth/verify-forgot-password-otp",
     "/auth/reset-password",
-    "/auth/logout",
-    "/users/change-password"
+    "/auth/logout"
 ]
 
 const processQueue = (error, token = null) => {

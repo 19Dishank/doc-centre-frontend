@@ -12,7 +12,7 @@ import ConfirmationModal from "../ConfirmationModel"
 import { toastNotification } from "@/helper/toastNotification"
 import { deleteUser } from "@/api/user"
 
-const UserDetails = ({ user : currentUser, fetchUsers, roles }) => {
+const UserDetails = ({ user: currentUser, fetchUsers, roles }) => {
 
     const { permissionCheck } = usePermissions();
     const { user: { _id: userId } } = useAuthContext();
@@ -27,7 +27,7 @@ const UserDetails = ({ user : currentUser, fetchUsers, roles }) => {
             case "Admin": return "bg-blue-100 text-blue-700 hover:bg-blue-100"
             case "Editor": return "bg-violet-100 text-violet-700 hover:bg-violet-100"
             case "Viewer": return "bg-gray-100 text-gray-700 hover:bg-gray-100"
-            default: return ""
+            default: return "bg-emerald-100 text-emerald-700 hover:bg-emerald-100"
         }
     }
 
@@ -47,7 +47,7 @@ const UserDetails = ({ user : currentUser, fetchUsers, roles }) => {
     return (
         <>
             <TableRow key={currentUser._id} className="hover:bg-zinc-50/50">
-                <TableCell>
+                <TableCell className="w-[40%] pl-4">
                     <div className="flex items-center gap-3">
                         {(currentUser.firstName && currentUser.lastName)
                             ? (<img
@@ -66,24 +66,17 @@ const UserDetails = ({ user : currentUser, fetchUsers, roles }) => {
                     </div>
                 </TableCell>
 
-                <TableCell>
+                <TableCell className="w-[20%]">
                     <Badge className={`font-medium rounded-full ${getStyles(currentUser.role.name)}`}>
                         {currentUser.role.name}
                     </Badge>
                 </TableCell>
 
-                {/* <TableCell className="sm:table-cell">
-                    <div className="flex items-center gap-2">
-                        <span className="size-2 rounded-full bg-green-500" />
-                        <span className="text-sm leading-5">{currentUser.status}</span>
-                    </div>
-                </TableCell> */}
-
-                <TableCell className="text-[#71717b] text-xs leading-4 lg:table-cell whitespace-nowrap">
+                <TableCell className="w-[25%] text-[#71717b] text-xs leading-4 lg:table-cell whitespace-nowrap">
                     {formateTime(currentUser.lastActivateAt)}
                 </TableCell>
 
-                <TableCell>
+                <TableCell className="w-[15%] pr-4">
                     {(currentUser._id !== userId && currentUser?.role?.name !== "Admin") && (
                         <div className="flex justify-end items-center gap-1">
                             {permissionCheck(PERMISSIONS.UPDATE_USER) && (

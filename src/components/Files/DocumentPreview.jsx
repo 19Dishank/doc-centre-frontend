@@ -13,8 +13,6 @@ import { getRegistryIcon } from "@/helper/getRegistryIcon";
 
 const DocumentPreview = ({ setIsOpen, item }) => {
 
-    console.log("Rendering DocumentPreview for item:", item);
-
     const [preSignedUrl, setPreSignedUrl] = useState(null);
     const [loading, setLoading] = useState(false);
 
@@ -101,7 +99,7 @@ const DocumentPreview = ({ setIsOpen, item }) => {
                         <Loader2 className="size-10 animate-spin" />
                     </div>
                 ) : (
-                    <div className="p-4 min-h-[70vh] flex items-center justify-center">
+                    <div className="p-4 min-h-150 flex items-center justify-center">
                         {getRenderer()}
                     </div>
                 )}

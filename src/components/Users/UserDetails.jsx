@@ -6,7 +6,7 @@ import { PERMISSIONS } from "@/helper/permissions"
 import { usePermissions } from "@/hooks/usePermissions"
 import { formateTime } from "@/helper/formateTime"
 import { useState } from "react"
-import UserModal from "./UserModal"
+import UserModel from "./UserModel"
 import { useAuthContext } from "@/contexts/AuthContext"
 import ConfirmationModal from "../ConfirmationModel"
 import { toastNotification } from "@/helper/toastNotification"
@@ -73,7 +73,7 @@ const UserDetails = ({ user: currentUser, fetchUsers, roles }) => {
                 </TableCell>
 
                 <TableCell className="w-[25%] text-[#71717b] text-xs leading-4 lg:table-cell whitespace-nowrap">
-                    {formateTime(currentUser.lastActivateAt)}
+                    {currentUser.lastActivateAt ? formateTime(currentUser.lastActivateAt) : "—"}
                 </TableCell>
 
                 <TableCell className="w-[15%] pr-4">
@@ -101,7 +101,7 @@ const UserDetails = ({ user: currentUser, fetchUsers, roles }) => {
 
 
             {isEditing && (
-                <UserModal setIsOpen={setIsEditing} user={currentUser} fetchUsers={fetchUsers} roles={roles} />
+                <UserModel setIsOpen={setIsEditing} user={currentUser} fetchUsers={fetchUsers} roles={roles} />
             )}
 
             {isDeleting && (

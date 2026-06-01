@@ -1,4 +1,4 @@
-const Loader = ({ styles }) => {
+const Loader = ({ styles, heading, subheading }) => {
     return (
         <div className={`${styles} flex flex-col justify-center items-center flex-1 font-sans animate-fade-in`}>
             <div className="flex flex-col items-center justify-center gap-6 max-w-sm text-center">
@@ -17,10 +17,10 @@ const Loader = ({ styles }) => {
                 </div>
                 <div className="space-y-1.5">
                     <h3 className="text-slate-800 font-semibold text-lg tracking-tight">
-                        Loading ...
+                        {heading || "Loading ..."}
                     </h3>
                     <p className="text-slate-400 text-sm font-medium animate-[pulse_2s_infinite]">
-                        Please wait a moment
+                        {subheading || "Please wait a moment"}
                     </p>
                 </div>
             </div>

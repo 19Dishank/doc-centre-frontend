@@ -30,6 +30,11 @@ const FilesTableFormat = ({ parentId, createNewFolder, setCreateNewFolder, setPa
         }
     };
 
+    const handleBack = () => setNavigationBar((prev) => {
+        setParentId(prev[prev.length - 2]?.parentId || "");
+        return prev.slice(0, -1)
+    });
+
     return (
         <>
             <Card className="p-0 overflow-x-hidden border-zinc-200">
@@ -58,8 +63,19 @@ const FilesTableFormat = ({ parentId, createNewFolder, setCreateNewFolder, setPa
                                         <Loader />
                                     </TableCell>
                                 </TableRow>
-                                : (tableRows.length > 0 || createNewFolder)
+                                : ((tableRows.length > 0 && !parentId) || createNewFolder || parentId)
                                     ? <>
+                                        {parentId && (
+                                            <TableRow onClick={handleBack} className="hover:bg-zinc-50/50 transition-colors">
+                                                <TableCell className="flex gap-3 pl-4 cursor-pointer font-black">
+                                                    {getRegistryIcon("folder")}
+                                                    <div className="flex items-center gap-1 text-[#71717b]">
+                                                        <span>.</span>
+                                                        <span>.</span>
+                                                    </div>
+                                                </TableCell>
+                                            </TableRow>
+                                        )}
                                         {createNewFolder && (
                                             <TableRow className="hover:bg-zinc-50/50 transition-colors">
                                                 <TableCell className={`first:pl-4 ${getCellWidthClass("Name")}`}>
@@ -83,11 +99,11 @@ const FilesTableFormat = ({ parentId, createNewFolder, setCreateNewFolder, setPa
                                             </TableRow>
                                         )}
                                         {tableRows.map((item) => (
-                                            <DisplayRow 
-                                                key={item._id} 
-                                                item={item} 
-                                                setParentId={setParentId} 
-                                                setNavigationBar={setNavigationBar} 
+                                            <DisplayRow
+                                                key={item._id}
+                                                item={item}
+                                                setParentId={setParentId}
+                                                setNavigationBar={setNavigationBar}
                                                 getFiles={getFiles}
                                                 getCellWidthClass={getCellWidthClass} // Pass down to lock standard row widths
                                             />

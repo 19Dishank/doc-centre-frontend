@@ -93,6 +93,18 @@ const OnBoardingForm = () => {
         return Object.values(newErrors).every((error) => error === "");
     };
 
+    const createSlug = () => {
+        const generatedSlug = registrationData.orgName.toLowerCase().trim().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+        setRegistrationData((prev) => ({
+            ...prev,
+            slug: generatedSlug
+        }));
+        setErrors((prev) => ({
+            ...prev,
+            slug: validateField("slug", generatedSlug)
+        }));
+    }
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         const isValid = validateForm();
@@ -117,7 +129,7 @@ const OnBoardingForm = () => {
             const res = await createTenant({ ...registrationData, logo: undefined, logoKey });
             console.log("Response Data:", res);
 
-            toastNotification("Tenant created successfully! Please check your email to complete the onboarding process.", "success");
+            toastNotification("Organization created successfully! Please check your email to complete the onboarding process.", "success");
 
             if (registrationData.logo.startsWith("blob:")) URL.revokeObjectURL(registrationData.logo);
             setRegistrationData(initialData);
@@ -139,7 +151,7 @@ const OnBoardingForm = () => {
                 <FormField label="Last Name" name="lastName" value={registrationData.lastName} onChange={handleChange} placeholder="Doe" error={errors.lastName} />
             </div>
             <FormField label="Work Email" name="email" value={registrationData.email} onChange={handleChange} placeholder="you@company.com" error={errors.email} />
-            <FormField label="Organization Name" name="orgName" value={registrationData.orgName} onChange={handleChange} placeholder="Acme Corp" error={errors.orgName} />
+            <FormField label="Organization Name" name="orgName" value={registrationData.orgName} onChange={handleChange} placeholder="Acme Corp" error={errors.orgName} onBlur={createSlug} />
             <FormField label="Organization Slogan" name="orgSlogan" value={registrationData.orgSlogan} onChange={handleChange} placeholder="Acme Corp" error={errors.orgSlogan} />
             <FormField label="Slug" name="slug" value={registrationData.slug} onChange={handleChange} placeholder="acme-corp" error={errors.slug} />
             <FileUpload errors={errors} setErrors={setErrors} selectedFile={selectedFile} setSelectedFile={setSelectedFile} setRegistrationData={setRegistrationData} registrationData={registrationData} fileInputRef={fileInputRef} />

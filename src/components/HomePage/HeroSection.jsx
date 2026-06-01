@@ -25,12 +25,12 @@ const HeroSection = () => {
 
                 <div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
                     <NavLink to="/onboarding" className="w-full sm:w-auto">
-                        <Button className="bg-[#2b7fff] text-blue-50 px-6 gap-2 h-12 w-full sm:w-auto shadow-lg shadow-blue-500/20">
+                        <Button className="cursor-pointer bg-[#2b7fff] text-blue-50 px-6 gap-2 h-12 w-full sm:w-auto shadow-lg shadow-blue-500/20">
                             Start for free
                             <ArrowRight className="size-4" />
                         </Button>
                     </NavLink>
-                    <Button className="px-6 gap-2 h-12 w-full sm:w-auto" variant="outline">
+                    <Button className="cursor-pointer px-6 gap-2 h-12 w-full sm:w-auto" variant="outline">
                         <PlayCircle className="size-4" />
                         Watch demo
                     </Button>

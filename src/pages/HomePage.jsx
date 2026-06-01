@@ -7,6 +7,8 @@ import Stats from "@/components/HomePage/Stats";
 import GetStarted from "@/components/HomePage/GetStarted";
 
 export default function HomePage() {
+
+    console.log("HomePage rendered");
     return (
         <div className="min-h-screen bg-white">
             <Header />

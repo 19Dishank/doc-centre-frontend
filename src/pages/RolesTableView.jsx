@@ -9,7 +9,7 @@ import { usePermissionsCatalog } from "@/contexts/PermissionsCatalogContext";
 import { usePermissions } from "@/hooks/usePermissions";
 import { PERMISSIONS } from "@/helper/permissions";
 import { Checkbox } from "@/components/ui/checkbox";
-import NewRoleModel from "@/components/Roles/NewRoleModel";
+import RoleModel from "@/components/Roles/RoleModel";
 
 export default function Roles() {
   const [isOpen, setIsOpen] = useState(false);
@@ -247,7 +247,7 @@ export default function Roles() {
       </div>
 
       {isOpen && (
-        <NewRoleModel
+        <RoleModel
           setIsOpen={setIsOpen}
           getAvailableRoles={getAvailableRoles}
         />

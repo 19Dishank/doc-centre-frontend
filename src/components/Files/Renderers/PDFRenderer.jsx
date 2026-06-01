@@ -1,186 +1,155 @@
-import { BASE_SCALE } from "@/constants"
-import { loadPdfJs } from "@/helper/loadPdfJs"
-import { AlertCircleIcon } from "lucide-react"
 import { useEffect, useRef, useState } from "react"
+import { AlertCircleIcon } from "lucide-react"
+
 import Loader from "@/components/ui/loader"
 
-const PageCanvas = ({ pdfDoc, pageNum, scale, totalPages, showBadge }) => {
-    const canvasRef = useRef(null)
-    const wrapperRef = useRef(null)
-    const renderTaskRef = useRef(null)
+import * as pdfjsLib from "pdfjs-dist"
+import {
+    EventBus,
+    PDFViewer,
+} from "pdfjs-dist/web/pdf_viewer"
 
-    useEffect(() => {
-        if (!pdfDoc || !canvasRef.current || !wrapperRef.current) return
+import "pdfjs-dist/web/pdf_viewer.css"
 
-        let cancelled = false
-
-        const render = async () => {
-            renderTaskRef.current?.cancel()
-
-            const page = await pdfDoc.getPage(pageNum)
-            if (cancelled) return
-
-            const viewport = page.getViewport({ scale })
-
-            const wrapperWidth = wrapperRef.current.clientWidth
-
-            const fitScale = Math.min(1, wrapperWidth / viewport.width)
-
-            const scaledViewport = page.getViewport({
-                scale: scale * fitScale,
-            })
-
-            const canvas = canvasRef.current
-            canvas.width = scaledViewport.width
-            canvas.height = scaledViewport.height
-
-            const ctx = canvas.getContext("2d")
-
-            const task = page.render({
-                canvasContext: ctx,
-                viewport: scaledViewport,
-            })
-
-            renderTaskRef.current = task
-
-            try {
-                await task.promise
-            } catch {
-                // cancelled
-            }
-        }
-
-        render()
-
-        return () => {
-            cancelled = true
-            renderTaskRef.current?.cancel()
-        }
-    }, [pdfDoc, pageNum, scale])
-
-    return (
-        <div
-            ref={wrapperRef}
-            className=" relative rounded-sm shadow-[0_2px_12px_rgba(0,0,0,0.15)] w-full flex justify-center"
-        >
-            <canvas
-                ref={canvasRef}
-                className="block max-w-full h-auto"
-            />
-
-            {showBadge && (
-                <div className="absolute bottom-2 right-2 bg-black/50 text-white text-[11px] px-2 py-0.5 rounded-full pointer-events-none select-none">
-                    {pageNum} / {totalPages}
-                </div>
-            )}
-        </div>
-    )
-}
+pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
+    "pdfjs-dist/build/pdf.worker.min.mjs",
+    import.meta.url
+).toString()
 
 export default function PDFRenderer({
     file,
     pdfUrl,
 }) {
-    const [pdfDoc, setPdfDoc] = useState(null)
-    const [totalPages, setTotalPages] = useState(0)
-    const [error, setError] = useState(null)
-    const [loading, setLoading] = useState(true)
+    const containerRef = useRef(null)
+    const viewerRef = useRef(null)
 
-    const hasDoc = !!pdfDoc && !loading && !error
+    const pdfViewerRef = useRef(null)
+    const pdfDocRef = useRef(null)
+
+    const [loading, setLoading] = useState(true)
+    const [error, setError] = useState(null)
 
     useEffect(() => {
         if (!file && !pdfUrl) return
 
         let cancelled = false
 
-        const load = async () => {
-            setError(null)
-            setLoading(true)
-
+        const loadPdf = async () => {
             try {
-                const pdfjsLib = await loadPdfJs()
+                setLoading(true)
+                setError(null)
 
-                let documentSource = null
+                if (
+                    !containerRef.current ||
+                    !viewerRef.current
+                ) {
+                    return
+                }
 
-                // Local file support
+                // Cleanup old viewer instance completely
+                if (pdfViewerRef.current) {
+                    pdfViewerRef.current.cleanup()
+                    pdfViewerRef.current = null
+                }
+
+                // Cleanup old document instance
+                if (pdfDocRef.current) {
+                    await pdfDocRef.current.destroy()
+                    pdfDocRef.current = null
+                }
+
+                let source = null
+
                 if (file) {
                     const arrayBuffer = await file.arrayBuffer()
-
-                    documentSource = {
-                        data: arrayBuffer,
-                    }
+                    source = { data: arrayBuffer }
+                } else if (pdfUrl) {
+                    source = { url: pdfUrl }
                 }
 
-                // Cloud URL support
-                else if (pdfUrl) {
-                    documentSource = {
-                        url: pdfUrl,
-                    }
-                }
-
-                const doc = await pdfjsLib
-                    .getDocument(documentSource)
-                    .promise
+                const loadingTask = pdfjsLib.getDocument(source)
+                const pdfDoc = await loadingTask.promise
 
                 if (cancelled) return
+                pdfDocRef.current = pdfDoc
 
-                setPdfDoc(doc)
-                setTotalPages(doc.numPages)
+                const eventBus = new EventBus()
+
+                // Create viewer with explicit configurations
+                const pdfViewer = new PDFViewer({
+                    container: containerRef.current,
+                    viewer: viewerRef.current,
+                    eventBus,
+                    textLayerMode: 2, // Enable text selection layering
+                })
+
+                pdfViewerRef.current = pdfViewer
+                pdfViewer.setDocument(pdfDoc)
+
+                // CRITICAL FIX: Wait for the document to initialize in the viewer 
+                // before enforcing the "page-width" calculation.
+                eventBus.on("pagesinit", () => {
+                    pdfViewer.currentScaleValue = "page-width"
+                    if (!cancelled) setLoading(false)
+                })
+
             } catch (err) {
                 console.error(err)
-
                 if (!cancelled) {
-                    setError(
-                        "Failed to load PDF. Please make sure the file or URL is valid."
-                    )
+                    setError("Failed to load PDF. Please check the file or URL.")
+                    setLoading(false)
                 }
-            } finally {
-                if (!cancelled) setLoading(false)
             }
         }
 
-        load()
+        loadPdf()
 
         return () => {
             cancelled = true
+            try {
+                if (pdfViewerRef.current) {
+                    pdfViewerRef.current.cleanup()
+                    pdfViewerRef.current = null
+                }
+                if (pdfDocRef.current) {
+                    pdfDocRef.current.destroy()
+                    pdfDocRef.current = null
+                }
+            } catch (err) {
+                console.error(err)
+            }
         }
     }, [file, pdfUrl])
 
     return (
-        <>
-            <div className="min-h-80 flex flex-col items-center gap-4 p-6 max-h-150 w-full overflow-y-auto bg-muted/20">
-
-                {loading && <Loader />}
-
-                {error && (
-                    <div className="flex flex-col items-center justify-center min-h-80 gap-3 text-center px-4">
-                        <AlertCircleIcon />
-
-                        <p className="text-sm text-destructive font-medium">
-                            Failed to load PDF
-                        </p>
-
-                        <p className="text-xs text-muted-foreground max-w-xs">
-                            {error}
-                        </p>
-                    </div>
-                )}
-
-                {hasDoc &&
-                    Array.from(
-                        { length: totalPages },
-                        (_, i) => i + 1
-                    ).map((n) => (
-                        <PageCanvas
-                            key={`page-${n}`}
-                            pdfDoc={pdfDoc}
-                            pageNum={n}
-                            scale={BASE_SCALE}
-                            totalPages={totalPages}
-                            showBadge={totalPages > 1}
-                        />
-                    ))}
+        <div className="relative w-full h-full border border-border rounded-md overflow-hidden bg-zinc-100">
+            <div
+                ref={containerRef}
+                className="absolute inset-0 overflow-auto p-4 flex justify-center"
+            >
+                <div
+                    ref={viewerRef}
+                    className="pdfViewer singlePageView"
+                />
             </div>
-        </>
+            
+            {loading && (
+                <div className="absolute inset-0 z-10 flex items-center justify-center bg-background/60 backdrop-blur-sm">
+                    <Loader />
+                </div>
+            )}
+
+            {error && (
+                <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-3 text-center px-4 bg-background/80">
+                    <AlertCircleIcon className="text-destructive h-8 w-8" />
+                    <p className="text-sm text-destructive font-medium">
+                        Failed to load PDF
+                    </p>
+                    <p className="text-xs text-muted-foreground max-w-xs">
+                        {error}
+                    </p>
+                </div>
+            )}
+        </div>
     )
 }

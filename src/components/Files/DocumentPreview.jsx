@@ -33,8 +33,9 @@ const DocumentPreview = ({ setIsOpen, item }) => {
         viewFile(item._id);
     }, [item._id])
 
+    const type = item?.originalFileName?.split(".").pop()?.toLowerCase();
+
     const getRenderer = () => {
-        const type = item?.originalFileName?.split(".").pop()?.toLowerCase();
 
         const imageTypes = ["png", "jpg", "jpeg", "gif", "webp", "svg"];
         const videoTypes = ["mp4", "webm", "ogg", "mov"];
@@ -47,11 +48,11 @@ const DocumentPreview = ({ setIsOpen, item }) => {
         }
 
         if (imageTypes.includes(type)) {
-            return <ImageRenderer src={preSignedUrl} />;
+            return <ImageRenderer imageUrl={preSignedUrl} />;
         }
 
         if (videoTypes.includes(type)) {
-            return <VideoRenderer src={preSignedUrl} />;
+            return <VideoRenderer videoUrl={preSignedUrl} />;
         }
 
         if (audioTypes.includes(type)) {
@@ -59,7 +60,7 @@ const DocumentPreview = ({ setIsOpen, item }) => {
         }
 
         if (codeTypes.includes(type)) {
-            return <CodeRenderer fileUrl={preSignedUrl} language={type} />;
+            return <CodeRenderer codeUrl={preSignedUrl} language={type} />;
         }
 
         if (textTypes.includes(type)) {
@@ -99,14 +100,14 @@ const DocumentPreview = ({ setIsOpen, item }) => {
                         <Loader2 className="size-10 animate-spin" />
                     </div>
                 ) : (
-                    <div className="p-4 min-h-150 flex items-center justify-center">
+                    <div className="p-4 h-150 flex items-center justify-center">
                         {getRenderer()}
                     </div>
                 )}
 
                 <div className="px-4 py-2 flex items-center justify-between border-t border-border bg-muted/60">
-                    <span className="text-xs text-muted-foreground">
-                        {item?.type ? item?.type.toUpperCase() : "PDF"} · {formatSize(item?.size) || "20 KB"}
+                    <span className="text-xs text-muted-foreground uppercase">
+                        {type} · {formatSize(item?.size)}
                     </span>
                     <button
                         onClick={handleDownload}

@@ -5,14 +5,17 @@ import App from "./App.jsx";
 import { ToastContainer } from "react-toastify";
 import AuthProvider from "./contexts/AuthContext";
 import PermissionsCatalogProvider from "./contexts/PermissionsCatalogContext";
+import { TooltipProvider } from "./components/ui/tooltip";
 
 createRoot(document.getElementById("root")).render(
   // <StrictMode>
+  <TooltipProvider>
     <AuthProvider>
       <PermissionsCatalogProvider>
         <App />
         <ToastContainer />
       </PermissionsCatalogProvider>
     </AuthProvider>
+  </TooltipProvider>
   // </StrictMode>
 );

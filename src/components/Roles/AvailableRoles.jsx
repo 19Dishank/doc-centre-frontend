@@ -1,7 +1,7 @@
 import { Plus, ShieldAlert } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
-import NewRoleModel from "./NewRoleModel";
+import RoleModel from "./RoleModel";
 import Role from "./Role";
 import { usePermissions } from "@/hooks/usePermissions";
 import { PERMISSIONS } from "@/helper/permissions";
@@ -27,7 +27,7 @@ const AvailableRoles = ({
           {permissionCheck(PERMISSIONS.CREATE_ROLE) && (
             <Button
               size="sm"
-              className="bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium px-2.5 h-8 gap-1.5 transition-colors rounded-lg shadow-sm shrink-0"
+              className="cursor-pointer bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium px-2.5 h-8 gap-1.5 transition-colors rounded-lg shadow-sm shrink-0"
               onClick={() => setIsOpen(true)}
             >
               <Plus className="size-3.5 stroke-[2.5]" />
@@ -70,7 +70,7 @@ const AvailableRoles = ({
       </div>
 
       {isOpen && (
-        <NewRoleModel
+        <RoleModel
           setIsOpen={setIsOpen}
           getAvailableRoles={getAvailableRoles}
         />

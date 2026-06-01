@@ -74,7 +74,7 @@ const ConfirmationModal = ({
                     <Button 
                         variant="ghost" 
                         size="icon" 
-                        className="size-8 -mr-1 -mt-1 hover:bg-zinc-100 rounded-full shrink-0" 
+                        className="size-8 -mr-1 -mt-1 hover:bg-zinc-100 rounded-full shrink-0 cursor-pointer" 
                         onClick={handleCancel}
                     >
                         <X className="size-4 text-zinc-500" />

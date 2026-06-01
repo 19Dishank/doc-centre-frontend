@@ -10,7 +10,7 @@ const AuthProvider = ({ children }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(!!accessToken);
     const [user, setUser] = useState(null);
     const permissions = user?.role?.permissions || [];
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true)
 
     const getUserDetails = async () => {
         setLoading(true);

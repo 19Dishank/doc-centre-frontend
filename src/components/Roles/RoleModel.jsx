@@ -2,13 +2,13 @@ import { X } from "lucide-react";
 import { Button } from "../ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../ui/card";
 import { Label } from "../ui/label";
-import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
 import { useState } from "react";
 import { toastNotification } from "@/helper/toastNotification";
 import { createNewRole, updateRole } from "@/api/role";
+import FormField from "../ui/form-field";
 
-const NewRoleModel = ({ setIsOpen, getAvailableRoles, currentRole }) => {
+const RoleModel = ({ setIsOpen, getAvailableRoles, currentRole }) => {
 
     const [invitationData, setInvitationData] = useState({
         name: currentRole?.name || "",
@@ -26,10 +26,8 @@ const NewRoleModel = ({ setIsOpen, getAvailableRoles, currentRole }) => {
 
             case "name":
                 if (!value.trim()) return "Name is required";
-                return "";
-
-            case "description":
-                if (!value.trim()) return "Description is required";
+                if(value.length < 3) return "Name should contain at least 3 characters";
+                if(value.length > 100) return "Name should not exceed 100 characters";
                 return "";
 
             default:
@@ -97,22 +95,24 @@ const NewRoleModel = ({ setIsOpen, getAvailableRoles, currentRole }) => {
                             {currentRole ? "Update the details of your role." : "Create a new role for your workspace."}
                         </CardDescription>
                     </div>
-                    <Button variant="ghost" size="icon" className="size-8 -mr-1 -mt-1 hover:bg-zinc-100 rounded-full" onClick={() => setIsOpen(false)}>
+                    <Button variant="ghost" size="icon" className="cursor-pointer size-8 -mr-1 -mt-1 hover:bg-zinc-100 rounded-full" onClick={() => setIsOpen(false)}>
                         <X className="size-4" />
                     </Button>
                 </CardHeader>
                 <CardContent className="flex p-0 flex-col gap-4">
-                    <div className="flex flex-col gap-2">
-                        <Label className="font-medium text-sm leading-5">Role <p className="text-red-500">*</p></Label>
-                        <Input placeholder="Enter role name" name="name" value={invitationData.name} onChange={handleChange} />
-                        {errors.name && <p className="text-red-500 text-xs"> * {errors.name}</p>}
-                    </div>
+                    <FormField
+                        label="Role"
+                        placeholder="Enter role name"
+                        name="name"
+                        value={invitationData.name}
+                        onChange={handleChange}
+                        error={errors.name} 
+                    />
                     <div className="flex flex-col gap-2">
                         <Label className="font-medium text-sm leading-5">
-                            Description <p className="text-red-500">*</p>
+                            Description
                         </Label>
                         <Textarea placeholder="Add a description for the role…" rows={3} name="description" value={invitationData.description} onChange={handleChange} />
-                        {errors.description && <p className="text-red-500 text-xs"> * {errors.description}</p>}
                     </div>
                 </CardContent>
                 <CardFooter className="justify-end gap-2 bg-white px-0">
@@ -128,4 +128,4 @@ const NewRoleModel = ({ setIsOpen, getAvailableRoles, currentRole }) => {
     );
 };
 
-export default NewRoleModel;
+export default RoleModel;

@@ -20,9 +20,10 @@ import { PERMISSIONS } from "@/helper/permissions";
 import { usePermissions } from "@/hooks/usePermissions";
 
 import UserDetails from "@/components/Users/UserDetails";
-import UserModal from "@/components/Users/UserModal";
+import UserModel from "@/components/Users/UserModel";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { fetchRoles } from "@/api/role";
+import { useSearchParams } from "react-router-dom";
 
 export default function UsersList() {
   const { permissionCheck } = usePermissions();
@@ -35,10 +36,11 @@ export default function UsersList() {
   const [paginationData, setPaginationData] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
 
+  const [searchParams, setSearchParams] = useSearchParams();
   const [filters, setFilters] = useState({
-    q: "",
-    sort: "",
-    type: ""
+    q: searchParams.get("q") || "",
+    sort: searchParams.get("sort") || "",
+    type: searchParams.get("type") || ""
   });
 
   const {
@@ -49,13 +51,14 @@ export default function UsersList() {
     hasPreviousPage
   } = paginationData || {};
 
+
   const fetchUsers = async (page = 1, filters = {}) => {
     setLoading(true);
 
     try {
       const res = await getUsers({
         page,
-        limit: 1,
+        limit: 5,
         ...filters
       });
 
@@ -89,6 +92,14 @@ export default function UsersList() {
     getRoles();
   }, []);
 
+  useEffect(() => {
+    setSearchParams((prev) => {
+      filters.q ? prev.set("q", filters.q) : prev.delete("q");
+      filters.sort ? prev.set("sort", filters.sort) : prev.delete("sort");
+      filters.type ? prev.set("type", filters.type) : prev.delete("type");
+      return prev;
+    })
+  }, [filters]);
 
   return (
     <div className="h-full flex flex-col gap-6">
@@ -237,7 +248,7 @@ export default function UsersList() {
         </div>)}
 
       {isOpen && (
-        <UserModal
+        <UserModel
           setIsOpen={setIsOpen}
           fetchUsers={() => fetchUsers(currentPage)}
           roles={roles}

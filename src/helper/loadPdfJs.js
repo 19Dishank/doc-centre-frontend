@@ -1,15 +1,17 @@
-export const loadPdfJs = () =>
-    new Promise((resolve, reject) => {
-        if (window.pdfjsLib) return resolve(window.pdfjsLib)
-        const script = document.createElement("script")
-        script.src =
-            "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"
-        script.onload = () => {
-            const lib = window.pdfjsLib
-            lib.GlobalWorkerOptions.workerSrc =
-                "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js"
-            resolve(lib)
-        }
-        script.onerror = reject
-        document.head.appendChild(script)
-    })
+// helper/loadPdfJs.js
+
+export const loadPdfJs = async () => {
+    const pdfjsLib = await import("pdfjs-dist")
+    const pdfjsViewer = await import("pdfjs-dist/web/pdf_viewer")
+
+    pdfjsLib.GlobalWorkerOptions.workerSrc =
+        new URL(
+            "pdfjs-dist/build/pdf.worker.min.mjs",
+            import.meta.url
+        ).toString()
+
+    return {
+        pdfjsLib,
+        pdfjsViewer,
+    }
+}

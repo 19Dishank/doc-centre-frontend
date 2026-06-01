@@ -12,9 +12,11 @@ import { Input } from "../ui/input";
 import { getRegistryIcon } from "@/helper/getRegistryIcon";
 import DocumentPreview from "./DocumentPreview";
 import ShareDocumentModal from "./ShareDocumentModal";
+import { useAuthContext } from "@/contexts/AuthContext";
 
 const DisplayRow = ({ item, setParentId, setNavigationBar, getFiles, getCellWidthClass }) => {
-    
+
+    const { user: { _id: userId } } = useAuthContext();
     const { permissionCheck } = usePermissions();
     const [isOpen, setIsOpen] = useState(false);
     const [renameMode, setRenameMode] = useState(false);
@@ -22,6 +24,9 @@ const DisplayRow = ({ item, setParentId, setNavigationBar, getFiles, getCellWidt
     const [shareDocument, setShareDocument] = useState(null);
 
     const isFolder = !item.originalFileName;
+    const isMe = isFolder
+        ? item.createdBy?._id === userId
+        : item.uploadedBy?._id === userId;
     const parts = item?.originalFileName?.split(".");
     const displayExtension = isFolder ? "Folder" : parts.pop();
     const displayName = isFolder ? item?.name : parts?.join("");
@@ -36,6 +41,7 @@ const DisplayRow = ({ item, setParentId, setNavigationBar, getFiles, getCellWidt
     const ownerEmailId = isFolder ? item.createdBy?.email : item.uploadedBy?.email;
 
     const handleClick = (parentId, type, name) => {
+        setPreviewDocument(true)
         if (type === "folder") {
             setParentId(parentId);
             setNavigationBar((prev) => [...prev, { name, parentId }]);
@@ -54,7 +60,6 @@ const DisplayRow = ({ item, setParentId, setNavigationBar, getFiles, getCellWidt
         }
     };
 
-
     const handleKeyDown = async (event) => {
         if (event.key === "Enter") {
             isFolder
@@ -70,20 +75,21 @@ const DisplayRow = ({ item, setParentId, setNavigationBar, getFiles, getCellWidt
     return (
         <>
             <TableRow key={item._id} className="hover:bg-zinc-50/50 transition-colors">
-                {/* Locked Width for Name cell */}
-                <TableCell className={`first:pl-4 ${getCellWidthClass("Name")}`}>
+                <TableCell
+                    className={`cursor-pointer first:pl-4 ${getCellWidthClass("Name")}`}
+                    onClick={() => handleClick(item._id, isFolder ? "folder" : "file", displayName)}
+                >
                     <div className="flex items-center gap-3 min-w-0">
                         {getRegistryIcon(item)}
 
                         <div
                             className="flex flex-col min-w-0 cursor-pointer hover:underline"
-                            onClick={() => handleClick(item._id, isFolder ? "folder" : "file", displayName)}
                         >
                             {renameMode
                                 ? <span className="font-semibold text-zinc-950 truncate">
                                     <Input autoFocus={true} onBlur={() => setRenameMode(false)} className="focus:ring-0! w-full" placeholder="Folder name..." onKeyDown={handleKeyDown} value={name} onChange={(e) => setName(e.target.value)} />
                                 </span>
-                                : <span onClick={() => setPreviewDocument(true)} className="font-semibold text-zinc-950 truncate">
+                                : <span className="font-semibold text-zinc-950 truncate">
                                     {displayName || item.name}
                                 </span>
                             }
@@ -95,22 +101,18 @@ const DisplayRow = ({ item, setParentId, setNavigationBar, getFiles, getCellWidt
                     </div>
                 </TableCell>
 
-                {/* Locked Width for Type cell */}
                 <TableCell className={`text-[#71717b] text-sm table-cell uppercase ${getCellWidthClass("Type")}`}>
                     {displayExtension}
                 </TableCell>
 
-                {/* Locked Width for Size cell */}
                 <TableCell className={`text-[#71717b] text-sm table-cell ${getCellWidthClass("Size")}`}>
                     {displaySize}
                 </TableCell>
 
-                {/* Locked Width for Last Modified cell */}
                 <TableCell className={`text-[#71717b] text-sm whitespace-nowrap ${getCellWidthClass("Last Modified")}`}>
                     {item.createdAt ? new Date(item.createdAt).toLocaleDateString() : "—"}
                 </TableCell>
 
-                {/* Locked Width for Owner cell */}
                 <TableCell className={`text-[#71717b] text-sm truncate flex items-center gap-2 py-2.5 ${getCellWidthClass("Owner")}`}>
                     {(!ownerName.includes("undefined"))
                         ? (<img
@@ -120,10 +122,12 @@ const DisplayRow = ({ item, setParentId, setNavigationBar, getFiles, getCellWidt
                         />)
                         : <User className="size-6 p-1.5 rounded-full bg-[#2b7fff] text-white text-xs" />
                     }
-                    <span className="max-w-40 truncate">{ownerName.includes("undefined") ? ownerEmailId : ownerName}</span>
+                    <span className="max-w-40 truncate flex gap-1 items-baseline">
+                        <span>{ownerName.includes("undefined") ? ownerEmailId : ownerName}</span>
+                        {isMe && <span className="text-xs">(You)</span>}
+                    </span>
                 </TableCell>
 
-                {/* Locked Width for Actions cell */}
                 <TableCell className={`text-right pr-4 ${getCellWidthClass("Actions")}`}>
                     <div className="flex justify-end items-center gap-0.5">
                         {permissionCheck(PERMISSIONS.SHARE_DOCUMENT) && !isFolder && (
@@ -166,26 +170,29 @@ const DisplayRow = ({ item, setParentId, setNavigationBar, getFiles, getCellWidt
                         )}
                     </div>
                 </TableCell>
-            </TableRow>
+            </TableRow >
 
             {isOpen && (
                 <ConfirmationModal
-                    heading="Delete File"
-                    subheading="Are you sure you want to delete this file? This action cannot be undone."
+                    heading={`Delete ${isFolder ? "Folder" : "File"}`}
+                    subheading={`Are you sure you want to delete ${displayName} ${isFolder ? "Folder" : "File"} ? This action cannot be undone.`}
                     onConfirm={handleDelete}
                     onCancel={() => setIsOpen(false)}
                     type="danger"
                 />
             )}
 
+            {
+                previewDocument && item?.mimeType && (
+                    <DocumentPreview setIsOpen={setPreviewDocument} url={previewDocument} type={displayExtension} item={item} />
+                )
+            }
 
-            {previewDocument && item?.mimeType && (
-                <DocumentPreview setIsOpen={setPreviewDocument} url={previewDocument} type={displayExtension} item={item} />
-            )}
-
-            {shareDocument && (
-                <ShareDocumentModal documentId={shareDocument} setIsOpen={setShareDocument} />
-            )}
+            {
+                shareDocument && (
+                    <ShareDocumentModal documentId={shareDocument} setIsOpen={setShareDocument} />
+                )
+            }
         </>
     );
 };

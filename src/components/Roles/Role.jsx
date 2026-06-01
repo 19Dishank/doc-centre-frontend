@@ -4,7 +4,7 @@ import { useState } from "react";
 import { deleteRole } from "@/api/role";
 import { toastNotification } from "@/helper/toastNotification";
 import ConfirmationModal from "../ConfirmationModel";
-import NewRoleModel from "./NewRoleModel";
+import RoleModel from "./RoleModel";
 import { PERMISSIONS } from "@/helper/permissions";
 import { usePermissions } from "@/hooks/usePermissions";
 
@@ -126,7 +126,7 @@ const Role = ({ currentRoleId, handleRoleChange, role, getAvailableRoles }) => {
             )}
 
             {showEditModel && (
-                <NewRoleModel
+                <RoleModel
                     setIsOpen={setShowEditModel}
                     getAvailableRoles={getAvailableRoles}
                     currentRole={role}

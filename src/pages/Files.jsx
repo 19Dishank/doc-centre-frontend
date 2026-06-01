@@ -13,11 +13,13 @@ import { PERMISSIONS } from "@/helper/permissions";
 import { usePermissions } from "@/hooks/usePermissions";
 import { toastNotification } from "@/helper/toastNotification";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 export default function Files() {
 
   const { permissionCheck } = usePermissions();
 
+  const inputRef = useRef(null);
   const [parentId, setParentId] = useState("");
   const [navigationBar, setNavigationBar] = useState([{ name: "My Files", parentId: "" }]);
   const [createNewFolder, setCreateNewFolder] = useState(false);
@@ -123,6 +125,37 @@ export default function Files() {
     { label: "Documents", value: "file" },
   ]
 
+  const handleKeyDown = (event) => {
+    event.stopPropagation();
+    if (event.ctrlKey && event.altKey && event.code === "KeyU") {
+      event.preventDefault();
+      if (permissionCheck(PERMISSIONS.UPLOAD_DOCUMENT)) {
+        document.getElementById("file-input")?.click();
+      }
+    }
+    else if (event.ctrlKey && event.altKey && event.code === "KeyN") {
+      event.preventDefault();
+      if (permissionCheck(PERMISSIONS.UPLOAD_DOCUMENT)) {
+        setCreateNewFolder(true);
+      }
+    }
+  }
+
+
+  useEffect(() => {
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
+
+
+
+  const handleUpload = () => {
+    if(!inputRef.current) return;
+    inputRef.current?.click();
+  }
+
   return (
     <div className="flex flex-col gap-6 w-full max-w-full">
       <div className="flex flex-col gap-4 lg:flex-row lg:justify-between lg:items-center">
@@ -139,16 +172,28 @@ export default function Files() {
 
         {permissionCheck(PERMISSIONS.UPLOAD_DOCUMENT) && (
           <div className="flex items-center gap-2 overflow-x-auto lg:overflow-visible pb-1 lg:pb-0">
-            <Button size="sm" className="bg-[#2b7fff] text-blue-50" disabled={isUploading} variant="default">
-              <label htmlFor="file-input" className="cursor-pointer gap-1 flex items-center">
-                {isUploading ? "Uploading..." : <><Plus className="size-4" /> Upload</>}
-                <input id="file-input" type="file" className="hidden" onChange={onChangeFile} />
-              </label>
-            </Button>
-            <Button size="sm" variant="outline" className="gap-1 shrink-0" onClick={() => setCreateNewFolder(true)}>
-              <FolderPlus className="size-4" />
-              <span className="hidden sm:inline">New Folder</span>
-            </Button>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button size="sm" className="bg-[#2b7fff] cursor-pointer text-blue-50" disabled={isUploading} variant="default" onClick={handleUpload}>
+                  {isUploading ? "Uploading..." : <><Plus className="size-4" /> Upload</>}
+                  <input ref={inputRef} id="file-input" type="file" className="hidden" onChange={onChangeFile} />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Ctrl + Alt + U</p>
+              </TooltipContent>
+            </Tooltip>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button size="sm" variant="outline" className="cursor-pointer gap-1 shrink-0" onClick={() => setCreateNewFolder(true)}>
+                  <FolderPlus className="size-4" />
+                  <span className="hidden sm:inline">New Folder</span>
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Ctrl + Alt + N</p>
+              </TooltipContent>
+            </Tooltip>
           </div>
         )}
 

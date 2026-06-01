@@ -1,11 +1,10 @@
 import Loader from "./components/ui/loader";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { createBrowserRouter, Navigate, RouterProvider } from "react-router-dom";
 import { getSubdomain } from "./helper/getSubdomain";
 import { platformRoutes } from "./routes/platformRoutes";
 import { Suspense } from "react";
 import ErrorPage from "./pages/ErrorPage";
 import AuthLayout from "./layouts/AuthLayout/AuthLayout";
-import { usePermissions } from "./hooks/usePermissions";
 import PublicRoute from "./routes/PublicRoute";
 import AppLayout from "./layouts/AppLayout/AppLayout";
 import ProtectedRoute from "./routes/ProtectedRoute";
@@ -15,7 +14,6 @@ import { useAuthContext } from "./contexts/AuthContext";
 export default function App() {
 
   const { loading } = useAuthContext();
-  const { permissionCheck } = usePermissions();
 
   const platformRouter = createBrowserRouter([
     {
@@ -27,6 +25,8 @@ export default function App() {
         }))
     },
   ]);
+
+  console.log("Platform Router:", platformRouter);
 
   const tenantRouter = createBrowserRouter([
     {
@@ -43,14 +43,17 @@ export default function App() {
         {
           element: <AppLayout />,
           children:
-            protectedRoutes
-              .filter(({ isRouteAccessible }) => {
-                if (isRouteAccessible === undefined) return true;
-                return permissionCheck(isRouteAccessible)
-              }).map(({ path, element }) => ({
-                path,
-                element: <ProtectedRoute>{element}</ProtectedRoute>,
-              }))
+            [
+              {
+                path: "/",
+                element: <Navigate to="/dashboard" replace />,
+              },
+              ...protectedRoutes
+                .map(({ path, element, isRouteAccessible }) => ({
+                  path,
+                  element: loading ? <Loader styles={"min-h-screen"} /> : <ProtectedRoute isRouteAccessible={isRouteAccessible}>{element}</ProtectedRoute>,
+                }))
+            ]
         },
       ],
     },
@@ -59,8 +62,6 @@ export default function App() {
   const subdomain = getSubdomain();
   const isPlatform = subdomain === "app" || subdomain === null;
   const router = isPlatform ? platformRouter : tenantRouter;
-
-  if (loading) return <Loader styles={"min-h-screen"} />;
 
   return (
     <Suspense fallback={<Loader styles={"min-h-screen"} />}>

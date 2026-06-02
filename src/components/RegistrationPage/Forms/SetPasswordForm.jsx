@@ -2,6 +2,7 @@ import { completeOnboarding, setPassword } from "@/api/auth";
 import { Button } from "@/components/ui/button";
 import FormField from "@/components/ui/form-field";
 import { passwordRegex } from "@/constants";
+import { toastNotification } from "@/helper/toastNotification";
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -85,6 +86,7 @@ const SetPasswordForm = ({ isOnboardingFlow, token }) => {
             );
         } catch (error) {
             console.error(error);
+            toastNotification(error.response?.data?.message || "An error occurred. Please try again.", "error");
         } finally {
             setLoading(false);
         }

@@ -1,8 +1,6 @@
 /* eslint-disable react-refresh/only-export-components */
 import { lazy } from "react";
 import { PERMISSIONS } from "@/helper/permissions";
-import IPWhitelistingPage from "@/pages/credentials/IPWhitelistingPage";
-import DocumentationPage from "@/pages/credentials/DocumentationPage";
 const Dashboard = lazy(() => import("@/pages/Dashboard"));
 const Files = lazy(() => import("@/pages/Files"));
 const UsersList = lazy(() => import("@/pages/Users"));
@@ -20,6 +18,9 @@ const SuccessPage = lazy(() => import("@/pages/SuccessPage"));
 const UserSettings = lazy(() => import("@/pages/settings/UserSettings"));
 const APIKeysPage = lazy(() => import("@/pages/credentials/APIKeysPage"));
 const APIActivityLogPage = lazy(() => import("@/pages/credentials/APIActivityLogPage"));
+const IPWhitelistingPage = lazy(() => import("@/pages/credentials/IPWhitelistingPage"));
+const DocumentationPage = lazy(() => import("@/pages/credentials/DocumentationPage"));
+const RecycleBin = lazy(() => import("@/pages/RecycleBin"));
 
 export const publicRoutes = [
     {
@@ -53,6 +54,11 @@ export const protectedRoutes = [
         path: "/files",
         element: <Files />,
         isRouteAccessible: PERMISSIONS.VIEW_DOCUMENT,
+    },
+    {
+        path: "/trash",
+        element: <RecycleBin />,
+        isRouteAccessible: PERMISSIONS.RESTORE_DOCUMENT,
     },
     {
         path: "/users",

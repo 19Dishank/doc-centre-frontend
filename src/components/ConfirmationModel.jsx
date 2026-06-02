@@ -1,3 +1,4 @@
+import { createPortal } from "react-dom"; // Add this import
 import { X, AlertTriangle, Info, CheckCircle2, AlertCircle } from "lucide-react";
 import { Button } from "./ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "./ui/card";
@@ -52,9 +53,10 @@ const ConfirmationModal = ({
         setIsOpen(false);
     };
 
-    return (
-        <div className="bg-zinc-950/40 flex fixed inset-0 justify-center items-center z-[100] backdrop-blur p-4">
-            <Card className="shadow-2xl p-5 sm:p-6 flex flex-col gap-4 w-full max-w-md sm:max-w-lg overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+    // Use a React Portal to break out of the table row's stacking context
+    return createPortal(
+        <div className="bg-zinc-950/40 flex fixed inset-0 justify-center items-center z-[9999] backdrop-blur p-4">
+            <Card className="shadow-2xl p-5 sm:p-6 flex flex-col gap-4 w-full max-w-md sm:max-w-lg animate-in fade-in zoom-in-95 duration-150">
                 <CardHeader className="p-0 flex flex-row justify-between items-start gap-4">
                     <div className="flex gap-3 items-start min-w-0">
                         <div className={`p-2 rounded-full ${currentConfig.iconBg} shrink-0`}>
@@ -99,7 +101,8 @@ const ConfirmationModal = ({
                     </Button>
                 </CardFooter>
             </Card>
-        </div>
+        </div>,
+        document.body 
     );
 };
 

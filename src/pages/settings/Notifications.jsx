@@ -7,17 +7,59 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
+import { useState } from "react";
 
 export default function Notifications() {
+
+  const emailNotifications = [
+    { title: "Email on Upload", description: "Receive an email each time a new file is uploaded.", name: "emailOnUpload" },
+    { title: "Weekly Usage Report", description: "Get a summary of activity every Monday morning.", name: "weeklyUsageReport" },
+    { title: "Security Alerts", description: "Get notified of any security-related events.", name: "securityAlerts" },
+    { title: "API Limit Warnings", description: "Receive alerts when approaching API usage limits.", name: "apiLimitWarnings" },
+  ]
+
+  const inAppNotifications = [
+    { title: "New File Comments", description: "Get notified when someone comments on a file you've uploaded.", name: "newFileComments" },
+    { title: "Role Changes", description: "Receive updates when your role or permissions change.", name: "roleChanges" },
+    { title: "Storage Warnings", description: "Get alerts when you're approaching your storage limits.", name: "storageWarnings" },
+    { title: "System Announcements", description: "Stay informed about important system updates and announcements.", name: "systemAnnouncements" }
+  ]
+
+  const availableFrequencies = [
+    { label: "Real-time", value: "realtime" },
+    { label: "Daily Summary", value: "daily" },
+    { label: "Weekly Summary", value: "weekly" }
+  ]
+
+  const initialFormData = {
+    emailOnUpload: true,
+    weeklyUsageReport: true,
+    securityAlerts: true,
+    apiLimitWarnings: true,
+    newFileComments: true,
+    roleChanges: true,
+    storageWarnings: true,
+    systemAnnouncements: true,
+    frequency: "realtime",
+    notificationEmail: ""
+  }
+
+  const [formData, setFormData] = useState(initialFormData);
+
+  const handleToggle = (key) => {
+    setFormData(prev => ({
+      ...prev,
+      [key]: !prev[key]
+    }))
+  }
+
   return (
     <div className="w-full max-w-4xl mx-auto flex flex-col gap-6">
-      {/* Page Header */}
       <div className="flex flex-col gap-1">
         <h1 className="font-semibold text-2xl leading-8 tracking-tight text-zinc-950">Notifications</h1>
         <p className="text-zinc-500 text-sm leading-5">Control how and when you receive alerts and updates.</p>
       </div>
 
-      {/* 1. Email Notifications Card */}
       <Card className="shadow-sm p-4 sm:p-6 flex flex-col gap-4">
         <CardHeader className="p-0 gap-1">
           <div className="flex items-center gap-2">
@@ -28,58 +70,28 @@ export default function Notifications() {
             Manage which emails are sent to your inbox.
           </CardDescription>
         </CardHeader>
-        
         <CardContent className="flex p-0 flex-col">
-          {/* Row 1 */}
-          <div className="flex py-4 justify-between items-start sm:items-center gap-4">
-            <div className="flex flex-col gap-1 min-w-0">
-              <Label className="font-semibold text-sm leading-5 text-zinc-950">Email on Upload</Label>
-              <span className="text-zinc-500 text-xs leading-normal">
-                Receive an email each time a new file is uploaded.
-              </span>
-            </div>
-            <Switch checked={true} className="shrink-0 mt-0.5 sm:mt-0" />
-          </div>
-          <Separator />
-          
-          {/* Row 2 */}
-          <div className="flex py-4 justify-between items-start sm:items-center gap-4">
-            <div className="flex flex-col gap-1 min-w-0">
-              <Label className="font-semibold text-sm leading-5 text-zinc-950">Weekly Usage Report</Label>
-              <span className="text-zinc-500 text-xs leading-normal">
-                Get a summary of activity every Monday morning.
-              </span>
-            </div>
-            <Switch checked={true} className="shrink-0 mt-0.5 sm:mt-0" />
-          </div>
-          <Separator />
-          
-          {/* Row 3 */}
-          <div className="flex py-4 justify-between items-start sm:items-center gap-4">
-            <div className="flex flex-col gap-1 min-w-0">
-              <Label className="font-semibold text-sm leading-5 text-zinc-950">Security Alerts</Label>
-              <span className="text-zinc-500 text-xs leading-normal">
-                Notify on suspicious sign-ins or permission changes.
-              </span>
-            </div>
-            <Switch checked={true} className="shrink-0 mt-0.5 sm:mt-0" />
-          </div>
-          <Separator />
-          
-          {/* Row 4 */}
-          <div className="flex py-4 justify-between items-start sm:items-center gap-4">
-            <div className="flex flex-col gap-1 min-w-0">
-              <Label className="font-semibold text-sm leading-5 text-zinc-950">API Limit Warnings</Label>
-              <span className="text-zinc-500 text-xs leading-normal">
-                Warn when API usage approaches the monthly limit.
-              </span>
-            </div>
-            <Switch className="shrink-0 mt-0.5 sm:mt-0" />
-          </div>
+          {emailNotifications.map(({ title, description, name }, index) => (
+            <>
+              <div className="flex py-4 justify-between items-start sm:items-center gap-4">
+                <div className="flex flex-col gap-1 min-w-0">
+                  <Label className="font-semibold text-sm leading-5 text-zinc-950">{title}</Label>
+                  <span className="text-zinc-500 text-xs leading-normal">
+                    {description}
+                  </span>
+                </div>
+                <Switch
+                  className="cursor-pointer shrink-0 mt-0.5 sm:mt-0 data-[state=checked]:bg-[#2b7fff] data-[state=unchecked]:bg-gray-300"
+                  checked={formData[name]}
+                  onCheckedChange={() => handleToggle(name)}
+                />
+              </div>
+              {index < emailNotifications.length - 1 && <Separator />}
+            </>
+          ))}
         </CardContent>
       </Card>
 
-      {/* 2. In-App Notifications Card */}
       <Card className="shadow-sm p-4 sm:p-6 flex flex-col gap-4">
         <CardHeader className="p-0 gap-1">
           <div className="flex items-center gap-2">
@@ -90,58 +102,28 @@ export default function Notifications() {
             Choose what shows up inside DocuCentral.
           </CardDescription>
         </CardHeader>
-        
         <CardContent className="flex p-0 flex-col">
-          {/* Row 1 */}
-          <div className="flex py-4 justify-between items-start sm:items-center gap-4">
-            <div className="flex flex-col gap-1 min-w-0">
-              <Label className="font-semibold text-sm leading-5 text-zinc-950">New File Comments</Label>
-              <span className="text-zinc-500 text-xs leading-normal">
-                Get notified when teammates comment on your files.
-              </span>
-            </div>
-            <Switch checked={true} className="shrink-0 mt-0.5 sm:mt-0" />
-          </div>
-          <Separator />
-          
-          {/* Row 2 */}
-          <div className="flex py-4 justify-between items-start sm:items-center gap-4">
-            <div className="flex flex-col gap-1 min-w-0">
-              <Label className="font-semibold text-sm leading-5 text-zinc-950">Role Changes</Label>
-              <span className="text-zinc-500 text-xs leading-normal">
-                Alert me when my role or permissions are updated.
-              </span>
-            </div>
-            <Switch checked={true} className="shrink-0 mt-0.5 sm:mt-0" />
-          </div>
-          <Separator />
-          
-          {/* Row 3 */}
-          <div className="flex py-4 justify-between items-start sm:items-center gap-4">
-            <div className="flex flex-col gap-1 min-w-0">
-              <Label className="font-semibold text-sm leading-5 text-zinc-950">Storage Warnings</Label>
-              <span className="text-zinc-500 text-xs leading-normal">
-                Notify when storage usage exceeds 80% of the limit.
-              </span>
-            </div>
-            <Switch className="shrink-0 mt-0.5 sm:mt-0" />
-          </div>
-          <Separator />
-          
-          {/* Row 4 */}
-          <div className="flex py-4 justify-between items-start sm:items-center gap-4">
-            <div className="flex flex-col gap-1 min-w-0">
-              <Label className="font-semibold text-sm leading-5 text-zinc-950">System Announcements</Label>
-              <span className="text-zinc-500 text-xs leading-normal">
-                Hear about new features and scheduled maintenance.
-              </span>
-            </div>
-            <Switch checked={true} className="shrink-0 mt-0.5 sm:mt-0" />
-          </div>
+          {inAppNotifications.map(({ title, description, name }, index) => (
+            <>
+              <div className="flex py-4 justify-between items-start sm:items-center gap-4">
+                <div className="flex flex-col gap-1 min-w-0">
+                  <Label className="font-semibold text-sm leading-5 text-zinc-950">{title}</Label>
+                  <span className="text-zinc-500 text-xs leading-normal">
+                    {description}
+                  </span>
+                </div>
+                <Switch
+                  className="cursor-pointer shrink-0 mt-0.5 sm:mt-0 data-[state=checked]:bg-[#2b7fff] data-[state=unchecked]:bg-gray-300"
+                  checked={formData[name]}
+                  onCheckedChange={() => handleToggle(name)}
+                />
+              </div>
+              {index < inAppNotifications.length - 1 && <Separator />}
+            </>
+          ))}
         </CardContent>
       </Card>
 
-      {/* 3. Notification Digest Card */}
       <Card className="shadow-sm p-4 sm:p-6 flex flex-col gap-4">
         <CardHeader className="p-0 gap-1">
           <div className="flex items-center gap-2">
@@ -154,37 +136,22 @@ export default function Notifications() {
         </CardHeader>
         
         <CardContent className="flex p-0 flex-col gap-6">
-          {/* Frequency Option Cards - Adjusted columns to scale down to 1 column on mobile */}
           <div className="flex flex-col gap-2">
             <Label className="font-semibold text-sm leading-5 text-zinc-950">Digest Frequency</Label>
+
             <RadioGroup defaultValue="realtime" className="grid grid-cols-1 md:grid-cols-3 gap-3">
-              <Label
-                htmlFor="realtime"
-                className="cursor-pointer rounded-lg bg-[#2b7fff]/5 border-[#2b7fff] border flex p-3 items-center gap-2 hover:bg-[#2b7fff]/10 transition-colors"
-              >
-                <RadioGroupItem value="realtime" id="realtime" />
-                <span className="font-medium text-sm leading-5 text-zinc-950">Real-time</span>
-              </Label>
-              
-              <Label
-                htmlFor="daily"
-                className="cursor-pointer rounded-lg border-zinc-200 border flex p-3 items-center gap-2 hover:bg-zinc-50 transition-colors"
-              >
-                <RadioGroupItem value="daily" id="daily" />
-                <span className="font-medium text-sm leading-5 text-zinc-950">Daily Summary</span>
-              </Label>
-              
-              <Label
-                htmlFor="weekly"
-                className="cursor-pointer rounded-lg border-zinc-200 border flex p-3 items-center gap-2 hover:bg-zinc-50 transition-colors"
-              >
-                <RadioGroupItem value="weekly" id="weekly" />
-                <span className="font-medium text-sm leading-5 text-zinc-950">Weekly Summary</span>
-              </Label>
+              {availableFrequencies.map(({ label, value }) => (
+                <Label
+                  htmlFor={value}
+                  className={`cursor-pointer rounded-lg ${formData.digestFrequency === value ? 'bg-blue-500! border-[#2b7fff]' : 'border-zinc-200'} border flex p-3 items-center gap-2 transition-colors`}
+                >
+                  <RadioGroupItem value={value} id={value} />
+                  <span className="font-medium text-sm leading-5 text-zinc-950">{label}</span>
+                </Label>
+              ))}
             </RadioGroup>
           </div>
 
-          {/* Email Input Line with Adaptive Badge formatting */}
           <div className="flex flex-col gap-2">
             <Label htmlFor="notif-email" className="font-semibold text-sm leading-5 text-zinc-950">
               Notification Email
@@ -202,7 +169,6 @@ export default function Notifications() {
           </div>
         </CardContent>
 
-        {/* Dynamic Mobile Footer Action Panel */}
         <CardFooter className="p-0 pt-2 bg-white flex flex-col-reverse sm:flex-row justify-end gap-2">
           <Button variant="ghost" className="w-full sm:w-auto">Cancel</Button>
           <Button className="bg-[#2b7fff] text-blue-50 gap-2 w-full sm:w-auto">

@@ -1,29 +1,21 @@
-import { Plus, Search } from "lucide-react";
+import { Pencil, Plus, Search, Trash2, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow
-} from "@/components/ui/table";
 import { useEffect, useState } from "react";
-
 import PaginationBar from "@/components/ui/pagination-bar";
-import { getUsers } from "@/api/user";
-import Loader from "@/components/ui/loader";
-
+import { deleteUser, getUsers } from "@/api/user";
 import { PERMISSIONS } from "@/helper/permissions";
 import { usePermissions } from "@/hooks/usePermissions";
-
-import UserDetails from "@/components/Users/UserDetails";
 import UserModel from "@/components/Users/UserModel";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { fetchRoles } from "@/api/role";
 import { useSearchParams } from "react-router-dom";
+import { DataTable } from "@/components/DataTable";
+import { useAuthContext } from "@/contexts/AuthContext";
+import { Badge } from "@/components/ui/badge";
+import { formatTime } from "@/helper/formatTime";
+import ConfirmationModal from "@/components/ConfirmationModel";
+import { toastNotification } from "@/helper/toastNotification";
 
 export default function UsersList() {
   const { permissionCheck } = usePermissions();
@@ -34,13 +26,13 @@ export default function UsersList() {
   const [usersData, setUsersData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [paginationData, setPaginationData] = useState(null);
-  const [currentPage, setCurrentPage] = useState(1);
-
   const [searchParams, setSearchParams] = useSearchParams();
+  const [currentPage, setCurrentPage] = useState(searchParams.get("page") || 1);
+
   const [filters, setFilters] = useState({
     q: searchParams.get("q") || "",
     sort: searchParams.get("sort") || "",
-    type: searchParams.get("type") || ""
+    type: searchParams.get("type") || "",
   });
 
   const {
@@ -52,7 +44,7 @@ export default function UsersList() {
   } = paginationData || {};
 
 
-  const fetchUsers = async (page = 1, filters = {}) => {
+  const fetchUsers = async (page, filters = {}) => {
     setLoading(true);
 
     try {
@@ -100,6 +92,57 @@ export default function UsersList() {
       return prev;
     })
   }, [filters]);
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setLoading(true);
+    setSearchParams((prev) => {
+      prev.set("page", currentPage);
+      return prev;
+    });
+  }, [currentPage]);
+
+  const getStyles = role => {
+    switch (role) {
+      case "Admin": return "bg-blue-100 text-blue-700 hover:bg-blue-100"
+      case "Editor": return "bg-violet-100 text-violet-700 hover:bg-violet-100"
+      case "Viewer": return "bg-gray-100 text-gray-700 hover:bg-gray-100"
+      default: return "bg-emerald-100 text-emerald-700 hover:bg-emerald-100"
+    }
+  }
+
+  const columns = [
+    {
+      key: "user",
+      header: "User",
+      width: "w-[40%]",
+      cellClassName: "font-medium",
+      render: (row) => <UserNameCell row={row} />,
+    },
+    {
+      key: "role",
+      header: "Role",
+      width: "w-[20%]",
+      render: (row) => (
+        <Badge className={`font-medium rounded-full ${getStyles(row.role.name)}`}>
+          {row?.role?.name}
+        </Badge>
+      ),
+    },
+    {
+      key: "lastActive",
+      header: "Last Active",
+      width: "w-[25%]",
+      render: (row) => row.lastActivateAt ? formatTime(row.lastActivateAt) : "—",
+    },
+    {
+      key: "actions",
+      header: "",
+      width: "w-[15%]",
+      align: "right",
+      render: (row) => <ActionsCell row={row} fetchUsers={fetchUsers} roles={roles} />
+    },
+  ];
 
   return (
     <div className="h-full flex flex-col gap-6">
@@ -177,62 +220,12 @@ export default function UsersList() {
         </div>
       </div>
 
-      <Card className="p-0 border-zinc-200">
-        <div className="w-full">
-          <Table className="min-w-175 lg:min-w-full">
-            <TableHeader className="bg-zinc-50">
-              <TableRow>
-                <TableHead className="w-[40%] text-[#71717b]! uppercase text-[11px] tracking-wide font-bold pl-4">
-                  User
-                </TableHead>
-
-                <TableHead className="w-[20%] text-[#71717b]! uppercase text-[11px] tracking-wide font-bold">
-                  Role
-                </TableHead>
-
-                <TableHead className="w-[25%] text-[#71717b]! uppercase text-[11px] tracking-wide font-bold lg:table-cell">
-                  Last Active
-                </TableHead>
-
-                <TableHead className="w-[15%] text-[#71717b]! uppercase text-[11px] tracking-wide font-bold text-right pr-4">
-                  Actions
-                </TableHead>
-              </TableRow>
-            </TableHeader>
-
-            <TableBody>
-              {loading ? (
-                <TableRow>
-                  <TableCell
-                    className="p-10 bg-white"
-                    colSpan={5}
-                  >
-                    <Loader />
-                  </TableCell>
-                </TableRow>
-              ) : usersData.length > 0 ? (
-                usersData.map((user) => (
-                  <UserDetails
-                    key={user._id}
-                    user={user}
-                    fetchUsers={() => fetchUsers(currentPage)}
-                    roles={roles}
-                  />
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell
-                    className="text-center py-10"
-                    colSpan={5}
-                  >
-                    No users found
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </div>
-      </Card>
+      <DataTable
+        columns={columns}
+        data={usersData}
+        loading={loading}
+        noDataMessage="No users found"
+      />
 
       {usersData.length > 0 && (
         <div className="mt-auto">
@@ -256,4 +249,89 @@ export default function UsersList() {
       )}
     </div>
   );
+}
+
+const UserNameCell = ({ row: currentUser }) => {
+
+  const { user: { _id: userId } } = useAuthContext();
+  const displayName = currentUser.firstName && currentUser.lastName ? `${currentUser.firstName} ${currentUser.lastName}` : currentUser.email;
+
+  return (
+    <div className="flex items-center gap-3">
+      {(currentUser.firstName && currentUser.lastName)
+        ? (<img
+          className="size-8 rounded-full shrink-0"
+          src={`https://ui-avatars.com/api/?name=${currentUser.firstName} ${currentUser.lastName}&background=random`}
+          alt={`${currentUser.firstName} ${currentUser.lastName}`}
+        />)
+        : <User className="size-8 p-1.5 rounded-full bg-[#2b7fff] text-white text-xs" />
+      }
+      <div className="flex flex-col min-w-0">
+        <span className="font-medium text-sm leading-5 truncate">
+          {displayName}  {currentUser._id === userId && <span className="font-medium text-zinc-500"> (You)</span>}
+        </span>
+        <span className="text-[#71717b] text-xs leading-4 truncate sm:block">{currentUser.email}</span>
+      </div>
+    </div>
+  )
+}
+
+const ActionsCell = ({ row: currentUser, fetchUsers, roles }) => {
+  const { permissionCheck } = usePermissions();
+  const { user: { _id: userId } } = useAuthContext();
+  const [isEditing, setIsEditing] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const displayName = currentUser.firstName && currentUser.lastName ? `${currentUser.firstName} ${currentUser.lastName}` : currentUser.email;
+
+
+  const handleDelete = async () => {
+    try {
+      const res = await deleteUser(currentUser._id);
+      if (res.success) {
+        fetchUsers();
+        setIsDeleting(false);
+      }
+    } catch (error) {
+      console.log("Error deleting user: ", error);
+      toastNotification(error?.response?.data?.message || "Failed to delete user", "error");
+    }
+  }
+
+  return (
+    <>
+      {(currentUser._id !== userId && currentUser?.role?.name !== "Admin") && (
+        <div className="flex justify-end items-center gap-1">
+          {permissionCheck(PERMISSIONS.UPDATE_USER) && (
+            <Button onClick={() => setIsEditing(true)} variant="ghost" size="icon" className="size-8 cursor-pointer">
+              <Pencil className="size-4 text-zinc-500" />
+            </Button>
+          )}
+          {permissionCheck(PERMISSIONS.DELETE_USER) && (
+            <Button
+              onClick={() => setIsDeleting(true)}
+              variant="ghost"
+              size="icon"
+              className="size-8 cursor-pointer text-red-500 hover:text-red-600 hover:bg-red-50"
+            >
+              <Trash2 className="size-4" />
+            </Button>
+          )}
+        </div>
+      )}
+
+      {isEditing && (
+        <UserModel setIsOpen={setIsEditing} user={currentUser} fetchUsers={fetchUsers} roles={roles} />
+      )}
+
+      {isDeleting && (
+        <ConfirmationModal
+          heading="Delete User"
+          subheading={`Are you sure you want to delete ${displayName}'s account? This action cannot be undone.`}
+          onConfirm={handleDelete}
+          onCancel={() => setIsDeleting(false)}
+          type="danger"
+        />
+      )}
+    </>
+  )
 }

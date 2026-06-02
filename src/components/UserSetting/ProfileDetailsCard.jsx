@@ -140,7 +140,7 @@ const ProfileDetailsCard = () => {
                     className="space-y-5"
                 >
 
-                    <div className="flex items-center gap-4 pb-4 border-zinc-200 border-b">
+                    {/* <div className="flex items-center gap-4 pb-4 border-zinc-200 border-b">
 
                         {(user.firstName && user.lastName) ? (
 
@@ -165,9 +165,9 @@ const ProfileDetailsCard = () => {
                             Change Profile Picture
                         </Button>
 
-                    </div>
+                    </div> */}
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-zinc-200 border-t">
 
                         <FormField
                             label="First Name"
@@ -227,7 +227,7 @@ const ProfileDetailsCard = () => {
 
                     <div className="cursor-pointer px-0 pt-2 bg-white flex flex-col-reverse sm:flex-row justify-end gap-2">
 
-                        <Button
+                        {hasChanges && (<Button
                             type="button"
                             onClick={() => {
 
@@ -239,10 +239,10 @@ const ProfileDetailsCard = () => {
                                 });
                             }}
                             variant="outline"
-                            className="h-9 w-full sm:w-auto"
+                            className="cursor-pointer h-9 w-full sm:w-auto"
                         >
                             Cancel
-                        </Button>
+                        </Button>)}
 
                         <Button
                             type="submit"

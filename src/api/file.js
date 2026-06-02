@@ -162,9 +162,44 @@ export const createShareLink = async (id, payload) => {
         console.error("Error creating share link:", error);
         throw error;
     }
-    // return {
-    //     data: {
-    //         link: "https://example.com/share-link"
-    //     }
-    // }
+};
+
+export const fetchDashBoardData = async () => {
+    try {
+        const response = await axiosInstance.get("/dashboard");
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching dashboard data:", error);
+        throw error;
+    }
+};
+
+export const fetchBinData = async () => {
+    try {
+        const res = await axiosInstance.get("/docs/restore-docs");
+        return res.data;
+    } catch (error) {
+        console.error("Error fetching recycle bin data:", error);
+        throw error;
+    }
+}
+  
+export const restoreFile = async (id) => {
+    try {
+        const res = await axiosInstance.put(`/docs/${id}/restore-doc`);
+        return res.data;
+    } catch (error) {
+        console.error("Error restoring file:", error);
+        throw error;
+    }
+};
+
+export const restoreFolder = async (id) => {
+    try {
+        const res = await axiosInstance.put(`/docs/${id}/restore-folder`);
+        return res.data;
+    } catch (error) {
+        console.error("Error restoring folder:", error);
+        throw error;
+    }
 };

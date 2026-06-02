@@ -23,11 +23,18 @@ export default function ImageRenderer({ file, imageUrl }) {
         }
     }, [file, imageUrl])
 
+
+
     return (
         <div className="w-full h-full border border-border rounded-md overflow-y-auto bg-zinc-100 flex items-center justify-center p-4">
-            
+
             {src && !error && (
                 <div className="relative w-full h-full flex flex-col items-center justify-center ">
+                    {loading && (
+                        <div className="absolute inset-0 z-10 flex items-center justify-center bg-background/60 backdrop-blur-sm">
+                            <Loader />
+                        </div>
+                    )}
                     <img
                         src={src}
                         alt={file?.name || "Document Preview"}
@@ -38,12 +45,6 @@ export default function ImageRenderer({ file, imageUrl }) {
                             setLoading(false)
                         }}
                     />
-                </div>
-            )}
-
-            {loading && (
-                <div className="absolute inset-0 z-10 flex items-center justify-center bg-background/60 backdrop-blur-sm">
-                    <Loader />
                 </div>
             )}
 

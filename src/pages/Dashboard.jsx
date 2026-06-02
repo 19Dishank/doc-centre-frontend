@@ -1,51 +1,65 @@
 import StatsCards from "@/components/Dashboard/StatsCards";
 import UsageChart from "@/components/Dashboard/UsageChart";
 import RecentUploads from "@/components/Dashboard/RecentUploads";
+import { useEffect, useState } from "react";
+import { fetchDashBoardData } from "@/api/file";
+import Loader from "@/components/ui/loader";
+import { useAuthContext } from "@/contexts/AuthContext";
 
 export default function Dashboard() {
+
+  const [dashboardData, setDashboardData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const { user } = useAuthContext();
+
+  const displayName = user?.firstName || user?.lastName ? `${user.firstName || ""} ${user.lastName || ""}`.trim() : user?.email || "User";
+
+  const getDashboardData = async () => {
+    setLoading(true);
+    try {
+      const response = await fetchDashBoardData();
+      setDashboardData(response.data);
+    } catch (error) {
+      console.error("Error fetching dashboard data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    getDashboardData();
+  }, []);
+
+  if (loading) return <Loader />;
+
   return (
-    // We remove the nested Sidebar/Navbar wrappers since AppLayout handles them
     <div className="flex flex-col gap-6">
-      
-      {/* Header Section */}
+
       <div className="flex flex-col gap-1">
         <h1 className="font-semibold text-2xl md:text-3xl leading-8 tracking-tight text-zinc-950">
           Dashboard
         </h1>
         <p className="text-zinc-500 text-sm md:text-base">
-          Welcome back, James. Here's what's happening.
+          Welcome back, {displayName}. Here's what's happening.
         </p>
       </div>
 
-      {/* 
-          Main Grid Layout 
-          1. StatsCards usually contains small boxes (should be a grid inside its component).
-          2. UsageChart and RecentUploads can be stacked or side-by-side.
-      */}
       <div className="flex flex-col gap-6">
-        
-        {/* Top Row: Statistics */}
         <section>
-          <StatsCards />
+          <StatsCards stats={dashboardData?.stats || {}} />
         </section>
 
-        {/* 
-            Bottom Section: 
-            On large screens, we might want Chart and Uploads side-by-side.
-            On mobile/tablet, they should stack.
-        */}
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-          
-          {/* Chart takes up 2 columns on extra large screens */}
+
           <div className="xl:col-span-2">
-            <UsageChart />
+            <UsageChart usageData={dashboardData?.usage || []} />
           </div>
 
-          {/* Recent Uploads takes up 1 column */}
           <div className="xl:col-span-1">
-            <RecentUploads />
+            <RecentUploads recentUploads={dashboardData?.docs || []} />
           </div>
-          
+
         </div>
       </div>
     </div>

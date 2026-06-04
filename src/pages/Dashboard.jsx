@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { fetchDashBoardData } from "@/api/file";
 import Loader from "@/components/ui/loader";
 import { useAuthContext } from "@/contexts/AuthContext";
+import PageHeading from "@/components/PageHeading";
 
 export default function Dashboard() {
 
@@ -35,15 +36,11 @@ export default function Dashboard() {
 
   return (
     <div className="flex flex-col gap-6">
-
-      <div className="flex flex-col gap-1">
-        <h1 className="font-semibold text-2xl md:text-3xl leading-8 tracking-tight text-zinc-950">
-          Dashboard
-        </h1>
-        <p className="text-zinc-500 text-sm md:text-base">
-          Welcome back, {displayName}. Here's what's happening.
-        </p>
-      </div>
+      
+      <PageHeading
+        heading="Dashboard"
+        subheading={`Welcome back, ${displayName}. Here's what's happening.`}
+      />
 
       <div className="flex flex-col gap-6">
         <section>

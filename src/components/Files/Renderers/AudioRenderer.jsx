@@ -36,14 +36,14 @@ export default function AudioRenderer({ file, audioUrl }) {
 
     return (
         <div className="relative w-full h-full border border-border rounded-md overflow-hidden bg-zinc-100 flex flex-col items-center justify-center p-6 select-none">
-            
+
             {/* Audio Visual Dashboard Card */}
             {src && !error && (
                 <div className="w-full max-w-md flex flex-col items-center gap-6 p-6 bg-background rounded-xl border border-border/60 shadow-sm transition-all duration-200">
                     <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center text-primary animate-pulse-slow">
                         <MusicIcon className="h-7 w-7" />
                     </div>
-                    
+
                     <div className="w-full text-center space-y-1">
                         <p className="text-sm font-medium truncate px-2">
                             {file ? file.name : "Audio Track Player"}
@@ -57,10 +57,13 @@ export default function AudioRenderer({ file, audioUrl }) {
                         ref={audioRef}
                         src={src}
                         controls
+                        controlsList="nodownload"
+                        onContextMenu={(e) => e.preventDefault()}
                         className="w-full h-10 mt-2 focus:outline-none"
                         onCanPlay={handleCanPlay}
                         onError={handleAudioError}
                     />
+
                 </div>
             )}
 

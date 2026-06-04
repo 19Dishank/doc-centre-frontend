@@ -56,7 +56,7 @@ const DocumentPreview = ({ setIsOpen, item }) => {
         }
 
         if (audioTypes.includes(type)) {
-            return <AudioRenderer src={preSignedUrl} />;
+            return <AudioRenderer audioUrl={preSignedUrl} />;
         }
 
         if (codeTypes.includes(type)) {

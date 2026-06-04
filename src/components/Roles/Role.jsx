@@ -16,8 +16,8 @@ const Role = ({ currentRoleId, handleRoleChange, role, getAvailableRoles }) => {
     const [showEditModel, setShowEditModel] = useState(false);
     const isActive = currentRoleId === role._id;
 
-    const canUpdateRole = permissionCheck(PERMISSIONS.UPDATE_ROLE);
-    const canDeleteRole = permissionCheck(PERMISSIONS.DELETE_ROLE);
+    const canUpdateRole = permissionCheck({ permissions: [PERMISSIONS.UPDATE_ROLE] });
+    const canDeleteRole = permissionCheck({ permissions: [PERMISSIONS.DELETE_ROLE] });
     const displayOptions = canUpdateRole || canDeleteRole;
 
     const handleOptionClick = (e) => {

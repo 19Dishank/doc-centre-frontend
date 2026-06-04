@@ -4,7 +4,6 @@ import { useEffect } from "react";
 import { Outlet, Navigate } from "react-router-dom";
 
 const PublicRoute = ({ children }) => {
-
   const { isAuthenticated } = useAuthContext();
 
   useEffect(() => {

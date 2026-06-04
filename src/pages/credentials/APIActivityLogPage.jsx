@@ -7,14 +7,16 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import PageHeading from "@/components/PageHeading";
 
 const APIActivityLogPage = () => {
     return (
         <div className="flex flex-col gap-6">
-            <div className="flex flex-col gap-1">
-                <h1 className="font-semibold text-2xl leading-8 tracking-tight text-zinc-950">Activity Logs</h1>
-                <p className="text-zinc-500 text-sm leading-5">View and manage your API activity logs.</p>
-            </div>
+            
+            <PageHeading
+                heading="API Activity Log"
+                subheading="Review recent API requests, monitor usage patterns, and identify potential issues with your API integrations."
+            />
 
             <div className="flex p-0 flex-col gap-6">
                 {/* Metrics Stack Grid: Collapses to single cards sequentially */}

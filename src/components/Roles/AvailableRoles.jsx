@@ -24,7 +24,7 @@ const AvailableRoles = ({
             Roles ({availableRoles.length})
           </span>
 
-          {permissionCheck(PERMISSIONS.CREATE_ROLE) && (
+          {permissionCheck({ permissions: [PERMISSIONS.CREATE_ROLE] }) && (
             <Button
               size="sm"
               className="cursor-pointer bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium px-2.5 h-8 gap-1.5 transition-colors rounded-lg shadow-sm shrink-0"
@@ -49,7 +49,7 @@ const AvailableRoles = ({
                 <ShieldAlert className="size-5" />
               </div>
               <p className="text-xs font-semibold text-zinc-900">No Roles Configured</p>
-              <p className="text-[11px] text-zinc-500 mt-1 max-w-[180px] mx-auto leading-normal">
+              <p className="text-[11px] text-zinc-500 mt-1 max-w-45 mx-auto leading-normal">
                 Create a custom security profile to assign permissions.
               </p>
             </div>

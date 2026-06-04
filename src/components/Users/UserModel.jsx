@@ -122,6 +122,7 @@ const UserModel = ({ setIsOpen, user, fetchUsers, roles }) => {
                         error={errors.role}
                         type="select"
                         options={roles}
+                        emptyStateMessage="No roles available. Please create a role first."
                     />
                     {!user && (
                         <div className="flex flex-col gap-1.5">

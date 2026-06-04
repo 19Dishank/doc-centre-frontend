@@ -26,8 +26,6 @@ export default function App() {
     },
   ]);
 
-  console.log("Platform Router:", platformRouter);
-
   const tenantRouter = createBrowserRouter([
     {
       errorElement: <ErrorPage />,
@@ -62,6 +60,13 @@ export default function App() {
   const subdomain = getSubdomain();
   const isPlatform = subdomain === "app" || subdomain === null;
   const router = isPlatform ? platformRouter : tenantRouter;
+
+  if (!isPlatform && window.location.hostname === import.meta.env.VITE_ROOT_DOMAIN) {
+    window.location.replace(import.meta.env.VITE_APP_BASE_URL.replace("slug", "app"));
+    return null;
+  }
+
+  // if(loading) return <Loader styles={"min-h-screen"} />
 
   return (
     <Suspense fallback={<Loader styles={"min-h-screen"} />}>

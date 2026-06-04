@@ -1,13 +1,23 @@
 import { useAuthContext } from "@/contexts/AuthContext";
 
 export function usePermissions() {
-    const { permissions } = useAuthContext();
+
+    const { permissions, user } = useAuthContext();
+    const userRole = user?.role?.name;
+
     return {
-        permissionCheck: (perm) => {
-            if (Array.isArray(perm)) {
-                return perm.every(p => permissions?.includes(p));
+        permissionCheck: (obj) => {
+            if (obj.permissions) {
+                if (Array.isArray(obj.permissions)) {
+                    return obj.permissions.every(p => permissions?.includes(p));
+                }
+                return permissions?.includes(obj.permissions);
             }
-            return permissions?.includes(perm);
+            if (obj.role) {
+                console.log("Checking role for .................................................................:", userRole === obj.role);
+                return userRole === obj.role;
+            }
+            return false;
         },
     };
 }

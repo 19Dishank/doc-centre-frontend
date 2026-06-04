@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import PageHeading from "@/components/PageHeading";
 
 const DocumentationPage = () => {
 
@@ -21,10 +22,11 @@ const DocumentationPage = () => {
 
     return (
         <div className="flex flex-col gap-4">
-            <div className="flex flex-col gap-1">
-                <h1 className="font-semibold text-2xl leading-8 tracking-tight text-zinc-950">Documentation & Resources</h1>
-                <p className="text-zinc-500 text-sm leading-5">Quick links to help you get started and integrate with our API.</p>
-            </div>
+
+            <PageHeading
+                heading="Documentation & Resources"
+                subheading="Explore our comprehensive guides, API references, and support resources to get the most out of our platform."
+            />
 
             <div className="flex p-0 flex-col gap-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">

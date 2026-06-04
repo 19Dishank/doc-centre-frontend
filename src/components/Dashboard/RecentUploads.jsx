@@ -6,12 +6,13 @@ import { getRegistryIcon } from "@/helper/getRegistryIcon";
 import { formatSize } from "@/helper/formatSize";
 import { formatTime } from "@/helper/formatTime";
 import DocumentPreview from "../Files/DocumentPreview";
+import { useAuthContext } from "@/contexts/AuthContext";
 
 const RecentUploads = ({ recentUploads }) => {
     return (
         <>
             <Card className="flex flex-col h-full pt-0">
-                <CardHeader className="p-5 flex-row justify-between items-center border-b">
+                <CardHeader className="p-5 flex justify-between items-center border-b">
                     <h2 className="font-semibold text-base">Recent Uploads</h2>
                     <NavLink to="/files" className="font-medium text-[#2b7fff] text-sm flex items-center gap-1 hover:underline">
                         View all
@@ -38,8 +39,13 @@ export default RecentUploads;
 const RecentUploadFile = ({ item }) => {
 
     const [previewDocument, setPreviewDocument] = useState(false);
-
     const displayExtension = item?.originalFileName?.split(".").pop();
+    const { user: { _id: userId } } = useAuthContext();
+
+    const isMe = item.uploadedBy._id === userId;
+    const ownerName = item.uploadedBy.firstName && item.uploadedBy.lastName
+        ? `${item.uploadedBy.firstName} ${item.uploadedBy.lastName}`
+        : item.uploadedBy.email;
 
     return (
         <>
@@ -66,8 +72,8 @@ const RecentUploadFile = ({ item }) => {
                         />)
                         : <User className="size-8 p-1.5 rounded-full bg-[#2b7fff] text-white text-xs" />
                     }
-                    <span className="hidden sm:inline-block text-zinc-500 text-xs w-24 truncate">
-                        {item.uploadedBy.firstName + " " + item.uploadedBy.lastName || item.uploadedBy.email}
+                    <span className="hidden sm:inline-block text-zinc-500 text-xs w-35 lg:w-25 truncate">
+                        {ownerName} {isMe && <span className="font-medium text-zinc-400"> (You)</span>}
                     </span>
                 </div>
             </div>

@@ -8,6 +8,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
 import { useState } from "react";
+import PageHeading from "@/components/PageHeading";
 
 export default function Notifications() {
 
@@ -55,10 +56,10 @@ export default function Notifications() {
 
   return (
     <div className="w-full max-w-4xl mx-auto flex flex-col gap-6">
-      <div className="flex flex-col gap-1">
-        <h1 className="font-semibold text-2xl leading-8 tracking-tight text-zinc-950">Notifications</h1>
-        <p className="text-zinc-500 text-sm leading-5">Control how and when you receive alerts and updates.</p>
-      </div>
+      <PageHeading
+        heading="Notifications"
+        subheading="Customize your notification preferences for email and in-app alerts."
+      />
 
       <Card className="shadow-sm p-4 sm:p-6 flex flex-col gap-4">
         <CardHeader className="p-0 gap-1">

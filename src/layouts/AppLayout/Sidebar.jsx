@@ -36,17 +36,17 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
             icon: <LayoutDashboard className="size-4" />,
             path: "/dashboard",
         },
-        permissionCheck(PERMISSIONS.VIEW_DOCUMENT) && {
+        permissionCheck({ permissions: [PERMISSIONS.VIEW_DOCUMENT] }) && {
             name: "Files",
             icon: <FileText className="size-4" />,
             path: "/files",
         },
-        permissionCheck(PERMISSIONS.VIEW_USER) && {
+        permissionCheck({ permissions: [PERMISSIONS.VIEW_USER] }) && {
             name: "Users",
             icon: <Users className="size-4" />,
             path: "/users",
         },
-        permissionCheck(PERMISSIONS.VIEW_ROLE) && {
+        permissionCheck({ permissions: [PERMISSIONS.VIEW_ROLE] }) && {
             name: "Roles & Permissions",
             icon: <Lock className="size-4" />,
             path: "/roles",
@@ -74,7 +74,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
             icon: <BookOpen className="size-4" />,
             path: "/credentials/documentation",
         },
-    ];
+    ].filter(Boolean);
 
     const settingsSubItems = [
         {
@@ -82,7 +82,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
             icon: <User className="size-4" />,
             path: "/settings/user",
         },
-        {
+        permissionCheck({ role: "Admin" }) && {
             name: "Organization",
             icon: <Building2 className="size-4" />,
             path: "/settings/organization",
@@ -103,7 +103,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
             path: "/settings/danger-zone",
             styles: "hover:bg-red-50! hover:text-red-700",
         },
-    ];
+    ].filter(Boolean);
 
     const sideBarItems = [
         ...navItems,

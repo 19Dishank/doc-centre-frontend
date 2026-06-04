@@ -1,24 +1,18 @@
+/* eslint-disable no-unused-vars */
 import {
     Search,
-    Trash2,
-    ArchiveRestore,
     Files,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { createFolder, deleteFile, deleteFolder, fetchBinData, renameFile, renameFolder, restoreFile, restoreFolder } from "@/api/file";
+import { fetchBinData } from "@/api/file";
 import { useEffect, useState } from "react";
-import { PERMISSIONS } from "@/helper/permissions";
-import { usePermissions } from "@/hooks/usePermissions";
-import { toastNotification } from "@/helper/toastNotification";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { NavLink, useSearchParams } from "react-router-dom";
 import { DataTable } from "@/components/DataTable";
-import { getRegistryIcon } from "@/helper/getRegistryIcon";
 import { formatSize } from "@/helper/formatSize";
-import ShareDocumentModal from "@/components/Files/ShareDocumentModal";
-import DocumentPreview from "@/components/Files/DocumentPreview";
-import ConfirmationModal from "@/components/ConfirmationModel";
+import FileNameCell from "@/components/Files/Cells/FileNameCell";
+import ActionsCell from "@/components/RecycleBin/ActionsCell";
 
 export default function RecycleBin() {
 
@@ -74,6 +68,7 @@ export default function RecycleBin() {
                     getFiles={getBinData}
                     renameMode={renameMode}
                     setRenameMode={setRenameMode}
+                    showPreview={false}
                 />;
             },
         },
@@ -82,7 +77,7 @@ export default function RecycleBin() {
             header: "Type",
             width: "w-[10%]",
             cellClassName: "uppercase",
-            render: (row) => { row?.originalFileName?.split(".").pop() || "Folder" },
+            render: (row) => row?.originalFileName ? row?.originalFileName.split(".").pop() : "Folder",
         },
         {
             key: "size",
@@ -145,7 +140,7 @@ export default function RecycleBin() {
                 </NavLink>
             </div>
 
-            <div className="flex flex-col gap-3 md:flex-row md:items-center">
+            {/* <div className="flex flex-col gap-3 md:flex-row md:items-center">
                 <div className="relative flex-1">
                     <Search className="size-4 text-[#71717b] absolute left-3 top-1/2 -translate-y-1/2" />
                     <Input placeholder="Search files…" className="bg-white pl-9 w-full" value={filters.q} onChange={(e) => setFilters((prev) => ({ ...prev, q: e.target.value }))} />
@@ -190,7 +185,7 @@ export default function RecycleBin() {
                         Clear Filters
                     </Button>
                 </div>
-            </div>
+            </div> */}
 
             <DataTable
                 columns={columns}
@@ -200,153 +195,4 @@ export default function RecycleBin() {
 
         </div>
     );
-}
-
-const ActionsCell = ({ row: item, getFiles }) => {
-
-    const isFolder = !item.originalFileName;
-    const { permissionCheck } = usePermissions();
-    const [shareDocument, setShareDocument] = useState(null);
-    const [confirmationModalOpen, setConfirmationModalOpen] = useState(false);
-
-    const handleDelete = async () => {
-        try {
-            isFolder
-                ? await deleteFolder(item._id)
-                : await deleteFile(item._id);
-            getFiles();
-        } catch (error) {
-            console.error("Error deleting :", error);
-            toastNotification(error?.response?.data?.message || `Error deleting ${isFolder ? "folder" : "file"}. Please try again.`, "error");
-        }
-    };
-
-    const restore = async (id) => {
-        try {
-            isFolder
-                ? await restoreFolder(id)
-                : await restoreFile(id);
-            getFiles();
-        } catch (error) {
-            console.error("Error restoring :", error);
-            toastNotification(error?.response?.data?.message || `Error restoring ${isFolder ? "folder" : "file"}. Please try again.`, "error");
-        }
-    }
-
-    return (
-        <>
-            <div className="flex justify-end items-center gap-0.5">
-
-                {permissionCheck(PERMISSIONS.RESTORE_DOCUMENT) && (
-                    <Button
-                        onClick={() => restore(item._id)}
-                        variant="ghost"
-                        size="icon"
-                        className="size-8 inline-flex cursor-pointer"
-                    >
-                        <ArchiveRestore className="size-3.5 text-[#71717b]" />
-                    </Button>
-                )}
-
-                {permissionCheck(PERMISSIONS.PERMANENTLY_DELETE_DOCUMENT) && (
-                    <Button
-                        onClick={() => setConfirmationModalOpen(true)}
-                        variant="ghost"
-                        size="icon"
-                        className="size-8 text-red-400 hover:text-red-600 hover:bg-red-50 cursor-pointer"
-                    >
-                        <Trash2 className="size-3.5" />
-                    </Button>
-                )}
-            </div>
-
-            {confirmationModalOpen && (
-                <ConfirmationModal
-                    setIsOpen={setConfirmationModalOpen}
-                    heading={`Delete ${isFolder ? "Folder" : "File"}`}
-                    subheading={`Are you sure you want to delete ${item.originalFileName || item.name} ${isFolder ? "Folder" : "File"}? This action cannot be undone.`}
-                    onConfirm={handleDelete}
-                    onCancel={() => setConfirmationModalOpen(false)}
-                    type="danger"
-                />
-            )}
-
-            {shareDocument && <ShareDocumentModal documentId={shareDocument} setIsOpen={setShareDocument} />}
-        </>
-    )
-}
-
-const FileNameCell = ({ row, setNewFolderRow, parentId, getFiles, setRenameMode, renameMode }) => {
-
-    const [previewDocument, setPreviewDocument] = useState(null);
-    const isFolder = !row.originalFileName;
-    const displayExtension = row.originalFileName?.split(".").pop();
-    const displayName = row.originalFileName ? row.originalFileName.split(".").slice(0, -1).join(".") : row.name;
-    const [input, setInput] = useState(displayName);
-
-    const handleKeyDown = async (event) => {
-
-        if (row.isNewFolder) {
-            if (event.key === "Enter") {
-                await createFolder({ parentFolderId: parentId, name: event.target.value });
-                setNewFolderRow(null);
-                getFiles();
-            } else if (event.key === "Escape") {
-                setNewFolderRow(null);
-            }
-        } else {
-            if (event.key === "Enter") {
-                isFolder
-                    ? await renameFolder(row._id, event.target.value)
-                    : await renameFile(row._id, `${event.target.value}.${displayExtension}`);
-                setRenameMode(null);
-                getFiles();
-            } else if (event.key === "Escape") {
-                setRenameMode(null);
-            }
-        }
-    };
-
-    const handleChange = (event) => {
-        if (row.isNewFolder) {
-            setNewFolderRow((prev) => ({
-                ...prev,
-                name: event.target.value,
-            }));
-        } else {
-            setInput(event.target.value);
-        }
-    }
-
-    return (
-        <>
-            <div onClick={() => setPreviewDocument(row._id)} className="cursor-pointer flex items-center gap-3">
-                {getRegistryIcon(row)}
-                {row.isNewFolder
-                    ? <Input
-                        className="focus:ring-0!"
-                        autoFocus
-                        placeholder="Folder name"
-                        value={row.name}
-                        onChange={handleChange}
-                        onKeyDown={handleKeyDown}
-                        onBlur={() => setNewFolderRow(null)}
-                    />
-                    : renameMode === row._id
-                        ? <Input
-                            className="focus:ring-0!"
-                            autoFocus
-                            placeholder={row.originalFileName || row.name}
-                            value={input}
-                            onChange={handleChange}
-                            onKeyDown={handleKeyDown}
-                            onBlur={() => setRenameMode(null)}
-                        />
-                        : displayName
-                }
-            </div>
-
-            {previewDocument && row?.mimeType && <DocumentPreview setIsOpen={setPreviewDocument} url={previewDocument} type={row?.originalFileName?.split(".").pop()} item={row} />}
-        </>
-    )
 }

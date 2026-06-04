@@ -155,7 +155,7 @@ const Permissions = ({ currentRoleId, currentRole, getAvailableRoles, onCancel }
                                             <Checkbox
                                                 id={"select_all_" + category.module}
                                                 className="cursor-pointer size-4 rounded border-zinc-300 text-blue-600 focus:ring-blue-500 data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600 shrink-0"
-                                                disabled={(!permissionCheck(PERMISSIONS.ASSIGN_PERMISSION) || currentRoleId === user.role._id)}
+                                                disabled={(!permissionCheck({ permissions: [PERMISSIONS.ASSIGN_PERMISSION] }) || currentRoleId === user.role._id)}
                                                 checked={category.permissions.every(perm => permissions?.includes(perm.permissionId))}
                                                 onCheckedChange={() => handelSelectAllChange(category.module) }
                                             />
@@ -175,15 +175,14 @@ const Permissions = ({ currentRoleId, currentRole, getAvailableRoles, onCancel }
                                                 className="flex items-center gap-3 p-2 rounded-lg hover:bg-zinc-50 transition-colors cursor-pointer"
                                                 key={permissionId}
                                                 onClick={() => {
-                                                    if (permissionCheck(PERMISSIONS.ASSIGN_PERMISSION)) {
+                                                    if (permissionCheck({ permissions: [PERMISSIONS.ASSIGN_PERMISSION] })) {
                                                         const isChecked = permissions?.includes(permissionId);
                                                         handlePermissionChange(permissionId, !isChecked, category.module, name);
                                                     }
                                                 }}
                                             >
                                                 <Checkbox
-                                                    // disabled={!permissionCheck(PERMISSIONS.ASSIGN_PERMISSION)}
-                                                    disabled={(!permissionCheck(PERMISSIONS.ASSIGN_PERMISSION) || currentRoleId === user.role._id)}
+                                                    disabled={(!permissionCheck({ permissions: [PERMISSIONS.ASSIGN_PERMISSION] }) || currentRoleId === user.role._id)}
                                                     onCheckedChange={(checked) => handlePermissionChange(permissionId, checked, category.module, name)}
                                                     checked={permissions?.includes(permissionId)}
                                                     className="cursor-pointer size-4 rounded border-zinc-300 text-blue-600 focus:ring-blue-500 data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600 shrink-0"
@@ -205,7 +204,7 @@ const Permissions = ({ currentRoleId, currentRole, getAvailableRoles, onCancel }
                         </div>
                     </div>
 
-                    {(permissionCheck(PERMISSIONS.ASSIGN_PERMISSION) && currentRoleId !== user.role._id) && (
+                    {(permissionCheck({ permissions: [PERMISSIONS.ASSIGN_PERMISSION] }) && currentRoleId !== user.role._id) && (
                         <div className="p-4 border-t border-zinc-200 flex flex-col-reverse sm:flex-row justify-end bg-zinc-50/50 shrink-0 gap-2">
                             {onCancel && (
                                 <Button

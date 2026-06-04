@@ -13,6 +13,7 @@ const FileNameCell = ({
     setRenameMode,
     renameMode,
     setNavigationBar,
+    showPreview = true,
 }) => {
     const [previewDocument, setPreviewDocument] = useState(null);
 
@@ -120,7 +121,7 @@ const FileNameCell = ({
 
         if (row.isGoBackRow) {
             return (
-                <div className="flex items-center gap-1 text-[#6b7280] font-black">
+                <div className="flex items-center gap-1 text-[#6b7280] font-black h-8.25">
                     <span>.</span>
                     <span>.</span>
                 </div>
@@ -140,7 +141,7 @@ const FileNameCell = ({
                 {renderContent()}
             </div>
 
-            {previewDocument && row.mimeType && (
+            {previewDocument && row.mimeType && showPreview && (
                 <DocumentPreview
                     setIsOpen={setPreviewDocument}
                     url={previewDocument}

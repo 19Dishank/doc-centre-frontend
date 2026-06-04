@@ -1,0 +1,88 @@
+import {
+    Trash2,
+    ArchiveRestore,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { deleteFile, deleteFolder, restoreFile, restoreFolder } from "@/api/file";
+import { useState } from "react";
+import { PERMISSIONS } from "@/helper/permissions";
+import { usePermissions } from "@/hooks/usePermissions";
+import { toastNotification } from "@/helper/toastNotification";
+import ShareDocumentModal from "@/components/Files/ShareDocumentModal";
+import ConfirmationModal from "@/components/ConfirmationModel";
+
+const ActionsCell = ({ row: item, getFiles }) => {
+
+    const isFolder = !item.originalFileName;
+    const { permissionCheck } = usePermissions();
+    const [shareDocument, setShareDocument] = useState(null);
+    const [confirmationModalOpen, setConfirmationModalOpen] = useState(false);
+
+    const handleDelete = async () => {
+        try {
+            isFolder
+                ? await deleteFolder(item._id)
+                : await deleteFile(item._id);
+            getFiles();
+        } catch (error) {
+            console.error("Error deleting :", error);
+            toastNotification(error?.response?.data?.message || `Error deleting ${isFolder ? "folder" : "file"}. Please try again.`, "error");
+        }
+    };
+
+    const restore = async (id) => {
+        try {
+            isFolder
+                ? await restoreFolder(id)
+                : await restoreFile(id);
+            getFiles();
+        } catch (error) {
+            console.error("Error restoring :", error);
+            toastNotification(error?.response?.data?.message || `Error restoring ${isFolder ? "folder" : "file"}. Please try again.`, "error");
+        }
+    }
+
+    return (
+        <>
+            <div className="flex justify-end items-center gap-0.5">
+
+                {permissionCheck({ permissions: [PERMISSIONS.RESTORE_DOCUMENT] }) && (
+                    <Button
+                        onClick={() => restore(item._id)}
+                        variant="ghost"
+                        size="icon"
+                        className="size-8 inline-flex cursor-pointer"
+                    >
+                        <ArchiveRestore className="size-3.5 text-[#71717b]" />
+                    </Button>
+                )}
+
+                {permissionCheck({ permissions: [PERMISSIONS.PERMANENTLY_DELETE_DOCUMENT] }) && (
+                    <Button
+                        onClick={() => setConfirmationModalOpen(true)}
+                        variant="ghost"
+                        size="icon"
+                        className="size-8 text-red-400 hover:text-red-600 hover:bg-red-50 cursor-pointer"
+                    >
+                        <Trash2 className="size-3.5" />
+                    </Button>
+                )}
+            </div>
+
+            {confirmationModalOpen && (
+                <ConfirmationModal
+                    setIsOpen={setConfirmationModalOpen}
+                    heading={`Delete ${isFolder ? "Folder" : "File"}`}
+                    subheading={`Are you sure you want to delete ${item.originalFileName || item.name} ${isFolder ? "Folder" : "File"}? This action cannot be undone.`}
+                    onConfirm={handleDelete}
+                    onCancel={() => setConfirmationModalOpen(false)}
+                    type="danger"
+                />
+            )}
+
+            {shareDocument && <ShareDocumentModal documentId={shareDocument} setIsOpen={setShareDocument} />}
+        </>
+    )
+}
+
+export default ActionsCell;

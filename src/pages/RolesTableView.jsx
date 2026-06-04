@@ -130,7 +130,7 @@ export default function Roles() {
               Define what each role can access and perform within the system.
             </p>
           </div>
-          {permissionCheck(PERMISSIONS.CREATE_ROLE) && (
+          {permissionCheck({ permissions: [PERMISSIONS.CREATE_ROLE] }) && (
             <Button
               size="sm"
               className="bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium px-2.5 h-8 gap-1.5 transition-colors rounded-lg shadow-sm shrink-0"
@@ -216,7 +216,7 @@ export default function Roles() {
                               <TableCell key={role._id}>
                                 <Checkbox
                                   disabled={
-                                    !permissionCheck(PERMISSIONS.ASSIGN_PERMISSION)
+                                    !permissionCheck({ permissions: [PERMISSIONS.ASSIGN_PERMISSION] })
                                   }
                                   checked={checked}
                                   onCheckedChange={(value) =>

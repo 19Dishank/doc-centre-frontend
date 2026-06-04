@@ -1,4 +1,4 @@
-import { AlertTriangle, Plus } from "lucide-react"
+import { AlertTriangle, Loader, Plus } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
     Card,
@@ -13,13 +13,16 @@ import { useEffect, useState } from "react"
 import { fetchApiKeys, generateApiKey } from "@/api/api"
 import { toastNotification } from "@/helper/toastNotification"
 import APIKeyDetails from "@/components/APIKeysPage/APIKeyDetails"
+import PageHeading from "@/components/PageHeading"
 
 const APIKeysPage = () => {
 
     const [apiKeys, setApiKeys] = useState([])
     const [newKeyName, setNewKeyName] = useState("")
+    const [loading, setLoading] = useState(false);
 
     const handleGenerateKey = async e => {
+        setLoading(true);
         try {
             e.preventDefault()
             if (!newKeyName.trim()) return
@@ -30,6 +33,8 @@ const APIKeysPage = () => {
         } catch (error) {
             console.error("Error generating API key: ", error);
             toastNotification(error?.response?.data?.message || "Failed to generate API key. Please try again.", "error");
+        } finally {
+            setLoading(false);
         }
     }
 
@@ -45,7 +50,6 @@ const APIKeysPage = () => {
     }
 
     useEffect(() => {
-        // eslint-disable-next-line react-hooks/set-state-in-effect
         getApiKeys();
     }, []);
 
@@ -53,10 +57,10 @@ const APIKeysPage = () => {
     return (
         <div className="flex flex-col gap-6">
 
-            <div className="flex flex-col gap-1">
-                <h1 className="font-semibold text-2xl leading-8 tracking-tight text-zinc-950">API Keys</h1>
-                <p className="text-zinc-500 text-sm leading-5">Manage your API keys.</p>
-            </div>
+            <PageHeading
+                heading="API Keys"
+                subheading="Manage your API keys for secure access to our services."
+            />
 
             <div className="rounded-lg bg-amber-50 border-amber-200 border flex p-3 items-start gap-2">
                 <AlertTriangle className="size-4 shrink-0 text-amber-600 mt-0.5" />
@@ -97,10 +101,13 @@ const APIKeysPage = () => {
                         </div>
                         <Button
                             type="submit"
-                            disabled={!newKeyName.trim()}
-                            className="gap-2 w-full sm:w-auto shrink-0 cursor-pointer font-semibold bg-[#2b7fff] text-blue-50 shadow-sm"
+                            disabled={!newKeyName.trim() || loading}
+                            className="gap-2 w-full sm:w-auto shrink-0 cursor-pointer font-semibold bg-[#2b7fff] text-blue-50 shadow-sm disabled:cursor-not-allowed"
                         >
-                            <Plus className="size-4" /> Generate Key
+                            {loading
+                                ? <><Loader className="size-4" /> <span>Generating...</span></>
+                                : <><Plus className="size-4" /> <span>Generate Key</span></>
+                            }
                         </Button>
                     </form>
                 </CardContent>

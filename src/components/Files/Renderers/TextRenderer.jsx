@@ -51,7 +51,6 @@ export default function TextRenderer({ file, fileUrl }) {
     return (
         <div className="relative w-full h-full border border-border rounded-md overflow-hidden bg-background text-foreground antialiased selection:bg-zinc-200">
             
-            {/* Scrollable Text Canvas Core */}
             {!error && !loading && (
                 <div className="absolute inset-0 overflow-auto p-6 md:p-8 flex justify-center">
                     <div className="w-full max-w-3xl text-left text-sm leading-relaxed whitespace-pre-wrap wrap-break-word font-normal">
@@ -64,14 +63,12 @@ export default function TextRenderer({ file, fileUrl }) {
                 </div>
             )}
 
-            {/* Central Loader Overlay */}
             {loading && (
                 <div className="absolute inset-0 z-10 flex items-center justify-center bg-background/60 backdrop-blur-sm">
                     <Loader />
                 </div>
             )}
 
-            {/* Error Message UI Box */}
             {error && (
                 <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-3 text-center px-4 bg-background/80">
                     <AlertCircleIcon className="text-destructive h-8 w-8" />

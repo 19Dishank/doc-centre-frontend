@@ -8,7 +8,7 @@ import { Download, Pencil, Share2, Trash2 } from "lucide-react";
 import { useState } from "react";
 import ShareDocumentModal from "../ShareDocumentModal";
 
-const ActionsCell = ({ row: item, getFiles, setRenameMode }) => {
+const ActionsCell = ({ row: item, getFiles, setRenameMode, currentPageItems, setCurrentPage }) => {
 
   const isFolder = !item.originalFileName;
   const { permissionCheck } = usePermissions();
@@ -21,6 +21,9 @@ const ActionsCell = ({ row: item, getFiles, setRenameMode }) => {
         ? await deleteFolder(item._id)
         : await deleteFile(item._id);
       getFiles();
+      if(currentPageItems === 1) {
+        setCurrentPage((prev) => Math.max(1, prev - 1));
+      }
     } catch (error) {
       console.error("Error deleting :", error);
       toastNotification(error?.response?.data?.message || `Error deleting ${isFolder ? "folder" : "file"}. Please try again.`, "error");
@@ -30,7 +33,7 @@ const ActionsCell = ({ row: item, getFiles, setRenameMode }) => {
   return (
     <>
       <div className="flex justify-end items-center gap-0.5">
-        {permissionCheck(PERMISSIONS.SHARE_DOCUMENT) && !isFolder && (
+        {permissionCheck({ permissions: [PERMISSIONS.SHARE_DOCUMENT] }) && !isFolder && (
           <Button
             onClick={() => setShareDocument(item._id)}
             variant="ghost"
@@ -41,13 +44,13 @@ const ActionsCell = ({ row: item, getFiles, setRenameMode }) => {
           </Button>
         )}
 
-        {permissionCheck(PERMISSIONS.DOWNLOAD_DOCUMENT) && !isFolder && (
+        {permissionCheck({ permissions: [PERMISSIONS.DOWNLOAD_DOCUMENT] }) && !isFolder && (
           <Button onClick={() => downloadFile(item._id)} variant="ghost" size="icon" className="size-8 cursor-pointer">
             <Download className="size-3.5 text-[#71717b]" />
           </Button>
         )}
 
-        {permissionCheck(PERMISSIONS.UPDATE_DOCUMENT) && (
+        {permissionCheck({ permissions: [PERMISSIONS.UPDATE_DOCUMENT] }) && (
           <Button
             onClick={() => setRenameMode(item._id)}
             variant="ghost"
@@ -58,7 +61,7 @@ const ActionsCell = ({ row: item, getFiles, setRenameMode }) => {
           </Button>
         )}
 
-        {permissionCheck(PERMISSIONS.DELETE_DOCUMENT) && (
+        {permissionCheck({ permissions: [PERMISSIONS.DELETE_DOCUMENT] }) && (
           <Button
             onClick={() => setConfirmationModalOpen(true)}
             variant="ghost"

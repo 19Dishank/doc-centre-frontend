@@ -1,4 +1,4 @@
-import { Building2, Calendar, Check, Upload, Users, Zap } from "lucide-react";
+import { Building2, Calendar, Check, Link2, Upload, Users, Zap } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -10,10 +10,15 @@ import { useEffect, useState } from "react";
 import FormField from "@/components/ui/form-field";
 import { toastNotification } from "@/helper/toastNotification";
 import { CompanyLogo } from "@/components/ui/form-container";
+import PageHeading from "@/components/PageHeading";
+import { NavLink } from "react-router-dom";
+import { getSignedURLForLogoUpload, uploadLogoToS3 } from "@/api/auth";
 
 export default function Organization() {
 
+  const logoUrlRegex = /^[a-zA-Z0-9/!\-_.*'()]+$/;
   const [organizationDetails, setOrganizationDetails] = useState(null);
+  const [selectedLogoFile, setSelectedLogoFile] = useState(null);
   const [formData, setFormData] = useState({
     orgName: "",
     slug: "",
@@ -23,6 +28,29 @@ export default function Organization() {
     currentPlan: "",
     logo: null
   });
+
+  const handleLogoChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      if (!file.type.startsWith("image/")) {
+        toastNotification("Please select a valid image file (PNG, JPG, JPEG).", "error");
+        return;
+      }
+      if (file.size > 1024 * 1024) {
+        toastNotification("File size exceeds 1MB. Please select a smaller image.", "error");
+        return;
+      }
+
+      const logoURL = URL.createObjectURL(file);
+      console.log("Selected logo file:", logoURL);
+
+      setSelectedLogoFile(file);
+      setFormData((prev) => ({
+        ...prev,
+        logo: logoURL
+      }));
+    }
+  };
 
   const getOrganizationDetails = async () => {
     try {
@@ -41,13 +69,30 @@ export default function Organization() {
 
   const hasChanges = organizationDetails && (organizationDetails.orgName !== formData.orgName.trim() ||
     organizationDetails.slug !== formData.slug.trim() ||
-    organizationDetails.orgSlogan !== formData.orgSlogan.trim());
-
+    organizationDetails.orgSlogan !== formData.orgSlogan.trim()) ||
+    formData?.logo !== organizationDetails?.logo;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await updateOrganizationDetails(formData);
+
+      if (organizationDetails.logo !== formData.logo && selectedLogoFile) {
+        const getPresignedUrlRes = await getSignedURLForLogoUpload({
+          "slug": formData.slug,
+          "fileName": selectedLogoFile.name,
+          "contentType": selectedLogoFile.type
+        });
+        const { url, key: logoKey } = getPresignedUrlRes.data;
+        const uploadRes = await uploadLogoToS3(url, selectedLogoFile);
+        if (uploadRes.status !== 200) {
+          toastNotification("Failed to upload logo. Please try again.", "error");
+          return;
+        } else {
+          await updateOrganizationDetails({ ...formData, logo: undefined, logoKey });
+        }
+      } else {
+        await updateOrganizationDetails(formData);
+      }
       toastNotification("Organization details updated successfully", "success");
       getOrganizationDetails();
     } catch (error) {
@@ -58,12 +103,13 @@ export default function Organization() {
 
   return (
     <div className="w-full max-w-4xl mx-auto">
-      <div className="flex flex-col gap-1 mb-6">
-        <h1 className="font-semibold text-2xl leading-8 tracking-tight text-zinc-950">Organization</h1>
-        <p className="text-zinc-500 text-sm leading-5">Manage your organization profile and preferences.</p>
-      </div>
 
-      <Card className="shadow-sm p-4 sm:p-6 flex flex-col gap-6">
+      <PageHeading
+        heading="Organization"
+        subheading="Manage your organization profile and preferences."
+      />
+
+      <Card className="shadow-sm p-4 sm:p-6 flex flex-col gap-6 mt-6">
         <CardHeader className="p-0 gap-1">
           <div className="flex items-center gap-2">
             <div className="size-8 rounded-md bg-[#2b7fff]/10 flex justify-center items-center shrink-0">
@@ -86,19 +132,21 @@ export default function Organization() {
               placeholder="Acme Corporation"
               value={formData.orgName}
               onChange={(e) => setFormData({ ...formData, orgName: e.target.value })}
+              isRequired={false}
             />
-            <FormField
-              label="Organization Slug"
-              id="slug"
-              placeholder="acme-corp"
-              value={formData.slug}
-              onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
-            />
+
+            <div className="flex flex-col gap-2">
+              <Label className="font-medium uppercase text-zinc-950 text-[11px] leading-4 tracking-[0.06em]">Slug</Label>
+              <div className="rounded-md bg-zinc-100/50 text-sm leading-5 border border-zinc-200 flex px-3 items-center gap-2 h-10 text-zinc-700">
+                <Link2 className="size-4 text-zinc-400 shrink-0 rotate-45" />
+                <span className="truncate">{formData.slug}</span>
+              </div>
+            </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
             <div className="flex flex-col gap-2">
-              <Label className="text-sm leading-5 text-zinc-950 font-medium">Created</Label>
+              <Label className="font-medium uppercase text-zinc-950 text-[11px] leading-4 tracking-[0.06em]">Created On</Label>
               <div className="rounded-md bg-zinc-100/50 text-sm leading-5 border border-zinc-200 flex px-3 items-center gap-2 h-10 text-zinc-700">
                 <Calendar className="size-4 text-zinc-400 shrink-0" />
                 <span className="truncate">{new Date(formData.createdAt).toLocaleDateString()}</span>
@@ -106,7 +154,7 @@ export default function Organization() {
             </div>
 
             <div className="flex flex-col gap-2">
-              <Label className="text-sm leading-5 text-zinc-950 font-medium">Member Count</Label>
+              <Label className="font-medium uppercase text-zinc-950 text-[11px] leading-4 tracking-[0.06em]">Member Count</Label>
               <div className="rounded-md bg-zinc-100/50 text-sm leading-5 border border-zinc-200 flex px-3 items-center gap-2 h-10 text-zinc-700">
                 <Users className="size-4 text-zinc-400 shrink-0" />
                 <span className="truncate">{formData.memberCount} members</span>
@@ -114,19 +162,21 @@ export default function Organization() {
             </div>
 
             <div className="flex flex-col gap-2 sm:col-span-2 md:col-span-1">
-              <Label className="text-sm leading-5 text-zinc-950 font-medium">Current Plan</Label>
+              <Label className="font-medium uppercase text-zinc-950 text-[11px] leading-4 tracking-[0.06em]">Current Plan</Label>
               <div className="rounded-md bg-zinc-100/50 border border-zinc-200 flex px-3 justify-between items-center h-10 gap-2">
                 <Badge className="bg-[#2b7fff] text-blue-50 px-2 py-0.5 gap-1 select-none shrink-0">
                   <Zap className="size-3" />
                   {formData.currentPlan}
                 </Badge>
-                <a className="cursor-pointer font-semibold text-[#2b7fff] text-xs hover:underline shrink-0">Upgrade</a>
+                <NavLink to="/settings/billing" className="cursor-pointer font-semibold text-[#2b7fff] text-xs hover:underline shrink-0">
+                  Upgrade
+                </NavLink>
               </div>
             </div>
           </div>
 
           <div className="flex flex-col gap-2">
-            <Label htmlFor="desc" className="text-sm leading-5 text-zinc-950 font-medium">
+            <Label htmlFor="desc" className="font-medium uppercase text-zinc-950 text-[11px] leading-4 tracking-[0.06em]">
               Organization Slogan
             </Label>
             <Textarea
@@ -140,18 +190,29 @@ export default function Organization() {
 
           <Separator />
           <div className="flex flex-col gap-3">
-            <Label className="text-sm font-medium leading-5 text-zinc-950">Organization Logo</Label>
+            <Label className="font-medium uppercase text-zinc-950 text-[11px] leading-4 tracking-[0.06em]">Organization Logo</Label>
             <div className="flex flex-row items-center gap-5">
               <div className="flex h-14 w-32 items-center justify-center rounded-lg border border-zinc-200 bg-zinc-50 p-2 shadow-sm transition-colors hover:bg-zinc-100/80">
-                <CompanyLogo />
+                {!logoUrlRegex.test(formData.logo) ? (
+                  <img src={formData.logo} alt="Organization Logo" className="h-full w-full object-contain" />
+                ) : (
+                  <CompanyLogo />
+                )}
               </div>
               <div className="flex flex-col gap-1.5">
-                <Button
-                  variant="outline"
-                  className="h-9 gap-2 border-zinc-200 text-zinc-700 hover:bg-zinc-50 hover:text-zinc-900"
-                >
-                  <Upload className="size-4 text-zinc-500" /> Upload Logo
-                </Button>
+                <label htmlFor="logo-upload" className="w-max block cursor-pointer">
+                  <Button
+                    asChild
+                    variant="outline"
+                    className="h-9 gap-2 border-zinc-200 text-zinc-700 hover:bg-zinc-50 hover:text-zinc-900"
+                  >
+                    <span>
+                      <Upload className="size-4 text-zinc-500" />
+                      Upload Logo
+                    </span>
+                  </Button>
+                  <input name="logo" onChange={handleLogoChange} id="logo-upload" type="file" accept="image/*" className="hidden" />
+                </label>
                 <span className="text-xs font-normal text-zinc-500">PNG, JPG up to 1MB</span>
               </div>
             </div>
@@ -162,7 +223,7 @@ export default function Organization() {
           <Button onClick={() => setFormData(organizationDetails)} variant="outline" className="h-9 w-full sm:w-auto">
             Cancel
           </Button>
-          <Button onClick={handleSubmit} disabled={!hasChanges} className="bg-[#2b7fff] text-blue-50 gap-2 h-9 w-full sm:w-auto">
+          <Button onClick={handleSubmit} disabled={!hasChanges} className="bg-[#2b7fff] cursor-pointer text-blue-50 gap-2 h-9 w-full sm:w-auto">
             <Check className="size-4" />
             Save Changes
           </Button>

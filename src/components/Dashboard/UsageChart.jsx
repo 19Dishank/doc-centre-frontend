@@ -23,7 +23,6 @@ const UsageChart = () => {
                     </p>
                 </div>
 
-                {/* Legend: Stacks on mobile, inline on tablet+ */}
                 <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
                     <div className="text-xs leading-4 flex items-center gap-2">
                         <span className="size-2 rounded-full bg-[#2b7fff]" />
@@ -37,11 +36,7 @@ const UsageChart = () => {
             </CardHeader>
 
             <CardContent className="p-0">
-                {/* 
-                   Changed fixed height to a responsive aspect ratio.
-                   h-[250px] for mobile, h-[350px] for larger screens.
-                */}
-                <div className="w-full h-[250px] md:h-[350px]">
+                <div className="w-full h-62.5 md:h-87.5">
                     <ChartContainer
                         config={{
                             api: { label: "API", color: "oklch(0.623 0.214 259.815)" },

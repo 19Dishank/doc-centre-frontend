@@ -91,8 +91,6 @@ const ShareDocumentModal = ({ setIsOpen, documentId }) => {
 
     const handleCopy = async () => {
         try {
-            console.log("Attempting to copy link:", shareLink);
-            console.log("Navigator Clipboard API:", navigator);
             await navigator.clipboard.writeText(shareLink);
             setCopied(true);
             toastNotification("Link copied successfully!", "success");

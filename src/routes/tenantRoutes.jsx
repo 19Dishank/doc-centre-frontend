@@ -53,23 +53,31 @@ export const protectedRoutes = [
     {
         path: "/files",
         element: <Files />,
-        isRouteAccessible: PERMISSIONS.VIEW_DOCUMENT,
+        isRouteAccessible: {
+            permissions: [PERMISSIONS.VIEW_DOCUMENT]
+        },
     },
     {
         path: "/trash",
         element: <RecycleBin />,
-        isRouteAccessible: PERMISSIONS.RESTORE_DOCUMENT,
+        isRouteAccessible: {
+            permissions: [PERMISSIONS.RESTORE_DOCUMENT]
+        },
     },
     {
         path: "/users",
         element: <UsersList />,
-        isRouteAccessible: PERMISSIONS.VIEW_USER,
+        isRouteAccessible: {
+            permissions: [PERMISSIONS.VIEW_USER]
+        },
     },
     {
         path: "/roles",
         element: <Roles />,
         // element: <RolesTableView />,
-        isRouteAccessible: PERMISSIONS.VIEW_ROLE,
+        isRouteAccessible: {
+            permissions: [PERMISSIONS.VIEW_ROLE]
+        },
     },
     {
         path: "/credentials/api-keys",
@@ -98,6 +106,9 @@ export const protectedRoutes = [
     {
         path: "/settings/organization",
         element: <Organization />,
+        isRouteAccessible: {
+            role: "Admin"
+        },
     },
     {
         path: "/settings/user",

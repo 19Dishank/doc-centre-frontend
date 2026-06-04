@@ -4,7 +4,7 @@ import { Label } from "./label";
 import { Eye, EyeOff } from "lucide-react";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "./select";
 
-const FormField = ({ label, name, value, onChange, onBlur, placeholder, error, isPasswordField = false, disabled, type = "text", min, max, options }) => {
+const FormField = ({ label, name, value, onChange, onBlur, placeholder, error, isPasswordField = false, disabled, type = "text", min, max, options, emptyStateMessage, isRequired = true }) => {
 
     const [showPassword, setShowPassword] = useState(false);
     const textInputs = ["text", "email", "number", "password"];
@@ -15,13 +15,9 @@ const FormField = ({ label, name, value, onChange, onBlur, placeholder, error, i
             <div className="flex flex-col gap-2">
                 <Label
                     htmlFor={name}
-                    className="font-medium uppercase text-zinc-950 tracking-wider"
-                    style={{
-                        fontSize: "11px",
-                        lineHeight: "16px",
-                        letterSpacing: "0.06em",
-                    }}>
-                    {label} <p className="text-red-500">*</p>
+                    className="font-medium uppercase text-zinc-950 text-[11px] leading-4 tracking-[0.06em]"
+                >
+                    {label} {isRequired && <p className="text-red-500">*</p>}
                 </Label>
                 <div className="relative">
                     <Input
@@ -69,7 +65,7 @@ const FormField = ({ label, name, value, onChange, onBlur, placeholder, error, i
                     </SelectTrigger>
                     <SelectContent position="popper" className="z-1000">
                         <SelectGroup>
-                            <SelectLabel>Select Role</SelectLabel>
+                            <SelectLabel>{options.length > 0 ? `Select Role` : emptyStateMessage}</SelectLabel>
                             {options.map((role) => (
                                 <SelectItem key={role._id} value={role._id}>{role.name}</SelectItem>
                             ))}

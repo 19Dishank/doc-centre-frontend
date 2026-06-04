@@ -12,7 +12,7 @@ export default function Roles() {
 
   const currentRole = availableRoles.find(role => role._id === currentRoleId) || null;
 
-  const isViewingPermissionsOnMobile = currentRoleId !== null;
+  const isPermissionsVisible = currentRoleId !== null;
 
   const handleRoleChange = useCallback((roleId) => {
     setCurrentRoleId(roleId);
@@ -22,7 +22,7 @@ export default function Roles() {
     setCurrentRoleId(null);
   };
 
-  const getAvailableRoles = useCallback(async () => {
+  const getAvailableRoles = async () => {
     try {
       setIsLoading(true);
       const res = await fetchRoles();
@@ -37,7 +37,7 @@ export default function Roles() {
     } finally {
       setIsLoading(false);
     }
-  }, [currentRoleId]);
+  };
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -46,11 +46,10 @@ export default function Roles() {
 
   return (
     <div className="w-full flex flex-col h-full min-h-0">
-      
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 shrink-0">
         <div className="flex flex-col gap-1 min-w-0">
           <div className="flex items-center gap-2">
-            {isViewingPermissionsOnMobile && (
+            {isPermissionsVisible && (
               <Button 
                 variant="ghost" 
                 size="icon" 
@@ -72,7 +71,7 @@ export default function Roles() {
 
       <div className="flex gap-6 w-full flex-1 relative">
         
-        <div className={`w-full xl:w-80 ${isViewingPermissionsOnMobile ? "hidden xl:block" : "block"}`}>
+        <div className={`w-full xl:w-80 ${isPermissionsVisible ? "hidden xl:block" : "block"}`}>
           <AvailableRoles 
             currentRoleId={currentRoleId} 
             handleRoleChange={handleRoleChange} 
@@ -82,7 +81,7 @@ export default function Roles() {
           />
         </div>
         
-        <div className={`flex-1 w-full min-w-0 mb-10! ${!isViewingPermissionsOnMobile ? "hidden xl:block" : "block"}`}>
+        <div className={`flex-1 w-full min-w-0 mb-10! ${!isPermissionsVisible ? "hidden xl:block" : "block"}`}>
           <Permissions 
             currentRoleId={currentRoleId} 
             currentRole={currentRole} 

@@ -75,10 +75,10 @@ const StatsCards = ({ stats }) => {
                         {formatSize(stats?.storageDetails?.storageUsed)}
                         <span className="font-medium text-[#71717b] text-base md:text-lg leading-7">/ {formatSize(stats?.planDetails?.storageLimit)}</span>
                     </div>
-                    <div className="rounded-full bg-zinc-100 w-full h-1.5 overflow-hidden mt-1">
-                        <div className="rounded-full bg-[#2b7fff] h-full transition-all duration-500" style={{ width: `${Math.round((stats?.storageDetails?.storageUsed / stats?.planDetails?.storageLimit) * 100)}%` }} />
+                    <div className="rounded-full border-zinc-200 border bg-zinc-100 w-full h-1.5 overflow-hidden mt-1">
+                        <div className="rounded-full bg-[#2b7fff] h-full transition-all duration-500" style={{ width: `${((stats?.storageDetails?.storageUsed / stats?.planDetails?.storageLimit) * 100).toFixed(1)}%` }} />
                     </div>
-                    <span className="text-[#71717b] text-xs leading-4">{Math.round((stats?.storageDetails?.storageUsed / stats?.planDetails?.storageLimit) * 100)}% of total capacity</span>
+                    <span className="text-[#71717b] text-xs leading-4">{((stats?.storageDetails?.storageUsed / stats?.planDetails?.storageLimit) * 100).toFixed(1)}% of total capacity</span>
                 </CardContent>
             </Card>
 

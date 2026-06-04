@@ -7,14 +7,16 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import PageHeading from "@/components/PageHeading";
 
 const IPWhitelistingPage = () => {
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex flex-col gap-1">
-        <h1 className="font-semibold text-2xl leading-8 tracking-tight text-zinc-950">Allowed IPs</h1>
-        <p className="text-zinc-500 text-sm leading-5">Restrict API access to specific IP addresses. Leave empty to allow all.</p>
-      </div>
+      
+      <PageHeading
+        heading="IP Whitelisting"
+        subheading="Manage the list of trusted IP addresses that can access your account. Add specific IPs or ranges to enhance security and control access."
+      />
 
       <div className="flex p-0 flex-col gap-4">
         <div className="flex flex-col gap-2">

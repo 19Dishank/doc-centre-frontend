@@ -5,13 +5,13 @@ import { PERMISSIONS } from "@/helper/permissions";
 import { toastNotification } from "@/helper/toastNotification";
 import { usePermissions } from "@/hooks/usePermissions";
 import { Download, Pencil, Share2, Trash2 } from "lucide-react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import ShareDocumentModal from "../ShareDocumentModal";
 
 const ActionsCell = ({ row: item, getFiles, setRenameMode, currentPageItems, setCurrentPage }) => {
 
   const isFolder = !item.originalFileName;
-  const { permissionCheck } = usePermissions();
+  const { checkPermission } = usePermissions();
   const [shareDocument, setShareDocument] = useState(null);
   const [confirmationModalOpen, setConfirmationModalOpen] = useState(false);
 
@@ -21,7 +21,7 @@ const ActionsCell = ({ row: item, getFiles, setRenameMode, currentPageItems, set
         ? await deleteFolder(item._id)
         : await deleteFile(item._id);
       getFiles();
-      if(currentPageItems === 1) {
+      if (currentPageItems === 1) {
         setCurrentPage((prev) => Math.max(1, prev - 1));
       }
     } catch (error) {
@@ -30,10 +30,15 @@ const ActionsCell = ({ row: item, getFiles, setRenameMode, currentPageItems, set
     }
   };
 
+  const canShareDocument = useMemo(() => checkPermission(PERMISSIONS.SHARE_DOCUMENT), [checkPermission]);
+  const canDownloadDocument = useMemo(() => checkPermission(PERMISSIONS.DOWNLOAD_DOCUMENT), [checkPermission]);
+  const canUpdateDocument = useMemo(() => checkPermission(PERMISSIONS.UPDATE_DOCUMENT), [checkPermission]);
+  const canDeleteDocument = useMemo(() => checkPermission(PERMISSIONS.DELETE_DOCUMENT), [checkPermission]);
+
   return (
     <>
       <div className="flex justify-end items-center gap-0.5">
-        {permissionCheck({ permissions: [PERMISSIONS.SHARE_DOCUMENT] }) && !isFolder && (
+        {canShareDocument && !isFolder && (
           <Button
             onClick={() => setShareDocument(item._id)}
             variant="ghost"
@@ -44,13 +49,13 @@ const ActionsCell = ({ row: item, getFiles, setRenameMode, currentPageItems, set
           </Button>
         )}
 
-        {permissionCheck({ permissions: [PERMISSIONS.DOWNLOAD_DOCUMENT] }) && !isFolder && (
+        {canDownloadDocument && !isFolder && (
           <Button onClick={() => downloadFile(item._id)} variant="ghost" size="icon" className="size-8 cursor-pointer">
             <Download className="size-3.5 text-[#71717b]" />
           </Button>
         )}
 
-        {permissionCheck({ permissions: [PERMISSIONS.UPDATE_DOCUMENT] }) && (
+        {canUpdateDocument && (
           <Button
             onClick={() => setRenameMode(item._id)}
             variant="ghost"
@@ -61,7 +66,7 @@ const ActionsCell = ({ row: item, getFiles, setRenameMode, currentPageItems, set
           </Button>
         )}
 
-        {permissionCheck({ permissions: [PERMISSIONS.DELETE_DOCUMENT] }) && (
+        {canDeleteDocument && (
           <Button
             onClick={() => setConfirmationModalOpen(true)}
             variant="ghost"

@@ -1,6 +1,6 @@
 import { Pencil, Trash2} from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { deleteUser } from "@/api/user";
 import { PERMISSIONS } from "@/helper/permissions";
 import { usePermissions } from "@/hooks/usePermissions";
@@ -10,7 +10,7 @@ import ConfirmationModal from "@/components/ConfirmationModel";
 import { toastNotification } from "@/helper/toastNotification";
 
 const ActionsCell = ({ row: currentUser, fetchUsers, roles, setCurrentPage, currentPageItems }) => {
-    const { permissionCheck } = usePermissions();
+    const { checkPermission } = usePermissions();
     const { user: { _id: userId } } = useAuthContext();
     const [isEditing, setIsEditing] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
@@ -32,16 +32,19 @@ const ActionsCell = ({ row: currentUser, fetchUsers, roles, setCurrentPage, curr
         }
     }
 
+    const canUpdateUser = useMemo(() => checkPermission(PERMISSIONS.UPDATE_USER), [checkPermission]);
+    const canDeleteUser = useMemo(() => checkPermission(PERMISSIONS.DELETE_USER), [checkPermission]);
+
     return (
         <>
             {(currentUser._id !== userId && currentUser?.role?.name !== "Admin") && (
                 <div className="flex justify-end items-center gap-1">
-                    {permissionCheck({ permissions: [PERMISSIONS.UPDATE_USER] }) && (
+                    {canUpdateUser && (
                         <Button onClick={() => setIsEditing(true)} variant="ghost" size="icon" className="size-8 cursor-pointer">
                             <Pencil className="size-4 text-zinc-500" />
                         </Button>
                     )}
-                    {permissionCheck({ permissions: [PERMISSIONS.DELETE_USER] }) && (
+                    {canDeleteUser && (
                         <Button
                             onClick={() => setIsDeleting(true)}
                             variant="ghost"

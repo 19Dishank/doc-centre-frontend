@@ -1,4 +1,4 @@
-import { Bell, CheckCircle2, Clock, Mail, Save } from "lucide-react";
+import { Bell, CheckCircle2, Clock, Loader, Mail, Save } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -7,24 +7,18 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import PageHeading from "@/components/PageHeading";
+import { toastNotification } from "@/helper/toastNotification";
+import { changePreferences } from "@/api/user";
+import { useAuthContext } from "@/contexts/AuthContext";
+import { useCatalogContext } from "@/contexts/CatalogContext";
 
 export default function Notifications() {
 
-  const emailNotifications = [
-    { title: "Email on Upload", description: "Receive an email each time a new file is uploaded.", name: "emailOnUpload" },
-    { title: "Weekly Usage Report", description: "Get a summary of activity every Monday morning.", name: "weeklyUsageReport" },
-    { title: "Security Alerts", description: "Get notified of any security-related events.", name: "securityAlerts" },
-    { title: "API Limit Warnings", description: "Receive alerts when approaching API usage limits.", name: "apiLimitWarnings" },
-  ]
-
-  const inAppNotifications = [
-    { title: "New File Comments", description: "Get notified when someone comments on a file you've uploaded.", name: "newFileComments" },
-    { title: "Role Changes", description: "Receive updates when your role or permissions change.", name: "roleChanges" },
-    { title: "Storage Warnings", description: "Get alerts when you're approaching your storage limits.", name: "storageWarnings" },
-    { title: "System Announcements", description: "Stay informed about important system updates and announcements.", name: "systemAnnouncements" }
-  ]
+  const { userNotificationPreferences } = useAuthContext();
+  const { preferencesCatalog } = useCatalogContext();
+  const { emailNotifications, inAppNotifications } = preferencesCatalog || {};
 
   const availableFrequencies = [
     { label: "Real-time", value: "realtime" },
@@ -33,25 +27,36 @@ export default function Notifications() {
   ]
 
   const initialFormData = {
-    emailOnUpload: true,
-    weeklyUsageReport: true,
-    securityAlerts: true,
-    apiLimitWarnings: true,
-    newFileComments: true,
-    roleChanges: true,
-    storageWarnings: true,
-    systemAnnouncements: true,
-    frequency: "realtime",
-    notificationEmail: ""
+    emailNotifications: userNotificationPreferences?.emailNotifications,
+    inAppNotifications: userNotificationPreferences?.inAppNotifications,
   }
 
   const [formData, setFormData] = useState(initialFormData);
+  const [loading, setLoading] = useState(false);
+  const hasChanges = Object.keys(formData).some(key => formData[key] !== initialFormData[key]);
 
-  const handleToggle = (key) => {
+  const handleToggle = (module, key) => {
     setFormData(prev => ({
       ...prev,
-      [key]: !prev[key]
+      [module]: {
+        ...prev[module],
+        [key]: !prev[module][key]
+      }
     }))
+  }
+
+  const handleSubmit = async () => {
+    setLoading(true);
+    try {
+      const res = await changePreferences(formData);
+      console.log("Preferences updated: ", res);
+      toastNotification("Preferences updated successfully.", "success");
+    } catch (error) {
+      toastNotification(error.response?.data?.message || "An error occurred while updating preferences.", "error");
+      console.error("Error updating preferences: ", error);
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -73,7 +78,7 @@ export default function Notifications() {
         </CardHeader>
         <CardContent className="flex p-0 flex-col">
           {emailNotifications.map(({ title, description, name }, index) => (
-            <>
+            <Fragment key={name}>
               <div className="flex py-4 justify-between items-start sm:items-center gap-4">
                 <div className="flex flex-col gap-1 min-w-0">
                   <Label className="font-semibold text-sm leading-5 text-zinc-950">{title}</Label>
@@ -83,12 +88,12 @@ export default function Notifications() {
                 </div>
                 <Switch
                   className="cursor-pointer shrink-0 mt-0.5 sm:mt-0 data-[state=checked]:bg-[#2b7fff] data-[state=unchecked]:bg-gray-300"
-                  checked={formData[name]}
-                  onCheckedChange={() => handleToggle(name)}
+                  checked={formData.emailNotifications?.[name]}
+                  onCheckedChange={() => handleToggle("emailNotifications", name)}
                 />
               </div>
               {index < emailNotifications.length - 1 && <Separator />}
-            </>
+            </Fragment>
           ))}
         </CardContent>
       </Card>
@@ -105,7 +110,7 @@ export default function Notifications() {
         </CardHeader>
         <CardContent className="flex p-0 flex-col">
           {inAppNotifications.map(({ title, description, name }, index) => (
-            <>
+            <Fragment key={name}>
               <div className="flex py-4 justify-between items-start sm:items-center gap-4">
                 <div className="flex flex-col gap-1 min-w-0">
                   <Label className="font-semibold text-sm leading-5 text-zinc-950">{title}</Label>
@@ -115,12 +120,12 @@ export default function Notifications() {
                 </div>
                 <Switch
                   className="cursor-pointer shrink-0 mt-0.5 sm:mt-0 data-[state=checked]:bg-[#2b7fff] data-[state=unchecked]:bg-gray-300"
-                  checked={formData[name]}
-                  onCheckedChange={() => handleToggle(name)}
+                  checked={formData.inAppNotifications?.[name]}
+                  onCheckedChange={() => handleToggle("inAppNotifications", name)}
                 />
               </div>
               {index < inAppNotifications.length - 1 && <Separator />}
-            </>
+            </Fragment>
           ))}
         </CardContent>
       </Card>
@@ -135,7 +140,7 @@ export default function Notifications() {
             Bundle notifications and pick where they are delivered.
           </CardDescription>
         </CardHeader>
-        
+
         <CardContent className="flex p-0 flex-col gap-6">
           <div className="flex flex-col gap-2">
             <Label className="font-semibold text-sm leading-5 text-zinc-950">Digest Frequency</Label>
@@ -143,6 +148,7 @@ export default function Notifications() {
             <RadioGroup defaultValue="realtime" className="grid grid-cols-1 md:grid-cols-3 gap-3">
               {availableFrequencies.map(({ label, value }) => (
                 <Label
+                  key={value}
                   htmlFor={value}
                   className={`cursor-pointer rounded-lg ${formData.digestFrequency === value ? 'bg-blue-500! border-[#2b7fff]' : 'border-zinc-200'} border flex p-3 items-center gap-2 transition-colors`}
                 >
@@ -170,11 +176,25 @@ export default function Notifications() {
           </div>
         </CardContent>
 
-        <CardFooter className="p-0 pt-2 bg-white flex flex-col-reverse sm:flex-row justify-end gap-2">
-          <Button variant="ghost" className="w-full sm:w-auto">Cancel</Button>
-          <Button className="bg-[#2b7fff] text-blue-50 gap-2 w-full sm:w-auto">
-            <Save className="size-4" />
-            Save Preferences
+        <CardFooter className="px-0 bg-white flex flex-col-reverse sm:flex-row justify-end gap-2">
+          {hasChanges && (
+            <Button
+              variant="outline"
+              className="w-full sm:w-auto cursor-pointer"
+              onClick={() => setFormData(initialFormData)}
+            >
+              Reset
+            </Button>
+          )}
+          <Button
+            className="bg-[#2b7fff] text-blue-50 gap-2 w-full sm:w-auto cursor-pointer"
+            onClick={handleSubmit}
+            disabled={!hasChanges || loading}
+          >
+            {loading
+              ? <><Loader className="animate-spin" /> <span>Saving Preferences...</span></>
+              : <><Save className="size-4" /><span>Save Preferences</span></>}
+
           </Button>
         </CardFooter>
       </Card>

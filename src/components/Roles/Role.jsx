@@ -1,6 +1,6 @@
 import { MoreHorizontal, Shield, Edit2, Trash2 } from "lucide-react";
 import { Button } from "../ui/button";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { deleteRole } from "@/api/role";
 import { toastNotification } from "@/helper/toastNotification";
 import ConfirmationModal from "../ConfirmationModel";
@@ -10,14 +10,14 @@ import { usePermissions } from "@/hooks/usePermissions";
 
 const Role = ({ currentRoleId, handleRoleChange, role, getAvailableRoles }) => {
 
-    const { permissionCheck } = usePermissions();
+    const { checkPermission } = usePermissions();
     const [isOpen, setIsOpen] = useState(false);
     const [showModel, setShowModel] = useState(false);
     const [showEditModel, setShowEditModel] = useState(false);
     const isActive = currentRoleId === role._id;
 
-    const canUpdateRole = permissionCheck({ permissions: [PERMISSIONS.UPDATE_ROLE] });
-    const canDeleteRole = permissionCheck({ permissions: [PERMISSIONS.DELETE_ROLE] });
+    const canUpdateRole = useMemo(() => checkPermission(PERMISSIONS.UPDATE_ROLE), [checkPermission]);
+    const canDeleteRole = useMemo(() => checkPermission(PERMISSIONS.DELETE_ROLE), [checkPermission]);
     const displayOptions = canUpdateRole || canDeleteRole;
 
     const handleOptionClick = (e) => {

@@ -1,5 +1,6 @@
 import { User } from "lucide-react";
 import { useAuthContext } from "@/contexts/AuthContext";
+import UIAvatar from "@/components/ui/ui-avatar";
 
 const UserNameCell = ({ row: currentUser }) => {
 
@@ -9,11 +10,7 @@ const UserNameCell = ({ row: currentUser }) => {
   return (
     <div className="flex items-center gap-3">
       {(currentUser.firstName && currentUser.lastName)
-        ? (<img
-          className="size-8 rounded-full shrink-0"
-          src={`https://ui-avatars.com/api/?name=${currentUser.firstName} ${currentUser.lastName}&background=random`}
-          alt={`${currentUser.firstName} ${currentUser.lastName}`}
-        />)
+        ? <UIAvatar fullName={displayName} userId={currentUser._id} />
         : <User className="size-8 p-1.5 rounded-full bg-[#2b7fff] text-white text-xs" />
       }
       <div className="flex flex-col min-w-0">

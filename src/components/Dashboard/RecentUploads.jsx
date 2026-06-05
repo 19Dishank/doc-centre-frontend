@@ -1,14 +1,38 @@
 import { ArrowRight, User } from "lucide-react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import { getRegistryIcon } from "@/helper/getRegistryIcon";
 import { formatSize } from "@/helper/formatSize";
 import { formatTime } from "@/helper/formatTime";
 import DocumentPreview from "../Files/DocumentPreview";
 import { useAuthContext } from "@/contexts/AuthContext";
+import { fetchRecentDocs } from "@/api/dashboard";
+import { Skeleton } from "../ui/skeleton";
+import UIAvatar from "../ui/ui-avatar";
 
-const RecentUploads = ({ recentUploads }) => {
+const RecentUploads = () => {
+
+    const [recentUploads, setRecentUploads] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    const getRecentUploads = async () => {
+        setLoading(true);
+        try {
+            const res = await fetchRecentDocs();
+            setRecentUploads(res.data.docs);
+        } catch (error) {
+            console.error("Error fetching recent uploads:", error);
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        getRecentUploads();
+    }, []);
+
     return (
         <>
             <Card className="flex flex-col h-full pt-0">
@@ -22,10 +46,10 @@ const RecentUploads = ({ recentUploads }) => {
 
                 <CardContent className="p-0">
                     <div className="divide-y divide-zinc-100">
-                        {recentUploads.length === 0
+                        {recentUploads.length === 0 && !loading
                             ? <div className="p-5 text-center text-zinc-500">No uploads found.</div>
                             : recentUploads.map((item) => (
-                                <RecentUploadFile key={item._id} item={item} />
+                                <RecentUploadFile key={item._id} item={item} loading={loading} />
                             ))}
                     </div>
                 </CardContent>
@@ -36,7 +60,7 @@ const RecentUploads = ({ recentUploads }) => {
 
 export default RecentUploads;
 
-const RecentUploadFile = ({ item }) => {
+const RecentUploadFile = ({ item, loading }) => {
 
     const [previewDocument, setPreviewDocument] = useState(false);
     const displayExtension = item?.originalFileName?.split(".").pop();
@@ -46,6 +70,8 @@ const RecentUploadFile = ({ item }) => {
     const ownerName = item.uploadedBy.firstName && item.uploadedBy.lastName
         ? `${item.uploadedBy.firstName} ${item.uploadedBy.lastName}`
         : item.uploadedBy.email;
+
+    if (loading) return <div className="mb-4 last:mb-0 px-5 h-15"><Skeleton className="h-full w-full" /></div>;
 
     return (
         <>
@@ -65,11 +91,7 @@ const RecentUploadFile = ({ item }) => {
 
                 <div className="flex items-center gap-2 shrink-0">
                     {(item.uploadedBy.firstName && item.uploadedBy.lastName)
-                        ? (<img
-                            className="size-8 rounded-full shrink-0"
-                            src={`https://ui-avatars.com/api/?name=${item.uploadedBy.firstName} ${item.uploadedBy.lastName}&background=random`}
-                            alt={`${item.uploadedBy.firstName} ${item.uploadedBy.lastName}`}
-                        />)
+                        ? (<UIAvatar firstName={item.uploadedBy.firstName} lastName={item.uploadedBy.lastName} userId={item.uploadedBy._id} />)
                         : <User className="size-8 p-1.5 rounded-full bg-[#2b7fff] text-white text-xs" />
                     }
                     <span className="hidden sm:inline-block text-zinc-500 text-xs w-35 lg:w-25 truncate">

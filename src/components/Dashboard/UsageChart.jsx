@@ -13,6 +13,22 @@ const UsageChart = () => {
         { day: "Day 30", api: 92, storage: 128 },
     ];
 
+    // const [usageData, setUsageData] = useState([]);
+
+    // const getUsageData = async () => {
+    //     try {
+    //         const res = await fetchUsageData();
+    //         setUsageData(res.data.usage);
+    //     } catch (error) {
+    //         console.error("Error fetching usage data:", error);
+    //     }
+    // };
+
+    // useEffect(() => {
+    //     // eslint-disable-next-line react-hooks/set-state-in-effect
+    //     getUsageData();
+    // }, []);
+
     return (
         <Card className="p-4 md:p-6 flex flex-col gap-4">
             <CardHeader className="p-0 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -53,10 +69,10 @@ const UsageChart = () => {
                                 data={data}
                                 margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
                             >
-                                <CartesianGrid 
-                                    strokeDasharray="3 3" 
-                                    stroke="oklch(0.92 0.004 286.32)" 
-                                    vertical={false} 
+                                <CartesianGrid
+                                    strokeDasharray="3 3"
+                                    stroke="oklch(0.92 0.004 286.32)"
+                                    vertical={false}
                                 />
                                 <XAxis
                                     dataKey="day"

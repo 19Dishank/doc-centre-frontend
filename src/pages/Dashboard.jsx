@@ -1,42 +1,25 @@
 import StatsCards from "@/components/Dashboard/StatsCards";
 import UsageChart from "@/components/Dashboard/UsageChart";
 import RecentUploads from "@/components/Dashboard/RecentUploads";
-import { useEffect, useState } from "react";
-import { fetchDashBoardData } from "@/api/file";
-import Loader from "@/components/ui/loader";
 import { useAuthContext } from "@/contexts/AuthContext";
 import PageHeading from "@/components/PageHeading";
+import { PERMISSIONS } from "@/helper/permissions";
+import { usePermissions } from "@/hooks/usePermissions";
+import { useMemo } from "react";
 
 export default function Dashboard() {
 
-  const [dashboardData, setDashboardData] = useState(null);
-  const [loading, setLoading] = useState(true);
   const { user } = useAuthContext();
+  // console.log(sadadas)
 
+  const { checkPermission } = usePermissions();
   const displayName = user?.firstName || user?.lastName ? `${user.firstName || ""} ${user.lastName || ""}`.trim() : user?.email || "User";
 
-  const getDashboardData = async () => {
-    setLoading(true);
-    try {
-      const response = await fetchDashBoardData();
-      setDashboardData(response.data);
-    } catch (error) {
-      console.error("Error fetching dashboard data:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    getDashboardData();
-  }, []);
-
-  if (loading) return <Loader />;
+  const canViewDocuments = useMemo(() => checkPermission(PERMISSIONS.VIEW_DOCUMENT), [checkPermission]);
 
   return (
     <div className="flex flex-col gap-6">
-      
+
       <PageHeading
         heading="Dashboard"
         subheading={`Welcome back, ${displayName}. Here's what's happening.`}
@@ -44,18 +27,20 @@ export default function Dashboard() {
 
       <div className="flex flex-col gap-6">
         <section>
-          <StatsCards stats={dashboardData?.stats || {}} />
+          <StatsCards />
         </section>
 
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
 
           <div className="xl:col-span-2">
-            <UsageChart usageData={dashboardData?.usage || []} />
+            <UsageChart />
           </div>
 
-          <div className="xl:col-span-1">
-            <RecentUploads recentUploads={dashboardData?.docs || []} />
-          </div>
+          {canViewDocuments && (
+            <div className="xl:col-span-1">
+              <RecentUploads />
+            </div>
+          )}
 
         </div>
       </div>

@@ -71,3 +71,23 @@ export const changeUserPassword = async (passwordData) => {
         throw error;
     }
 }
+
+export const fetchPreferencesCatalog = async () => {
+    try {
+        const response = await axiosInstance.get("/notifications/details");
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching notifications catalog:", error);
+        throw error;
+    }
+}
+
+export const changePreferences = async (preferencesData) => {
+    try {
+        const response = await axiosInstance.put(`/notifications/preferences`, preferencesData);
+        return response.data;
+    } catch (error) {
+        console.error("Error changing user preferences:", error);
+        throw error;
+    }
+}

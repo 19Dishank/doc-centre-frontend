@@ -1,19 +1,19 @@
 import { FileText, Lock, Save, Settings, Shield, ShieldAlert, Users } from "lucide-react";
 import { Button } from "../ui/button";
 import { Checkbox } from "../ui/checkbox";
-import { usePermissionsCatalog } from "@/contexts/PermissionsCatalogContext";
 import { useEffect, useState, useMemo } from "react";
 import { updateRolePermissions } from "@/api/role";
 import { toastNotification } from "@/helper/toastNotification";
 import { PERMISSIONS } from "@/helper/permissions";
 import { usePermissions } from "@/hooks/usePermissions";
 import { useAuthContext } from "@/contexts/AuthContext";
+import { useCatalogContext } from "@/contexts/CatalogContext";
 
-const Permissions = ({ currentRoleId, currentRole, getAvailableRoles, onCancel }) => {
-    const { permissionsCatalog = [] } = usePermissionsCatalog();
+const Permissions = ({ currentRoleId, currentRole, getAvailableRoles }) => {
+    const { permissionsCatalog = [] } = useCatalogContext();
     const [permissions, setPermissions] = useState([]);
     const [isSaving, setIsSaving] = useState(false);
-    const { permissionCheck } = usePermissions();
+    const { checkPermission } = usePermissions();
     const { user } = useAuthContext();
 
     useEffect(() => {
@@ -72,7 +72,6 @@ const Permissions = ({ currentRoleId, currentRole, getAvailableRoles, onCancel }
             await updateRolePermissions(currentRoleId, permissions);
             await getAvailableRoles();
             toastNotification("Permissions saved successfully!", "success");
-            if (window.innerWidth < 1280 && onCancel) onCancel(); // Auto back on mobile save
         } catch (error) {
             toastNotification(error?.response?.data?.message || "Failed to update profile permissions.", "error");
             console.error(error);
@@ -100,6 +99,12 @@ const Permissions = ({ currentRoleId, currentRole, getAvailableRoles, onCancel }
             });
         }
     };
+
+    const handleReset = () => {
+        setPermissions(currentRole?.permissions || []);
+    };
+
+    const canAssignPermissions = useMemo(() => checkPermission(PERMISSIONS.ASSIGN_PERMISSION), [checkPermission]);
 
     return (
         <>
@@ -155,7 +160,7 @@ const Permissions = ({ currentRoleId, currentRole, getAvailableRoles, onCancel }
                                             <Checkbox
                                                 id={"select_all_" + category.module}
                                                 className="cursor-pointer size-4 rounded border-zinc-300 text-blue-600 focus:ring-blue-500 data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600 shrink-0"
-                                                disabled={(!permissionCheck({ permissions: [PERMISSIONS.ASSIGN_PERMISSION] }) || currentRoleId === user.role._id)}
+                                                disabled={(!canAssignPermissions || currentRoleId === user.role._id)}
                                                 checked={category.permissions.every(perm => permissions?.includes(perm.permissionId))}
                                                 onCheckedChange={() => handelSelectAllChange(category.module) }
                                             />
@@ -175,14 +180,14 @@ const Permissions = ({ currentRoleId, currentRole, getAvailableRoles, onCancel }
                                                 className="flex items-center gap-3 p-2 rounded-lg hover:bg-zinc-50 transition-colors cursor-pointer"
                                                 key={permissionId}
                                                 onClick={() => {
-                                                    if (permissionCheck({ permissions: [PERMISSIONS.ASSIGN_PERMISSION] })) {
+                                                    if (canAssignPermissions) {
                                                         const isChecked = permissions?.includes(permissionId);
                                                         handlePermissionChange(permissionId, !isChecked, category.module, name);
                                                     }
                                                 }}
                                             >
                                                 <Checkbox
-                                                    disabled={(!permissionCheck({ permissions: [PERMISSIONS.ASSIGN_PERMISSION] }) || currentRoleId === user.role._id)}
+                                                    disabled={(!canAssignPermissions || currentRoleId === user.role._id)}
                                                     onCheckedChange={(checked) => handlePermissionChange(permissionId, checked, category.module, name)}
                                                     checked={permissions?.includes(permissionId)}
                                                     className="cursor-pointer size-4 rounded border-zinc-300 text-blue-600 focus:ring-blue-500 data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600 shrink-0"
@@ -204,15 +209,15 @@ const Permissions = ({ currentRoleId, currentRole, getAvailableRoles, onCancel }
                         </div>
                     </div>
 
-                    {(permissionCheck({ permissions: [PERMISSIONS.ASSIGN_PERMISSION] }) && currentRoleId !== user.role._id) && (
+                    {(canAssignPermissions && currentRoleId !== user.role._id) && (
                         <div className="p-4 border-t border-zinc-200 flex flex-col-reverse sm:flex-row justify-end bg-zinc-50/50 shrink-0 gap-2">
-                            {onCancel && (
+                            {hasChanges && (
                                 <Button
                                     variant="outline"
-                                    onClick={onCancel}
-                                    className="w-full sm:w-auto text-xs h-10 sm:h-9"
+                                    onClick={handleReset}
+                                    className="w-full sm:w-auto text-xs h-10 sm:h-9 cursor-pointer"
                                 >
-                                    Cancel
+                                    Reset
                                 </Button>
                             )}
                             <Button

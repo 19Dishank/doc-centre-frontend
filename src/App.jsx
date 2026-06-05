@@ -66,7 +66,7 @@ export default function App() {
     return null;
   }
 
-  // if(loading) return <Loader styles={"min-h-screen"} />
+  if(loading) return <Loader styles={"min-h-screen"} />
 
   return (
     <Suspense fallback={<Loader styles={"min-h-screen"} />}>

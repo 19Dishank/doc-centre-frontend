@@ -18,17 +18,23 @@ import {
     User,
     Users,
 } from "lucide-react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 
 const Sidebar = ({ isOpen, setIsOpen }) => {
     const location = useLocation();
-    const { permissionCheck } = usePermissions();
+    const { checkPermission, checkRole } = usePermissions();
 
     const [openMenus, setOpenMenus] = useState({
         apiAccess: location.pathname.startsWith("/credentials"),
         settings: location.pathname.startsWith("/settings"),
     });
+
+    const canViewDocument = useMemo(() => checkPermission(PERMISSIONS.VIEW_DOCUMENT), [checkPermission]);
+    const canViewUsers = useMemo(() => checkPermission(PERMISSIONS.VIEW_USER), [checkPermission]);
+    const canViewRoles = useMemo(() => checkPermission(PERMISSIONS.VIEW_ROLE), [checkPermission]);
+    const canViewOrganizationSettings = useMemo(() => checkRole("Admin"), [checkRole]);
+    const canViewBillingSection = useMemo(() => checkRole("Admin"), [checkRole]);
 
     const navItems = [
         {
@@ -36,17 +42,17 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
             icon: <LayoutDashboard className="size-4" />,
             path: "/dashboard",
         },
-        permissionCheck({ permissions: [PERMISSIONS.VIEW_DOCUMENT] }) && {
+        canViewDocument && {
             name: "Files",
             icon: <FileText className="size-4" />,
             path: "/files",
         },
-        permissionCheck({ permissions: [PERMISSIONS.VIEW_USER] }) && {
+        canViewUsers && {
             name: "Users",
             icon: <Users className="size-4" />,
             path: "/users",
         },
-        permissionCheck({ permissions: [PERMISSIONS.VIEW_ROLE] }) && {
+        canViewRoles && {
             name: "Roles & Permissions",
             icon: <Lock className="size-4" />,
             path: "/roles",
@@ -82,12 +88,12 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
             icon: <User className="size-4" />,
             path: "/settings/user",
         },
-        permissionCheck({ role: "Admin" }) && {
+        canViewOrganizationSettings && {
             name: "Organization",
             icon: <Building2 className="size-4" />,
             path: "/settings/organization",
         },
-        {
+        canViewBillingSection && {
             name: "Billing",
             icon: <CreditCard className="size-4" />,
             path: "/settings/billing",
@@ -97,12 +103,12 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
             icon: <Bell className="size-4" />,
             path: "/settings/notifications",
         },
-        {
-            name: "Danger Zone",
-            icon: <AlertTriangle className="size-4" />,
-            path: "/settings/danger-zone",
-            styles: "hover:bg-red-50! hover:text-red-700",
-        },
+        // {
+        //     name: "Danger Zone",
+        //     icon: <AlertTriangle className="size-4" />,
+        //     path: "/settings/danger-zone",
+        //     styles: "hover:bg-red-50! hover:text-red-700",
+        // },
     ].filter(Boolean);
 
     const sideBarItems = [

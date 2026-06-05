@@ -1,3 +1,4 @@
+import UIAvatar from "@/components/ui/ui-avatar";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { User } from "lucide-react";
 
@@ -16,11 +17,7 @@ const OwnerNameCell = ({ row }) => {
     return (
         <>
             {(!ownerName.includes("undefined"))
-                ? (<img
-                    className="size-7 rounded-full"
-                    src={`https://ui-avatars.com/api/?name=${ownerName}&background=random`}
-                    alt={`${ownerName}`}
-                />)
+                ? <UIAvatar fullName={ownerName} userId={row.createdBy?._id || row.uploadedBy?._id} />
                 : <User className="size-6 p-1.5 rounded-full bg-[#2b7fff] text-white text-xs" />
             }
             <span className="max-w-40 truncate flex gap-1 items-baseline">

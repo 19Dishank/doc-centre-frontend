@@ -10,6 +10,7 @@ import TextRenderer from "./Renderers/TextRenderer";
 import UnsupportedRenderer from "./Renderers/UnsupportedRenderer";
 import { useEffect, useState } from "react";
 import { getRegistryIcon } from "@/helper/getRegistryIcon";
+import OfficeRendered from "./Renderers/OfficeRendered";
 
 const DocumentPreview = ({ setIsOpen, item }) => {
 
@@ -42,9 +43,18 @@ const DocumentPreview = ({ setIsOpen, item }) => {
         const audioTypes = ["mp3", "wav", "ogg"];
         const codeTypes = ["js", "jsx", "ts", "tsx", "json", "html", "css", "py", "java", "cpp", "c",];
         const textTypes = ["txt", "md"];
+        const officeTypes = [
+            'doc', 'docx', 'docm', 'dot', 'dotx', 'dotm',
+            'xls', 'xlsx', 'xlsm', 'xlsb', 'xlt', 'xltx', 'xltm', 'xlam',
+            'ppt', 'pptx', 'pptm', 'pot', 'potx', 'potm', 'ppam', 'pps', 'ppsx', 'ppsm', 'sldx', 'sldm',
+        ];
 
         if (type === "pdf") {
             return <PDFRenderer pdfUrl={preSignedUrl} />;
+        }
+
+        if (officeTypes.includes(type)) {
+            return <OfficeRendered fileUrl={preSignedUrl} />;
         }
 
         if (imageTypes.includes(type)) {

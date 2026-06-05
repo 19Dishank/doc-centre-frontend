@@ -1,23 +1,32 @@
 import { useAuthContext } from "@/contexts/AuthContext";
+import { useCallback } from "react";
 
 export function usePermissions() {
 
-    const { permissions, user } = useAuthContext();
-    const userRole = user?.role?.name;
+  const { permissions, user } = useAuthContext();
+  const userRole = user?.role?.name;
 
-    return {
-        permissionCheck: (obj) => {
-            if (obj.permissions) {
-                if (Array.isArray(obj.permissions)) {
-                    return obj.permissions.every(p => permissions?.includes(p));
-                }
-                return permissions?.includes(obj.permissions);
-            }
-            if (obj.role) {
-                console.log("Checking role for .................................................................:", userRole === obj.role);
-                return userRole === obj.role;
-            }
-            return false;
-        },
-    };
+  const checkPermission = useCallback(
+    (requiredPermissions) => {
+
+      if (Array.isArray(requiredPermissions)) {
+        return requiredPermissions.every((p) =>
+          permissions?.includes(p)
+        );
+      }
+
+      return permissions?.includes(requiredPermissions);
+    },
+    [permissions]
+  );
+
+  const checkRole = useCallback(
+    (role) => userRole === role,
+    [userRole]
+  );
+
+  return {
+    checkPermission,
+    checkRole,
+  };
 }

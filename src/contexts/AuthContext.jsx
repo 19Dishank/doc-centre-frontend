@@ -8,18 +8,21 @@ const AuthContext = createContext();
 const AuthProvider = ({ children }) => {
     const { accessToken } = getTokens();
     const [isAuthenticated, setIsAuthenticated] = useState(!!accessToken);
-    const [user, setUser] = useState(null);
+    const [responseData, setResponseData] = useState(null);
+
+    const { user, userNotificationPreferences } = responseData || {};
+
     const permissions = user?.role?.permissions || [];
-    const [loading, setLoading] = useState(true)
+    const [loading, setLoading] = useState(isAuthenticated);
 
     const getUserDetails = async () => {
         setLoading(true);
         try {
             const res = await fetchMe();
-            setUser(res.data.userData);
+            setResponseData(res.data);
         } catch (error) {
             console.error("Error fetching user details:", error);
-            setUser(null);
+            setResponseData(null);
         } finally {
             setLoading(false);
         }
@@ -32,7 +35,7 @@ const AuthProvider = ({ children }) => {
     }, [isAuthenticated]);
 
     return (
-        <AuthContext.Provider value={{ isAuthenticated, setIsAuthenticated, user, setUser, permissions, loading, getUserDetails }}>
+        <AuthContext.Provider value={{ isAuthenticated, setIsAuthenticated, user, userNotificationPreferences, permissions, loading, getUserDetails }}>
             {children}
         </AuthContext.Provider>
     );

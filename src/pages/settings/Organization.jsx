@@ -78,9 +78,9 @@ export default function Organization() {
 
       if (organizationDetails.logo !== formData.logo && selectedLogoFile) {
         const getPresignedUrlRes = await getSignedURLForLogoUpload({
-          "slug": formData.slug,
-          "fileName": selectedLogoFile.name,
-          "contentType": selectedLogoFile.type
+          slug: formData.slug,
+          fileName: selectedLogoFile.name,
+          contentType: selectedLogoFile.type
         });
         const { url, key: logoKey } = getPresignedUrlRes.data;
         const uploadRes = await uploadLogoToS3(url, selectedLogoFile);

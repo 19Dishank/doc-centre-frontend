@@ -25,10 +25,10 @@ export default function Roles() {
   const getAvailableRoles = async () => {
     try {
       setIsLoading(true);
-      const res = await fetchRoles();
+      const res = await fetchRoles({ adminFlag: false });
       const rolesData = res.data.roles || [];
       setAvailableRoles(rolesData);
-      
+
       if (rolesData.length > 0 && !currentRoleId && window.innerWidth >= 1280) {
         setCurrentRoleId(rolesData[0]._id);
       }
@@ -45,15 +45,15 @@ export default function Roles() {
   }, []);
 
   return (
-    <div className="w-full flex flex-col h-full min-h-0">
+    <div className="w-full max-w-7xl self-center flex flex-col h-full min-h-0">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 shrink-0">
         <div className="flex flex-col gap-1 min-w-0">
           <div className="flex items-center gap-2">
             {isPermissionsVisible && (
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                onClick={handleBackToRoles} 
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={handleBackToRoles}
                 className="xl:hidden size-8 -ml-2 text-zinc-600 hover:text-zinc-950"
               >
                 <ArrowLeft className="size-5" />
@@ -70,27 +70,24 @@ export default function Roles() {
       </div>
 
       <div className="flex gap-6 w-full flex-1 relative">
-        
         <div className={`w-full xl:w-80 ${isPermissionsVisible ? "hidden xl:block" : "block"}`}>
-          <AvailableRoles 
-            currentRoleId={currentRoleId} 
-            handleRoleChange={handleRoleChange} 
-            availableRoles={availableRoles} 
+          <AvailableRoles
+            currentRoleId={currentRoleId}
+            handleRoleChange={handleRoleChange}
+            availableRoles={availableRoles}
             getAvailableRoles={getAvailableRoles}
             isLoading={isLoading}
           />
         </div>
-        
         <div className={`flex-1 w-full min-w-0 mb-10! ${!isPermissionsVisible ? "hidden xl:block" : "block"}`}>
-          <Permissions 
-            currentRoleId={currentRoleId} 
-            currentRole={currentRole} 
-            getAvailableRoles={getAvailableRoles} 
-            onCancel={handleBackToRoles}
+          <Permissions
+            currentRoleId={currentRoleId}
+            currentRole={currentRole}
+            getAvailableRoles={getAvailableRoles}
           />
         </div>
-
       </div>
+      
     </div>
   );
 }

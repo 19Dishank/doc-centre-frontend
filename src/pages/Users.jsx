@@ -1,6 +1,6 @@
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import PaginationBar from "@/components/ui/pagination-bar";
 import { getUsers } from "@/api/user";
 import { PERMISSIONS } from "@/helper/permissions";
@@ -17,7 +17,7 @@ import PageHeading from "@/components/PageHeading";
 import FiltersBar from "@/components/Users/FiltersBar";
 
 export default function UsersList() {
-  const { permissionCheck } = usePermissions();
+  const { checkPermission } = usePermissions();
 
   const [isOpen, setIsOpen] = useState(false);
   const [roles, setRoles] = useState([]);
@@ -25,8 +25,8 @@ export default function UsersList() {
   const [loading, setLoading] = useState(true);
   const [paginationData, setPaginationData] = useState(null);
   const [searchParams, setSearchParams] = useSearchParams();
-  const [currentPage, setCurrentPage] = useState((Number(searchParams.get("page")) || 1));
-  const prevCurrentPageRef = useRef(currentPage);
+  const [currentPage, setCurrentPage] = useState(Number(searchParams.get("page")) || 1);
+  const prevCurrentPageRef = useRef(null);
 
   const [filters, setFilters] = useState({
     q: searchParams.get("q") || "",
@@ -78,7 +78,7 @@ export default function UsersList() {
 
   const getRoles = async () => {
     try {
-      const res = await fetchRoles();
+      const res = await fetchRoles({ adminFlag: true });
       setRoles(res.data.roles || []);
     } catch (error) {
       console.error("Error fetching roles:", error);
@@ -150,6 +150,8 @@ export default function UsersList() {
     },
   ];
 
+  const canInviteUser = useMemo(() => checkPermission(PERMISSIONS.INVITE_USER), [checkPermission]);
+
   return (
     <div className="h-full flex flex-col gap-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -159,7 +161,7 @@ export default function UsersList() {
           subheading="Manage team members and their access levels."
         />
 
-        {permissionCheck({ permissions: [PERMISSIONS.INVITE_USER] }) && (
+        {canInviteUser && (
           <Button
             className="font-semibold bg-[#2b7fff] text-blue-50 gap-2 w-full sm:w-auto cursor-pointer"
             onClick={() => setIsOpen(true)}
@@ -183,7 +185,7 @@ export default function UsersList() {
         noDataMessage="No users found"
       />
 
-      {(usersData.length > 0)  && (
+      {(usersData.length > 0) && (
         <div className="mt-auto">
           <PaginationBar
             totalPages={totalPages || 0}

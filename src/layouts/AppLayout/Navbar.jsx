@@ -1,5 +1,6 @@
 import { logoutUser } from "@/api/auth";
 import { Button } from "@/components/ui/button";
+import UIAvatar from "@/components/ui/ui-avatar";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { Menu, Home, ChevronRight, Bell, LogOut, User } from "lucide-react";
 import { Fragment, useEffect, useRef, useState } from "react";
@@ -72,11 +73,7 @@ const Navbar = ({ setIsSidebarOpen }) => {
                 <div className="relative" ref={dropdownRef}>
                     <div onClick={() => setOpen(!open)} className="cursor-pointer">
                         {(user?.firstName && user?.lastName) ? (
-                            <img
-                                className="size-8 rounded-full shrink-0"
-                                src={`https://ui-avatars.com/api/?name=${user.firstName} ${user.lastName}&background=random`}
-                                alt={`${user.firstName} ${user.lastName}`}
-                            />
+                            <UIAvatar firstName={user.firstName} lastName={user.lastName} userId={user._id} />
                         ) : (
                             <User className="size-8 p-1.5 rounded-full bg-[#2b7fff] text-white text-xs" />
                         )}

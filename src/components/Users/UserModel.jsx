@@ -121,7 +121,7 @@ const UserModel = ({ setIsOpen, user, fetchUsers, roles }) => {
                         onChange={(value) => handleSelectChange("role", value)}
                         error={errors.role}
                         type="select"
-                        options={roles}
+                        options={roles.filter(role => role.name !== "Admin")}
                         emptyStateMessage="No roles available. Please create a role first."
                     />
                     {!user && (

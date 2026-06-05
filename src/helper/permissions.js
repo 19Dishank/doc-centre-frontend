@@ -7,7 +7,6 @@ export const PERMISSIONS = {
     DOWNLOAD_DOCUMENT: "download_document",
     SHARE_DOCUMENT: "share_document",
     RESTORE_DOCUMENT: "restore_document",
-    PERMANENTLY_DELETE_DOCUMENT: "permanently_delete_document",
 
     VIEW_USER: "view_user",
     INVITE_USER: "invite_user",

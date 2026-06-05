@@ -1,15 +1,9 @@
-import {
-  FolderPlus,
-  Plus,
-  Trash2,
-} from "lucide-react";
+import { Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { completeUpload, failedUpload, fetchFiles, getSignedURL, uploadOnSignedURL } from "@/api/file";
-import { useEffect, useRef, useState } from "react";
+import { fetchFiles } from "@/api/file";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { PERMISSIONS } from "@/helper/permissions";
 import { usePermissions } from "@/hooks/usePermissions";
-import { toastNotification } from "@/helper/toastNotification";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { NavLink, useSearchParams } from "react-router-dom";
 import { DataTable } from "@/components/DataTable";
 import { formatSize } from "@/helper/formatSize";
@@ -20,16 +14,15 @@ import ActionsCell from "@/components/Files/Cells/ActionsCell";
 import PaginationBar from "@/components/ui/pagination-bar";
 import FiltersBar from "@/components/Files/FiltersBar";
 import PageHeading from "@/components/PageHeading";
+import UploadButtons from "@/components/Files/UploadButtons";
 
 export default function Files() {
 
-  const { permissionCheck } = usePermissions();
+  const { checkPermission } = usePermissions();
 
-  const inputRef = useRef(null);
   const [searchParams, setSearchParams] = useSearchParams();
   const [parentId, setParentId] = useState("");
   const [navigationBar, setNavigationBar] = useState([{ name: "My Files", parentId: "" }]);
-  const [isUploading, setIsUploading] = useState(false);
   const [tableRows, setTableRows] = useState([]);
   const [newFolderRow, setNewFolderRow] = useState(null);
   const [goBackRow, setGoBackRow] = useState({ isGoBackRow: false });
@@ -46,14 +39,11 @@ export default function Files() {
     hasPreviousPage
   } = paginationData || {};
 
-  console.log("Pagination Data:", paginationData);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setGoBackRow({ isGoBackRow: !!parentId });
   }, [parentId]);
-
-  console.log("Go Back Row:", goBackRow);
 
   const tableData = newFolderRow
     ? [newFolderRow, ...tableRows]
@@ -87,42 +77,6 @@ export default function Files() {
     setParentId(parentId)
     setNavigationBar(prev => prev.slice(0, index + 1))
   }
-
-  const onChangeFile = async (event) => {
-    setIsUploading(true);
-    try {
-      const file = event.target.files?.[0];
-      console.log("Selected file for upload:", file);
-      if (!file) {
-        console.log("No file selected");
-        return;
-      }
-      const payload = {
-        fileName: file.name,
-        contentType: file.type,
-        folderId: parentId ?? undefined,
-        size: file.size,
-      };
-      const getSignedURLResponse = await getSignedURL(payload);
-      const { url, documentId } = getSignedURLResponse.data;
-      const uploadResponse = await uploadOnSignedURL(url, file);
-      if (uploadResponse.status === 200) {
-        const res = await completeUpload(documentId);
-        console.log("Complete upload response :", res);
-      } else {
-        const res = await failedUpload(documentId);
-        console.log("Failed upload response :", res);
-      }
-    } catch (error) {
-      console.log("Error during file upload process:", error?.response);
-      toastNotification(error?.response?.data?.message || "File upload failed. Please try again.", "error");
-      console.error("File upload failed :", error);
-    } finally {
-      getFiles();
-      event.target.value = "";
-      setIsUploading(false);
-    }
-  };
 
   const getFiles = async () => {
     setLoading(true);
@@ -224,50 +178,17 @@ export default function Files() {
     },
   ];
 
-  const handleKeyDown = (event) => {
-    event.stopPropagation();
-    if (event.ctrlKey && event.altKey && event.code === "KeyU") {
-      event.preventDefault();
-      if (permissionCheck({ permissions: [PERMISSIONS.UPLOAD_DOCUMENT] })) {
-        document.getElementById("file-input")?.click();
-      }
-    }
-    else if (event.ctrlKey && event.altKey && event.code === "KeyN") {
-      event.preventDefault();
-      if (permissionCheck({ permissions: [PERMISSIONS.UPLOAD_DOCUMENT] })) {
-        handleNewFolder();
-      }
-    }
-  }
-
-  const handleNewFolder = () => {
-    setNewFolderRow({
-      id: "new-folder",
-      isNewFolder: true,
-      name: "",
-    });
-  };
-
-  useEffect(() => {
-    document.addEventListener("keydown", handleKeyDown);
-    return () => {
-      document.removeEventListener("keydown", handleKeyDown);
-    };
-  }, []);
-
-  const handleUpload = () => {
-    if (!inputRef.current) return;
-    inputRef.current?.click();
-  }
+  const canRestoreDocument = useMemo(() => checkPermission(PERMISSIONS.RESTORE_DOCUMENT), [checkPermission]);
 
   return (
     <div className="flex h-full flex-col gap-6 w-full max-w-full p-1">
+
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between border-b border-zinc-100 pb-4">
         <PageHeading
           heading="Files"
           subheading="Manage your files and folders."
         />
-        {permissionCheck({ permissions: [PERMISSIONS.RESTORE_DOCUMENT] }) && (
+        {canRestoreDocument && (
           <NavLink to="/trash" className="mt-auto">
             <Button variant="outline" className="cursor-pointer gap-2 text-zinc-700 hover:text-zinc-900">
               <Trash2 className="size-4 text-zinc-500" />
@@ -276,50 +197,10 @@ export default function Files() {
           </NavLink>
         )}
       </div>
+
       <div className="flex flex-col gap-4 sm:flex-row sm:justify-between sm:items-center">
-
         <BreadcrumbNavigation navigationBar={navigationBar} handleNavigationClick={handleNavigationClick} />
-
-        {permissionCheck({ permissions: [PERMISSIONS.UPLOAD_DOCUMENT] }) && (
-          <div className="flex items-center gap-2 shrink-0">
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  size="sm"
-                  className="cursor-pointer bg-blue-600 hover:bg-blue-700 text-white gap-1.5 shadow-sm"
-                  disabled={isUploading}
-                  onClick={handleUpload}
-                >
-                  {isUploading ? (
-                    "Uploading..."
-                  ) : (
-                    <>
-                      <Plus className="size-4" />
-                      <span>Upload</span>
-                    </>
-                  )}
-                  <input ref={inputRef} id="file-input" type="file" className="hidden" onChange={onChangeFile} />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent><p>Ctrl + Alt + U</p></TooltipContent>
-            </Tooltip>
-
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  className="cursor-pointer gap-1.5 text-zinc-700 bg-white shadow-sm"
-                  onClick={handleNewFolder}
-                >
-                  <FolderPlus className="size-4 text-zinc-500" />
-                  <span>New Folder</span>
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent><p>Ctrl + Alt + N</p></TooltipContent>
-            </Tooltip>
-          </div>
-        )}
+        <UploadButtons getFiles={getFiles} parentId={parentId} setNewFolderRow={setNewFolderRow} />
       </div>
 
       <FiltersBar filters={filters} setFilters={setFilters} />
@@ -343,7 +224,9 @@ export default function Files() {
             totalItems={totalDocuments}
             limit={limit}
           />
-        </div>)}
+        </div>
+      )}
+
     </div>
   );
 }

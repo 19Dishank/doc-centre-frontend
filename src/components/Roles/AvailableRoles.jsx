@@ -1,6 +1,6 @@
 import { Plus, ShieldAlert } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import RoleModel from "./RoleModel";
 import Role from "./Role";
 import { usePermissions } from "@/hooks/usePermissions";
@@ -14,7 +14,9 @@ const AvailableRoles = ({
   isLoading
 }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const { permissionCheck } = usePermissions();
+  const { checkPermission } = usePermissions();
+
+  const canCreateRole = useMemo(() => checkPermission(PERMISSIONS.CREATE_ROLE), [checkPermission]);
 
   return (
     <>
@@ -24,7 +26,7 @@ const AvailableRoles = ({
             Roles ({availableRoles.length})
           </span>
 
-          {permissionCheck({ permissions: [PERMISSIONS.CREATE_ROLE] }) && (
+          {canCreateRole && (
             <Button
               size="sm"
               className="cursor-pointer bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium px-2.5 h-8 gap-1.5 transition-colors rounded-lg shadow-sm shrink-0"

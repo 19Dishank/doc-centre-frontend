@@ -124,6 +124,26 @@ export const deleteFolder = async (id) => {
     }
 };
 
+export const deleteFilePermanently = async (id) => {
+    try {
+        const response = await axiosInstance.delete(`/docs/recycle-bin/documents/${id}`);
+        return response.data;
+    } catch (error) {
+        console.error("Error deleting file:", error);
+        throw error;
+    }
+};
+
+export const deleteFolderPermanently = async (id) => {
+    try {
+        const response = await axiosInstance.delete(`/docs/recycle-bin/folders/${id}`);
+        return response.data;
+    } catch (error) {
+        console.error("Error deleting folder:", error);
+        throw error;
+    }
+};
+
 export const renameFile = async (id, name) => {
     try {
         const response = await axiosInstance.put(`/docs/${id}/document`, { name });
@@ -164,16 +184,6 @@ export const createShareLink = async (id, payload) => {
     }
 };
 
-export const fetchDashBoardData = async () => {
-    try {
-        const response = await axiosInstance.get("/dashboard");
-        return response.data;
-    } catch (error) {
-        console.error("Error fetching dashboard data:", error);
-        throw error;
-    }
-};
-
 export const fetchBinData = async () => {
     try {
         const res = await axiosInstance.get("/docs/restore-docs");
@@ -183,7 +193,7 @@ export const fetchBinData = async () => {
         throw error;
     }
 }
-  
+
 export const restoreFile = async (id) => {
     try {
         const res = await axiosInstance.put(`/docs/${id}/restore-doc`);

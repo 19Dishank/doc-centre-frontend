@@ -5,11 +5,10 @@ const Dashboard = lazy(() => import("@/pages/Dashboard"));
 const Files = lazy(() => import("@/pages/Files"));
 const UsersList = lazy(() => import("@/pages/Users"));
 const Roles = lazy(() => import("@/pages/Roles"));
-// const Roles = lazy(() => import("@/pages/RolesTableView"));
 const BillingPage = lazy(() => import("@/pages/settings/BillingPage"));
 const Organization = lazy(() => import("@/pages/settings/Organization"));
 const Notifications = lazy(() => import("@/pages/settings/Notifications"));
-const DangerZone = lazy(() => import("@/pages/settings/DangerZone"));
+// const DangerZone = lazy(() => import("@/pages/settings/DangerZone"));
 const LoginPage = lazy(() => import("@/pages/LoginPage"));
 const EmailInput = lazy(() => import("@/components/ForgotPasswordPage/EmailInput"));
 const OTPInput = lazy(() => import("@/components/ForgotPasswordPage/OTPInput"));
@@ -54,29 +53,28 @@ export const protectedRoutes = [
         path: "/files",
         element: <Files />,
         isRouteAccessible: {
-            permissions: [PERMISSIONS.VIEW_DOCUMENT]
+            permissions: PERMISSIONS.VIEW_DOCUMENT
         },
     },
     {
         path: "/trash",
         element: <RecycleBin />,
         isRouteAccessible: {
-            permissions: [PERMISSIONS.RESTORE_DOCUMENT]
+            permissions: PERMISSIONS.RESTORE_DOCUMENT
         },
     },
     {
         path: "/users",
         element: <UsersList />,
         isRouteAccessible: {
-            permissions: [PERMISSIONS.VIEW_USER]
+            permissions: PERMISSIONS.VIEW_USER
         },
     },
     {
         path: "/roles",
         element: <Roles />,
-        // element: <RolesTableView />,
         isRouteAccessible: {
-            permissions: [PERMISSIONS.VIEW_ROLE]
+            permissions: PERMISSIONS.VIEW_ROLE
         },
     },
     {
@@ -102,6 +100,9 @@ export const protectedRoutes = [
     {
         path: "/settings/billing",
         element: <BillingPage />,
+        isRouteAccessible: {
+            role: "Admin"
+        },
     },
     {
         path: "/settings/organization",
@@ -118,9 +119,9 @@ export const protectedRoutes = [
         path: "/settings/notifications",
         element: <Notifications />,
     },
-    {
-        path: "/settings/danger-zone",
-        element: <DangerZone />,
-    },
+    // {
+    //     path: "/settings/danger-zone",
+    //     element: <DangerZone />,
+    // },
 ]
 

@@ -9,6 +9,7 @@ import DocumentPreview from "@/components/Files/DocumentPreview";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { fetchSharedDocumentDetails } from "@/api/file";
+import PlanComparison from "@/components/HomePage/PlanComparison";
 
 export default function HomePage() {
 
@@ -47,11 +48,12 @@ export default function HomePage() {
             <div className="min-h-screen bg-white">
                 <Header />
                 <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12 lg:py-20">
-                    <div className="flex flex-col gap-16 md:gap-24 lg:gap-32">
+                    <div className="flex flex-col gap-16 md:gap-20 lg:gap-24">
                         <HeroSection />
                         <TrustedBy />
                         <Features />
                         <Stats />
+                        <PlanComparison />
                         <GetStarted />
                     </div>
                 </main>

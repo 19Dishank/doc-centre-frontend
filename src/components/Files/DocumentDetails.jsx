@@ -32,7 +32,7 @@ const DocumentDetails = ({ item }) => {
     ]
 
     return (
-        <div className="absolute inset-y-0 right-0 z-20 w-72 border-l border-border bg-card shadow-2xl flex flex-col justify-between animate-in slide-in-from-right-5 duration-200 min-w-0 shrink-0 md:relative md:w-80 md:shadow-none md:flex">
+        <div className="absolute inset-y-0 right-0 z-20 w-72 border-l border-border bg-card shadow-2xl flex flex-col justify-between animate-in slide-in-from-right-5 duration-200 min-w-0 shrink-0 ">
             <div className="p-4 space-y-4 overflow-y-auto h-full">
                 <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                     File Properties

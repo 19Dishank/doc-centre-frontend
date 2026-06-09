@@ -17,6 +17,7 @@ import PageHeading from "@/components/PageHeading";
 import FiltersBar from "@/components/Users/FiltersBar";
 
 export default function UsersList() {
+  
   const { checkPermission } = usePermissions();
 
   const [isOpen, setIsOpen] = useState(false);
@@ -51,7 +52,7 @@ export default function UsersList() {
         limit: 2,
         ...filters
       });
-      if(res.data.users.length === 0 && currentPage > 1) {
+      if (res.data.users.length === 0 && currentPage > 1) {
         setCurrentPage(1);
         return;
       }
@@ -182,12 +183,14 @@ export default function UsersList() {
         roles={roles}
       />
 
-      <DataTable
-        columns={columns}
-        data={usersData}
-        loading={loading}
-        noDataMessage="No users found"
-      />
+      <div className="rounded-xl border border-zinc-200 bg-white shadow-sm">
+        <DataTable
+          columns={columns}
+          data={usersData}
+          loading={loading}
+          noDataMessage="No users found"
+        />
+      </div>
 
       {(usersData.length > 0) && (
         <div className="mt-auto">

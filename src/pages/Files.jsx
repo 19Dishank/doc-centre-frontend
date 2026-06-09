@@ -204,7 +204,7 @@ export default function Files() {
 
       <FiltersBar filters={filters} setFilters={setFilters} />
 
-      <div className="rounded-xl border border-zinc-200 bg-white shadow-sm overflow-hidden">
+      <div className="rounded-xl border border-zinc-200 bg-white shadow-sm">
         <DataTable
           columns={columns}
           data={tableData}

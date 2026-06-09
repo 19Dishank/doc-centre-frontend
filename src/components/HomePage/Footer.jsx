@@ -10,7 +10,7 @@ const Footer = () => {
                             <FileStack className="size-4 text-blue-50" />
                         </div>
                         <span className="text-zinc-500 text-sm">
-                            © {new Date().getFullYear()} DocuCentral. All rights reserved.
+                            © {new Date().getFullYear()} DocCentral. All rights reserved.
                         </span>
                     </div>
 

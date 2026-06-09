@@ -9,7 +9,7 @@ export function DataTable({
     emptyMessage = "No data found",
 }) {
     return (
-        <Card className="p-0 overflow-hidden border-zinc-200 w-full">
+        <Card className="p-0 border-zinc-200 w-full">
             <Table className="w-full table-fixed"> 
                 
                 <TableHeader className="bg-zinc-50/50">

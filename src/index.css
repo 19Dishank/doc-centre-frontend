@@ -128,3 +128,8 @@
     @apply font-sans;
   }
 }
+
+.pdfViewer .page {
+    margin: 12px auto !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}

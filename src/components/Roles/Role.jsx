@@ -14,6 +14,7 @@ const Role = ({ currentRoleId, handleRoleChange, role, getAvailableRoles }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [showModel, setShowModel] = useState(false);
     const [showEditModel, setShowEditModel] = useState(false);
+    const [isDeleting, setIsDeleting] = useState(false);
     const isActive = currentRoleId === role._id;
 
     const canUpdateRole = useMemo(() => checkPermission(PERMISSIONS.UPDATE_ROLE), [checkPermission]);
@@ -27,6 +28,7 @@ const Role = ({ currentRoleId, handleRoleChange, role, getAvailableRoles }) => {
 
     const handleDeleteRole = async () => {
         setShowModel(true);
+        setIsDeleting(true);
         try {
             await deleteRole(role._id);
             await getAvailableRoles();
@@ -36,6 +38,7 @@ const Role = ({ currentRoleId, handleRoleChange, role, getAvailableRoles }) => {
             console.error(error);
             toastNotification(error?.response?.data?.message || "Could not delete role.", "error");
         } finally {
+            setIsDeleting(false);
             setShowModel(false);
         }
     };
@@ -122,6 +125,9 @@ const Role = ({ currentRoleId, handleRoleChange, role, getAvailableRoles }) => {
                     onConfirm={handleDeleteRole}
                     onCancel={() => setShowModel(false)}
                     type="danger"
+                    loading={isDeleting}
+                    confirmText="Yes, delete it"
+                    loadingText="Deleting..."
                 />
             )}
 

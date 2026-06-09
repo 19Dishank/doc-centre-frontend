@@ -119,7 +119,7 @@ const Permissions = ({ currentRoleId, currentRole, getAvailableRoles }) => {
                     </p>
                 </div>
             ) : (
-                <div className="w-full flex flex-col border border-zinc-200 bg-white shadow-sm overflow-hidden rounded-xl min-h-0 h-full mb-10">
+                <div className="w-full h-fit flex flex-col border border-zinc-200 bg-white shadow-sm overflow-hidden rounded-xl min-h-0 mb-10">
 
                     <div className="px-4 py-4 sm:px-5 flex border-b border-zinc-200 shrink-0">
                         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 w-full min-w-0">

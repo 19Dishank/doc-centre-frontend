@@ -1,6 +1,5 @@
 import axiosInstance from "@/helper/axiosInstance"
 
-
 export const fetchMe = async () => {
     try {
         const response = await axiosInstance.get(`/users/me`);

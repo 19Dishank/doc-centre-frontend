@@ -14,8 +14,10 @@ const ActionsCell = ({ row: item, getFiles }) => {
     const { checkPermission } = usePermissions();
     const [shareDocument, setShareDocument] = useState(null);
     const [confirmationModalOpen, setConfirmationModalOpen] = useState(false);
+    const [isDeleting, setIsDeleting] = useState(false);
 
     const handleDelete = async () => {
+        setIsDeleting(true);
         try {
             isFolder
                 ? await deleteFolderPermanently(item._id)
@@ -26,6 +28,7 @@ const ActionsCell = ({ row: item, getFiles }) => {
             console.error("Error deleting :", error);
             toastNotification(error?.response?.data?.message || `Error deleting ${isFolder ? "folder" : "file"}. Please try again.`, "error");
         } finally {
+            setIsDeleting(false);
             setConfirmationModalOpen(false);
         }
     };
@@ -80,6 +83,9 @@ const ActionsCell = ({ row: item, getFiles }) => {
                     onConfirm={handleDelete}
                     onCancel={() => setConfirmationModalOpen(false)}
                     type="danger"
+                    loading={isDeleting}
+                    confirmText="Yes, delete it"
+                    loadingText="Deleting..."
                 />
             )}
 

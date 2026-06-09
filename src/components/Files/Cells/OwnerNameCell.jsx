@@ -18,10 +18,10 @@ const OwnerNameCell = ({ row }) => {
         <>
             {(!ownerName.includes("undefined"))
                 ? <UIAvatar fullName={ownerName} userId={row.createdBy?._id || row.uploadedBy?._id} />
-                : <User className="size-6 p-1.5 rounded-full bg-[#2b7fff] text-white text-xs" />
+                : <User className="size-8 rounded-full shrink-0 p-1.5 bg-[#2b7fff] text-white text-xs" />
             }
             <span className="max-w-40 truncate flex gap-1 items-baseline">
-                <span>{ownerName.includes("undefined") ? ownerEmailId : ownerName}</span>
+                <span className="truncate">{ownerName.includes("undefined") ? ownerEmailId : ownerName}</span>
                 {isMe && <span className="text-xs">(You)</span>}
             </span>
         </>

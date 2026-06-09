@@ -6,10 +6,10 @@ import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrig
 
 const FiltersBar = ({ filters, setFilters, roles }) => {
     return (
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-2">
+            
             <div className="relative w-full">
                 <Search className="size-4 top-1/2 -translate-y-1/2 text-[#71717b] absolute left-3" />
-
                 <Input
                     value={filters.q}
                     onChange={(e) => setFilters((prev) => ({ ...prev, q: e.target.value }))}

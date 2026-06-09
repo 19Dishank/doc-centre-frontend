@@ -2,7 +2,7 @@ import Loader from "./components/ui/loader";
 import { createBrowserRouter, Navigate, RouterProvider } from "react-router-dom";
 import { getSubdomain } from "./helper/getSubdomain";
 import { platformRoutes } from "./routes/platformRoutes";
-import { Suspense } from "react";
+import { Suspense, useMemo } from "react";
 import ErrorPage from "./pages/ErrorPage";
 import AuthLayout from "./layouts/AuthLayout/AuthLayout";
 import PublicRoute from "./routes/PublicRoute";
@@ -15,47 +15,51 @@ export default function App() {
 
   const { loading } = useAuthContext();
 
-  const platformRouter = createBrowserRouter([
-    {
-      errorElement: <ErrorPage />,
-      children:
-        platformRoutes.map(({ path, element }) => ({
-          path,
-          element: path === "/" ? element : <AuthLayout>{element}</AuthLayout>,
-        }))
-    },
-  ]);
+  const platformRouter = useMemo(() => (
+    createBrowserRouter([
+      {
+        errorElement: <ErrorPage />,
+        children:
+          platformRoutes.map(({ path, element, layout }) => ({
+            path,
+            element: layout === "public" ? element : <AuthLayout>{element}</AuthLayout>,
+          }))
+      },
+    ])
+  ), []);
 
-  const tenantRouter = createBrowserRouter([
-    {
-      errorElement: <ErrorPage />,
-      children: [
-        {
-          element: <AuthLayout />,
-          children:
-            publicRoutes.map(({ path, element }) => ({
-              path,
-              element: <PublicRoute>{element}</PublicRoute>,
-            }))
-        },
-        {
-          element: <AppLayout />,
-          children:
-            [
-              {
-                path: "/",
-                element: <Navigate to="/dashboard" replace />,
-              },
-              ...protectedRoutes
-                .map(({ path, element, isRouteAccessible }) => ({
-                  path,
-                  element: loading ? <Loader styles={"min-h-screen"} /> : <ProtectedRoute isRouteAccessible={isRouteAccessible}>{element}</ProtectedRoute>,
-                }))
-            ]
-        },
-      ],
-    },
-  ]);
+  const tenantRouter = useMemo(() => (
+    createBrowserRouter([
+      {
+        errorElement: <ErrorPage />,
+        children: [
+          {
+            element: <AuthLayout />,
+            children:
+              publicRoutes.map(({ path, element }) => ({
+                path,
+                element: <PublicRoute>{element}</PublicRoute>,
+              }))
+          },
+          {
+            element: <AppLayout />,
+            children:
+              [
+                {
+                  path: "/",
+                  element: <Navigate to="/dashboard" replace />,
+                },
+                ...protectedRoutes
+                  .map(({ path, element, isRouteAccessible }) => ({
+                    path,
+                    element: loading ? <Loader styles={"min-h-screen"} /> : <ProtectedRoute isRouteAccessible={isRouteAccessible}>{element}</ProtectedRoute>,
+                  }))
+              ]
+          },
+        ],
+      },
+    ])
+  ), [loading]);
 
   const subdomain = getSubdomain();
   const isPlatform = subdomain === "app" || subdomain === null;
@@ -66,7 +70,7 @@ export default function App() {
     return null;
   }
 
-  if(loading) return <Loader styles={"min-h-screen"} />
+  if (loading) return <Loader styles={"min-h-screen"} />
 
   return (
     <Suspense fallback={<Loader styles={"min-h-screen"} />}>

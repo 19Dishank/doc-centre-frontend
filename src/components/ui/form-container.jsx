@@ -41,6 +41,7 @@ export const CompanyLogo = () => {
             setLogoSrc(res.data.url);
         } catch (error) {
             console.error("Error fetching logo:", error);
+            window.location.replace(import.meta.env.VITE_APP_BASE_URL.replace("slug", "app") + `/onboarding`); 
             return null; 
         }
     };

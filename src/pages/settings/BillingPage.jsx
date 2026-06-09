@@ -1,4 +1,4 @@
-import { Building2, Check, HelpCircle, Rocket, X, Zap } from "lucide-react";
+import { Check, HelpCircle, X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
@@ -110,19 +110,38 @@ export default function BillingPage() {
     }
   ]
 
-
-  console.log(plans[0]?.pricing[selectedBillingCycle]?.amount)
-
   const faqs = [
     {
       question: "Can I change plans anytime?",
-      answer:
-        "Yes, you can upgrade or downgrade your plan anytime. Changes are applied automatically.",
+      answer: "Yes, you can upgrade or downgrade your plan anytime. Changes are applied automatically."
     },
     {
       question: "Do you offer refunds?",
-      answer:
-        "We offer a 14-day money-back guarantee on all paid plans.",
+      answer: "We offer a 14-day money-back guarantee on all paid plans."
+    },
+    {
+      question: "What payment methods do you accept?",
+      answer: "We accept all major credit cards, PayPal, and Apple Pay."
+    },
+    {
+      question: "Is there a free trial available?",
+      answer: "Yes, we offer a 7-day free trial with full access to all features."
+    },
+    {
+      question: "Can I cancel my subscription?",
+      answer: "Yes, you can cancel your subscription at any time from your account settings."
+    },
+    {
+      question: "Do you offer discounts for non-profits?",
+      answer: "Yes, we offer a 20% discount for registered non-profit organizations and students."
+    },
+    {
+      question: "Is my data secure?",
+      answer: "Yes, we use industry-standard SSL encryption to protect all your personal data."
+    },
+    {
+      question: "How do I contact customer support?",
+      answer: "You can reach our support team 24/7 via live chat or email."
     },
   ];
 
@@ -132,7 +151,6 @@ export default function BillingPage() {
       style={{ fontFamily: "Inter, sans-serif" }}
     >
       <div className="max-w-6xl mx-auto flex flex-col gap-12">
-
         <div className="text-center flex flex-col items-center gap-4">
           <Badge className="bg-blue-50 text-blue-700 border border-blue-100 px-4 py-1 rounded-full shadow-sm">
             Pricing
@@ -169,7 +187,6 @@ export default function BillingPage() {
             </button>
           </div>
         </div>
-
         <div className="w-full mx-auto px-4 py-10">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
             {plans.map((plan, idx) => {
@@ -180,8 +197,8 @@ export default function BillingPage() {
                 <div
                   key={idx}
                   className={`relative rounded-xl border transition-all duration-300 shadow-sm flex flex-col ${isPro
-                      ? "border-blue-500 shadow-xl shadow-blue-100/60 lg:scale-[1.02] bg-gradient-to-b from-blue-50/30 to-white"
-                      : "border-zinc-200 bg-white hover:shadow-lg"
+                    ? "border-blue-500 shadow-xl shadow-blue-100/60 lg:scale-[1.02] bg-gradient-to-b from-blue-50/30 to-white"
+                    : "border-zinc-200 bg-white hover:shadow-lg"
                     }`}
                 >
                   {/* Radial glow background for featured card */}
@@ -278,8 +295,8 @@ export default function BillingPage() {
                       <Button
                         variant={isPro ? "default" : "outline"}
                         className={`h-11 w-full rounded-lg text-sm cursor-pointer font-semibold transition-all duration-200 ${isPro
-                            ? "bg-blue-600 hover:bg-blue-700 text-white shadow-md shadow-blue-500/10"
-                            : "border-zinc-200 text-zinc-700 hover:bg-zinc-50 hover:border-zinc-300"
+                          ? "bg-blue-600 hover:bg-blue-700 text-white shadow-md shadow-blue-500/10"
+                          : "border-zinc-200 text-zinc-700 hover:bg-zinc-50 hover:border-zinc-300"
                           }`}
                       >
                         {plan.buttonText}
@@ -291,35 +308,22 @@ export default function BillingPage() {
             })}
           </div>
         </div>
-
-        <div className="rounded-3xl border border-zinc-200 bg-white p-8 shadow-sm">
+        <div className="rounded-lg border border-zinc-200 bg-white p-8 mx-auto shadow-sm">
           <div className="mb-8">
-            <h2 className="text-2xl font-bold">
-              Frequently asked questions
-            </h2>
-            <p className="text-zinc-500 mt-2">
-              Everything you need to know about billing and plans.
-            </p>
+            <h3 className="font-semibold text-base leading-6">Frequently asked</h3>
+            <p className="text-[#71717b] text-xs leading-4">Common questions about our plans and billing</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {faqs.map((faq, idx) => (
-              <div key={idx} className="flex gap-4">
-                <div className="mt-1">
-                  <div className="flex size-8 items-center justify-center rounded-full bg-blue-50">
-                    <HelpCircle className="size-4 text-blue-600" />
-                  </div>
+              <div key={idx} className="flex flex-col gap-1">
+                <div className="flex items-center gap-2">
+                  <HelpCircle className="size-4 text-[#2b7fff]" />
+                  <span className="font-medium text-sm leading-5">{faq.question}</span>
                 </div>
-
-                <div>
-                  <h3 className="font-semibold text-base">
-                    {faq.question}
-                  </h3>
-
-                  <p className="text-sm text-zinc-500 mt-2 leading-relaxed">
-                    {faq.answer}
-                  </p>
-                </div>
+                <p className="text-[#71717b] text-xs leading-4 pl-6">
+                  {faq.answer}
+                </p>
               </div>
             ))}
           </div>

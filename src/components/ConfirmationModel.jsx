@@ -11,7 +11,9 @@ const ConfirmationModal = ({
     onCancel,
     type = "info", 
     confirmText = "Confirm",
-    cancelText = "Cancel"
+    cancelText = "Cancel",
+    loading = false,
+    loadingText = "Confirming..."
 }) => {
 
     const typeConfigs = {
@@ -53,9 +55,8 @@ const ConfirmationModal = ({
         setIsOpen(false);
     };
 
-    // Use a React Portal to break out of the table row's stacking context
     return createPortal(
-        <div className="bg-zinc-950/40 flex fixed inset-0 justify-center items-center z-[9999] backdrop-blur p-4">
+        <div className="bg-zinc-950/40 flex fixed inset-0 justify-center items-center z-888 backdrop-blur p-4">
             <Card className="shadow-2xl p-5 sm:p-6 flex flex-col gap-4 w-full max-w-md sm:max-w-lg animate-in fade-in zoom-in-95 duration-150">
                 <CardHeader className="p-0 flex flex-row justify-between items-start gap-4">
                     <div className="flex gap-3 items-start min-w-0">
@@ -67,7 +68,7 @@ const ConfirmationModal = ({
                             <CardTitle className="font-semibold text-base sm:text-lg text-zinc-950 truncate">
                                 {heading}
                             </CardTitle>
-                            <CardDescription className="text-xs sm:text-sm leading-relaxed text-zinc-500 break-words">
+                            <CardDescription className="text-xs sm:text-sm leading-relaxed text-zinc-500 wrap-break-word">
                                 {subheading}
                             </CardDescription>
                         </div>
@@ -96,8 +97,9 @@ const ConfirmationModal = ({
                     <Button 
                         className={`cursor-pointer font-semibold ${currentConfig.buttonClass}`} 
                         onClick={handleConfirm}
+                        disabled={loading}
                     >
-                        {confirmText}
+                        {loading ? loadingText : confirmText}
                     </Button>
                 </CardFooter>
             </Card>

@@ -101,7 +101,7 @@ export default function RecycleBin() {
         // },
         {
             key: "actions",
-            header: "",
+            header: "Actions",
             width: "w-[20%]",
             align: "right",
             render: (row) => (

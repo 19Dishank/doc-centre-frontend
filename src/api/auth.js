@@ -160,6 +160,16 @@ export const validateEmailVerificationToken = async (token) => {
     }
 };
 
+export const validateTenant = async (slug) => {
+    try {
+        const response = await axiosInstance.get(`/auth/${slug}`);
+        return response.data;
+    } catch (error) {
+        console.error("Error validating tenant:", error);
+        throw error;
+    }
+}
+
 export const loginUser = async (credentials) => {
     try {
         const response = await axiosInstance.post(

@@ -3,7 +3,6 @@ import { PERMISSIONS } from "@/helper/permissions";
 import { usePermissions } from "@/hooks/usePermissions";
 import {
     ActivityIcon,
-    AlertTriangle,
     Bell,
     BookOpen,
     Building2,
@@ -155,7 +154,9 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
                 `}
             >
                 <div className="flex p-4 flex-col gap-5 h-full">
-                    <Logo width={180} />
+                    <NavLink to="/">
+                        <Logo width={180} />
+                    </NavLink>
                     <nav className="flex flex-col gap-1 overflow-y-auto">
                         {sideBarItems.map((item) =>
                             !item.subItems ? (

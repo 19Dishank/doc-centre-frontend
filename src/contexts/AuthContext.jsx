@@ -1,7 +1,7 @@
 /* eslint-disable react-refresh/only-export-components */
 import { fetchMe } from "@/api/user";
 import { getTokens } from "@/helper/tokens";
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useMemo, useState } from "react";
 
 const AuthContext = createContext();
 
@@ -12,7 +12,7 @@ const AuthProvider = ({ children }) => {
 
     const { user, userNotificationPreferences } = responseData || {};
 
-    const permissions = user?.role?.permissions || [];
+    const permissions = useMemo(() => (user?.role?.permissions || []), [user]);
     const [loading, setLoading] = useState(isAuthenticated);
 
     const getUserDetails = async () => {
@@ -28,6 +28,10 @@ const AuthProvider = ({ children }) => {
         }
     }
 
+    const value = useMemo(() => (
+        { isAuthenticated, setIsAuthenticated, user, userNotificationPreferences, permissions, loading, getUserDetails }
+    ), [isAuthenticated, user, userNotificationPreferences, permissions, loading]);
+
     useEffect(() => {
         if (!isAuthenticated) return;
         // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -35,7 +39,7 @@ const AuthProvider = ({ children }) => {
     }, [isAuthenticated]);
 
     return (
-        <AuthContext.Provider value={{ isAuthenticated, setIsAuthenticated, user, userNotificationPreferences, permissions, loading, getUserDetails }}>
+        <AuthContext.Provider value={value}>
             {children}
         </AuthContext.Provider>
     );

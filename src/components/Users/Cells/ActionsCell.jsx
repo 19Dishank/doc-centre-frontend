@@ -1,4 +1,4 @@
-import { Pencil, Trash2} from "lucide-react";
+import { Pencil, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useMemo, useState } from "react";
 import { deleteUser } from "@/api/user";
@@ -14,9 +14,11 @@ const ActionsCell = ({ row: currentUser, fetchUsers, roles, setCurrentPage, curr
     const { user: { _id: userId } } = useAuthContext();
     const [isEditing, setIsEditing] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
+    const [deletingUser, setDeletingUser] = useState(null);
     const displayName = currentUser.firstName && currentUser.lastName ? `${currentUser.firstName} ${currentUser.lastName}` : currentUser.email;
 
     const handleDelete = async () => {
+        setDeletingUser(true);
         try {
             const res = await deleteUser(currentUser._id);
             if (res.success) {
@@ -29,6 +31,8 @@ const ActionsCell = ({ row: currentUser, fetchUsers, roles, setCurrentPage, curr
         } catch (error) {
             console.log("Error deleting user: ", error);
             toastNotification(error?.response?.data?.message || "Failed to delete user", "error");
+        } finally {
+            setDeletingUser(false);
         }
     }
 
@@ -68,6 +72,9 @@ const ActionsCell = ({ row: currentUser, fetchUsers, roles, setCurrentPage, curr
                     onConfirm={handleDelete}
                     onCancel={() => setIsDeleting(false)}
                     type="danger"
+                    loading={deletingUser}
+                    confirmText="Yes, delete it"
+                    loadingText="Deleting..."
                 />
             )}
         </>

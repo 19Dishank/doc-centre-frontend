@@ -1,5 +1,5 @@
 import { fetchPermissionsCatalog } from "@/api/role";
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { useAuthContext } from "./AuthContext";
 import { fetchPreferencesCatalog } from "@/api/user";
 
@@ -35,8 +35,13 @@ const CatalogProvider = ({ children }) => {
         getPreferencesCatalog();
     }, [isAuthenticated]);
 
+    const value = useMemo(() => ({
+        permissionsCatalog,
+        preferencesCatalog
+    }), [permissionsCatalog, preferencesCatalog]);
+
     return (
-        <CatalogContext.Provider value={{ permissionsCatalog, preferencesCatalog }}>
+        <CatalogContext.Provider value={value}>
             {children}
         </CatalogContext.Provider>
     );

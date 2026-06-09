@@ -1,4 +1,5 @@
 const UIAvatar = ({ fullName, firstName, lastName, userId }) => {
+    
     function getAvatarColors() {
         const seed = String(userId);
 
@@ -26,15 +27,18 @@ const UIAvatar = ({ fullName, firstName, lastName, userId }) => {
     const { bgColor, textColor } = getAvatarColors();
 
     const name = fullName || `${firstName} ${lastName}`;
+    const initials = name
+        .split(" ")
+        .map((n) => n[0])
+        .join("")
+        .toUpperCase();
 
     return (
-        <img
-            className="size-8 rounded-full shrink-0"
-            src={`https://ui-avatars.com/api/?name=${encodeURIComponent(
-                name
-            )}&background=${bgColor}&color=${textColor}`}
-            alt={name}
-        />
+        <div className="size-8 rounded-full shrink-0 flex items-center justify-center text-sm"
+            style={{ backgroundColor: `#${bgColor}`, color: `#${textColor}` }}
+        >
+            {initials}
+        </div>
     );
 };
 

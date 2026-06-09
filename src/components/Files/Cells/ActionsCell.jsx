@@ -14,9 +14,11 @@ const ActionsCell = ({ row: item, getFiles, setRenameMode, currentPageItems, set
   const { checkPermission } = usePermissions();
   const [shareDocument, setShareDocument] = useState(null);
   const [confirmationModalOpen, setConfirmationModalOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const handleDelete = async () => {
     try {
+      setIsDeleting(true);
       isFolder
         ? await deleteFolder(item._id)
         : await deleteFile(item._id);
@@ -27,6 +29,8 @@ const ActionsCell = ({ row: item, getFiles, setRenameMode, currentPageItems, set
     } catch (error) {
       console.error("Error deleting :", error);
       toastNotification(error?.response?.data?.message || `Error deleting ${isFolder ? "folder" : "file"}. Please try again.`, "error");
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -86,6 +90,9 @@ const ActionsCell = ({ row: item, getFiles, setRenameMode, currentPageItems, set
           onConfirm={handleDelete}
           onCancel={() => setConfirmationModalOpen(false)}
           type="danger"
+          loading={isDeleting}
+          confirmText="Yes, delete it"
+          loadingText="Deleting..."
         />
       )}
 

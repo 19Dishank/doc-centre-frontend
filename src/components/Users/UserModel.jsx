@@ -10,6 +10,7 @@ import { inviteUser, updateUserRole } from "@/api/user";
 import FormField from "../ui/form-field";
 
 const UserModel = ({ setIsOpen, user, fetchUsers, roles }) => {
+    
     const [formData, setFormData] = useState({
         email: user?.email || "",
         role: user?.role?._id || "",
@@ -143,7 +144,7 @@ const UserModel = ({ setIsOpen, user, fetchUsers, roles }) => {
                 </CardContent>
 
                 <CardFooter className="flex gap-2 justify-end bg-white px-0 w-full">
-                    <Button variant="outline" onClick={() => setIsOpen(false)} className=" text-zinc-700">
+                    <Button variant="outline" onClick={() => setIsOpen(false)} className=" text-zinc-700 cursor-pointer">
                         Cancel
                     </Button>
                     <Button

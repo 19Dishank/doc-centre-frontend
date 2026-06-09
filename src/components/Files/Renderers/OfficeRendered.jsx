@@ -5,7 +5,7 @@ const OfficeRendered = ({ fileUrl }) => {
         <iframe
             src={`https://view.officeapps.live.com/op/embed.aspx?src=${encodedFileUrl}`}
             width="100%"
-            height="600px"
+            className="h-full rounded-md"
             title="Office Document"
         />
     );

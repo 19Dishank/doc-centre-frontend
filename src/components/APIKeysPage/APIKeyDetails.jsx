@@ -13,17 +13,23 @@ const APIKeyDetails = ({ item, index, getApiKeys }) => {
     const [isVisibleKey, setIsVisibleKey] = useState(false);
     const [copied, setCopied] = useState(false);
     const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
+    const [isDeleting, setIsDeleting] = useState(false);
 
     const formatKey = key => {
         return `••••••••••••••••••••••••••••${key.slice(-4)}`
     }
 
     const handleDeleteKey = async (id) => {
+        setIsDeleting(true);
         try {
             await revokeApiKey(id);
             getApiKeys();
+            toastNotification("API key revoked successfully!", "success");
         } catch (error) {
             console.error("Error deleting API key: ", error);
+        } finally {
+            setIsDeleting(false);
+            setIsConfirmationModalOpen(false);
         }
     }
 
@@ -133,6 +139,9 @@ const APIKeyDetails = ({ item, index, getApiKeys }) => {
                     onConfirm={() => handleDeleteKey(item._id)}
                     onCancel={() => setIsConfirmationModalOpen(false)}
                     type="danger"
+                    loading={isDeleting}
+                    confirmText="Yes, delete it"
+                    loadingText="Deleting..."
                 />
             )}
         </>

@@ -39,7 +39,6 @@ export default function Files() {
     hasPreviousPage
   } = paginationData || {};
 
-
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setGoBackRow({ isGoBackRow: !!parentId });

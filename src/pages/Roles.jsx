@@ -45,7 +45,7 @@ export default function Roles() {
   }, []);
 
   return (
-    <div className="w-full max-w-7xl self-center flex flex-col h-full min-h-0">
+    <div className="w-full max-w-7xl mx-auto self-center flex flex-col h-full min-h-0">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 shrink-0">
         <div className="flex flex-col gap-1 min-w-0">
           <div className="flex items-center gap-2">

@@ -9,6 +9,7 @@ const SuccessPage = lazy(() => import("@/pages/SuccessPage"));
 export const platformRoutes = [
     {
         path: "/",
+        layout: "public",
         element: <HomePage />,
     },
     {
@@ -34,5 +35,10 @@ export const platformRoutes = [
     {
         path: "/users/invite/success",
         element: <SuccessPage />,
+    },
+    {
+        path: "/shared/:id",
+        layout: "public",
+        element: <HomePage />,
     },
 ]

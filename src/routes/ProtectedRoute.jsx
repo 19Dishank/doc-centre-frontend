@@ -9,10 +9,11 @@ const ProtectedRoute = ({ children, isRouteAccessible }) => {
   const { permissions, role } = isRouteAccessible || {};
 
   if (!!permissions && !checkPermission(permissions)) return <Navigate to="/dashboard" replace />;
-  if (!!role && !checkRole(role) ) return <Navigate to="/dashboard" replace />;
+  if (!!role && !checkRole(role)) return <Navigate to="/dashboard" replace />;
 
   if (!isAuthenticated) return <Navigate to="/login" replace />
 
   return children ? children : <Outlet />;
 };
+
 export default ProtectedRoute;

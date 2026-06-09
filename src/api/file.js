@@ -213,3 +213,13 @@ export const restoreFolder = async (id) => {
         throw error;
     }
 };
+
+export const fetchSharedDocumentDetails = async (id) => {
+    try {
+        const res = await axiosInstance.get(`/docs/shared/${id}`);
+        return res.data;
+    } catch (error) {
+        console.error("Error fetching shared document details:", error);
+        throw error;
+    }
+};

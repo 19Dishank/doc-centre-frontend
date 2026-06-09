@@ -3,6 +3,7 @@ import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import DocumentPreview from "../DocumentPreview";
 import { getRegistryIcon } from "@/helper/getRegistryIcon";
+import { toastNotification } from "@/helper/toastNotification";
 
 const FileNameCell = ({
     row,
@@ -35,16 +36,30 @@ const FileNameCell = ({
         }
 
         if (key !== "Enter") return;
+        
+        if(!value || value.length < 1 || value.length > 100) {
+            toastNotification("Folder name should contain 1 to 100 characters", "error");
+            return;
+        }
 
         if (row.isNewFolder) {
-            await createFolder({
-                parentFolderId: parentId,
-                name: value,
-            });
+            try {
 
-            setNewFolderRow(null);
-            getFiles();
-            return;
+
+                await createFolder({
+                    parentFolderId: parentId,
+                    name: value,
+                });
+
+                setNewFolderRow(null);
+                getFiles();
+                return;
+            } catch (error) {
+                toastNotification( 
+                    error?.response?.data?.errors?.[0]?.msg ||
+                    "Error creating folder:", "error");
+                return;
+            }
         }
 
         if (isFolder) {
@@ -96,7 +111,7 @@ const FileNameCell = ({
                 <Input
                     className="focus:ring-0!"
                     autoFocus
-                    placeholder="Folder name"
+                    placeholder="Folder name should contain 1 to 100 characters"
                     value={row.name}
                     onChange={handleChange}
                     onKeyDown={handleKeyDown}
@@ -128,14 +143,14 @@ const FileNameCell = ({
             );
         }
 
-        return <span className="truncate">{displayName}</span>;
+        return <span className="w-full truncate">{displayName}</span>;
     };
 
     return (
         <>
             <div
                 onClick={handleClick}
-                className="cursor-pointer flex items-center gap-3"
+                className="cursor-pointer w-full flex items-center gap-3"
             >
                 {getRegistryIcon(row)}
                 {renderContent()}

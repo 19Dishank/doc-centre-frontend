@@ -48,9 +48,13 @@ export default function UsersList() {
     try {
       const res = await getUsers({
         page: currentPage,
-        limit: 1,
+        limit: 2,
         ...filters
       });
+      if(res.data.users.length === 0 && currentPage > 1) {
+        setCurrentPage(1);
+        return;
+      }
       setUsersData(res.data.users);
       setPaginationData(res.data.paginationData);
     } catch (error) {

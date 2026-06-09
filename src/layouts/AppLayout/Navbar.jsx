@@ -1,34 +1,39 @@
-import { logoutUser } from "@/api/auth";
-import { Button } from "@/components/ui/button";
-import UIAvatar from "@/components/ui/ui-avatar";
-import { useAuthContext } from "@/contexts/AuthContext";
-import { Menu, Home, ChevronRight, Bell, LogOut, User } from "lucide-react";
+import NotificationsDropdown from "@/components/NavBar/NotificationsDropdown";
+import ProfileDropdown from "@/components/NavBar/ProfileDropdown";
+import { Menu, Home, ChevronRight } from "lucide-react";
 import { Fragment, useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
 
 const Navbar = ({ setIsSidebarOpen }) => {
     const currPath = useLocation().pathname.slice(1).split("/");
-    const [open, setOpen] = useState(false);
-    const dropdownRef = useRef(null);
-    const { user } = useAuthContext();
+    const [profileOpen, setProfileOpen] = useState(false);
+    const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
 
-    // Outside click handler
+    const profileDropdownRef = useRef(null);
+    const notificationsDropdownRef = useRef(null);
+
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (
-                dropdownRef.current &&
-                !dropdownRef.current.contains(event.target)
+                profileDropdownRef.current &&
+                !profileDropdownRef.current.contains(event.target)
             ) {
-                setOpen(false);
+                setProfileOpen(false);
+            }
+            if (
+                notificationsDropdownRef.current &&
+                !notificationsDropdownRef.current.contains(event.target)
+            ) {
+                setIsNotificationsOpen(false);
             }
         };
 
         document.addEventListener("mousedown", handleClickOutside);
-
         return () => {
             document.removeEventListener("mousedown", handleClickOutside);
         };
     }, []);
+
 
     return (
         <header className="bg-white border-b border-zinc-200 flex px-4 md:px-8 justify-between items-center h-16 sticky top-0 z-30">
@@ -63,35 +68,19 @@ const Navbar = ({ setIsSidebarOpen }) => {
             </div>
 
             <div className="flex items-center gap-2 md:gap-4">
-                <div className="relative">
-                    <Button variant="ghost" size="icon" className="size-9 cursor-pointer">
-                        <Bell className="size-4" />
-                    </Button>
-                    <span className="size-2 rounded-full bg-[#e7000b] absolute right-2 top-2 border-2 border-white" />
-                </div>
+                <NotificationsDropdown
+                    notificationsDropdownRef={notificationsDropdownRef}
+                    isNotificationsOpen={isNotificationsOpen}
+                    setIsNotificationsOpen={setIsNotificationsOpen}
+                    setProfileOpen={setProfileOpen}
+                />
 
-                <div className="relative" ref={dropdownRef}>
-                    <div onClick={() => setOpen(!open)} className="cursor-pointer">
-                        {(user?.firstName && user?.lastName) ? (
-                            <UIAvatar firstName={user.firstName} lastName={user.lastName} userId={user._id} />
-                        ) : (
-                            <User className="size-8 p-1.5 rounded-full bg-[#2b7fff] text-white text-xs" />
-                        )}
-                    </div>
-
-                    {open && (
-                        <div className="absolute right-0 mt-2 w-48 bg-white border border-zinc-200 rounded-lg shadow-xl p-1 animate-in fade-in zoom-in duration-100">
-                            <Button
-                                variant="ghost"
-                                className="cursor-pointer w-full justify-start text-sm text-red-600 hover:bg-red-50 hover:text-red-700"
-                                onClick={logoutUser}
-                            >
-                                <LogOut className="mr-2 size-4" />
-                                Logout
-                            </Button>
-                        </div>
-                    )}
-                </div>
+                <ProfileDropdown
+                    profileDropdownRef={profileDropdownRef}
+                    setProfileOpen={setProfileOpen}
+                    setIsNotificationsOpen={setIsNotificationsOpen}
+                    profileOpen={profileOpen}
+                />
             </div>
         </header>
     );

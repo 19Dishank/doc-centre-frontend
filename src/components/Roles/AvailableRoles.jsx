@@ -20,7 +20,8 @@ const AvailableRoles = ({
 
   return (
     <>
-      <div className="w-full flex flex-col bg-white gap-0 border border-zinc-200 rounded-xl shadow-none">
+      <div className="w-full h-140 sticky top-0 flex flex-col bg-white gap-0 border border-zinc-200 rounded-xl shadow-none 
+      ">
         <div className="flex h-14 px-4 justify-between items-center border-b border-zinc-200 shrink-0">
           <span className="font-semibold text-sm text-zinc-900 tracking-wide">
             Roles ({availableRoles.length})
@@ -38,7 +39,13 @@ const AvailableRoles = ({
           )}
         </div>
 
-        <div className="flex-1 divide-y divide-zinc-100 p-3 custom-scrollbar">
+        <div className="flex-1 max-h-130 overflow-y-auto divide-y divide-zinc-100 p-3 custom-scrollbar
+           [&::-webkit-scrollbar]:w-1
+     [&::-webkit-scrollbar-track]:bg-slate-100
+     [&::-webkit-scrollbar-thumb]:bg-slate-400
+     [&::-webkit-scrollbar-thumb]:rounded-full
+     hover:[&::-webkit-scrollbar-thumb]:bg-slate-500
+        ">
           {isLoading ? (
             <div className="space-y-3">
               {[1, 2, 3].map((n) => (
@@ -56,7 +63,7 @@ const AvailableRoles = ({
               </p>
             </div>
           ) : (
-            <div className="space-y-1.5"> 
+            <div className="space-y-1.5">
               {availableRoles.map((role) => (
                 <Role
                   key={role._id}

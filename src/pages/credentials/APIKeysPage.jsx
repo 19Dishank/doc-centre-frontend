@@ -41,7 +41,6 @@ const APIKeysPage = () => {
     const getApiKeys = async () => {
         try {
             const res = await fetchApiKeys();
-            console.log("Fetched API keys: ", res);
             setApiKeys(res.data.apiKeys);
         } catch (error) {
             console.error("Error fetching API keys: ", error);
@@ -125,7 +124,7 @@ const APIKeysPage = () => {
                     ) : (
                         apiKeys.map((item, index) => (
                             <APIKeyDetails
-                                key={item.id}
+                                key={item._id}
                                 item={item}
                                 index={index}
                                 getApiKeys={getApiKeys}

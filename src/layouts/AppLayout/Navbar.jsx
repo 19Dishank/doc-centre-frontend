@@ -1,6 +1,7 @@
 import NotificationsDropdown from "@/components/NavBar/NotificationsDropdown";
 import ProfileDropdown from "@/components/NavBar/ProfileDropdown";
-import { Menu, Home, ChevronRight } from "lucide-react";
+import SearchBar from "@/components/NavBar/SearchBar";
+import { Menu, Home, ChevronRight } from "lucide-react"; 
 import { Fragment, useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
 
@@ -34,28 +35,28 @@ const Navbar = ({ setIsSidebarOpen }) => {
         };
     }, []);
 
-
     return (
-        <header className="bg-white border-b border-zinc-200 flex px-4 md:px-8 justify-between items-center h-16 sticky top-0 z-30">
-            <div className="flex items-center gap-3">
+        <header className="bg-white border-b border-zinc-200 flex px-4 md:px-6 justify-between items-center h-16 sticky top-0 z-30 gap-4">
+            {/* Left Section: Menu Toggle + Breadcrumbs */}
+            <div className="flex items-center gap-2 min-w-0 flex-1 sm:flex-initial">
                 <button
                     onClick={() => setIsSidebarOpen(true)}
-                    className="p-2 -ml-2 lg:hidden text-zinc-600 hover:bg-zinc-100 rounded-md"
+                    className="p-2 -ml-2 lg:hidden text-zinc-600 hover:bg-zinc-100 rounded-md shrink-0"
                 >
                     <Menu className="size-5" />
                 </button>
 
-                <div className="text-sm hidden sm:flex items-center gap-2 overflow-hidden">
+                <div className="text-sm hidden sm:flex items-center gap-2 min-w-0 overflow-hidden">
                     <Home className="size-4 text-[#71717b] shrink-0" />
                     <ChevronRight className="size-3 text-[#71717b] shrink-0" />
-                    <div className="font-medium capitalize flex items-center gap-2 truncate">
+                    <div className="font-medium capitalize flex items-center gap-2 truncate text-zinc-700">
                         {currPath[0] === "" ? (
                             <span>Home</span>
                         ) : (
                             currPath.map((segment, index) => (
                                 <Fragment key={index}>
                                     {index !== 0 && (
-                                        <ChevronRight className="size-3 text-[#71717b]" />
+                                        <ChevronRight className="size-3 text-[#71717b] shrink-0" />
                                     )}
                                     <span className="truncate">
                                         {segment.replace(/-/g, " ")}
@@ -67,20 +68,25 @@ const Navbar = ({ setIsSidebarOpen }) => {
                 </div>
             </div>
 
-            <div className="flex items-center gap-2 md:gap-4">
-                <NotificationsDropdown
-                    notificationsDropdownRef={notificationsDropdownRef}
-                    isNotificationsOpen={isNotificationsOpen}
-                    setIsNotificationsOpen={setIsNotificationsOpen}
-                    setProfileOpen={setProfileOpen}
-                />
+            {/* Right Section: Adaptive Search Bar & Profile Controls */}
+            <div className="flex items-center gap-2 md:gap-4 flex-1 sm:flex-initial justify-end min-w-0">
+                <SearchBar />
 
-                <ProfileDropdown
-                    profileDropdownRef={profileDropdownRef}
-                    setProfileOpen={setProfileOpen}
-                    setIsNotificationsOpen={setIsNotificationsOpen}
-                    profileOpen={profileOpen}
-                />
+                <div className="flex items-center gap-2 shrink-0">
+                    <NotificationsDropdown
+                        notificationsDropdownRef={notificationsDropdownRef}
+                        isNotificationsOpen={isNotificationsOpen}
+                        setIsNotificationsOpen={setIsNotificationsOpen}
+                        setProfileOpen={setProfileOpen}
+                    />
+
+                    <ProfileDropdown
+                        profileDropdownRef={profileDropdownRef}
+                        setProfileOpen={setProfileOpen}
+                        setIsNotificationsOpen={setIsNotificationsOpen}
+                        profileOpen={profileOpen}
+                    />
+                </div>
             </div>
         </header>
     );

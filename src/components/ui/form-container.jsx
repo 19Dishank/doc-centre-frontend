@@ -33,7 +33,6 @@ export const CompanyLogo = () => {
 
     
     const [logoSrc, setLogoSrc] = useState(null);
-    console.log("Fetching logo for subdomain:", logoSrc);
     
     const getLogoSrc = async () => {
         try {

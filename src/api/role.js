@@ -2,7 +2,6 @@ import axiosInstance from "@/helper/axiosInstance";
 import { toastNotification } from "@/helper/toastNotification";
 
 export const fetchRoles = async (adminFlag) => {
-    console.log("Fetching roles with adminFlag:", { params: adminFlag });
     try {
         const response = await axiosInstance.get("/roles", { params: adminFlag });
         return response.data;

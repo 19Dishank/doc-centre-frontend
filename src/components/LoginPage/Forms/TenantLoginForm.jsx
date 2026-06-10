@@ -70,7 +70,6 @@ const TenantLoginForm = () => {
 
         setLoading(true);
         const res = await loginUser(loginData);
-        console.log("Login Data:", res);
         if (res.success) {
             setTokens(res.data.accessToken, res.data.refreshToken);
             navigate("/dashboard");

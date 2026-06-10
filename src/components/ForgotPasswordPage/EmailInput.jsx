@@ -38,7 +38,7 @@ const EmailInput = () => {
         setLoading(true);
         try {
             const res = await generateOTP({ email });
-            localStorage.setItem("otp_expiry", res.data.expiryTime);
+            localStorage.setItem("otp_expiry", res.data.expiryTime);   
             navigate(`/forgot-password/verify`, { state: { email } });
         } catch (error) {
             console.log("Error : ", error)

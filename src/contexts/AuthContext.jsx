@@ -1,5 +1,6 @@
 /* eslint-disable react-refresh/only-export-components */
 import { fetchMe } from "@/api/user";
+import { socket } from "@/helper/socketService";
 import { getTokens } from "@/helper/tokens";
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 
@@ -33,9 +34,28 @@ const AuthProvider = ({ children }) => {
     ), [isAuthenticated, user, userNotificationPreferences, permissions, loading]);
 
     useEffect(() => {
-        if (!isAuthenticated) return;
+
+        if (!isAuthenticated) {
+            socket.disconnect();
+            return;
+        }
+
         // eslint-disable-next-line react-hooks/set-state-in-effect
         getUserDetails();
+
+        if (!socket.connected) {
+            socket.auth = { token: accessToken };
+            socket.connect();
+        }
+
+        socket.on("connect", () => {
+            console.log("Connected:", socket.id);
+            socket.on("hello", (message) => {
+                console.log("Received message:", message);
+            });
+        });
+
+
     }, [isAuthenticated]);
 
     return (

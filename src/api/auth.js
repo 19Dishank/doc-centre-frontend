@@ -176,7 +176,6 @@ export const loginUser = async (credentials) => {
             `/auth/login`,
             credentials
         );
-        console.log("Login Response:", response);
         return response.data;
     } catch (error) {
         console.error("Error logging in:", error);

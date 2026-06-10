@@ -41,7 +41,6 @@ const AUTO_CLOSE = 4000;
 
 // eslint-disable-next-line react-refresh/only-export-components
 const ToastContent = ({ message, type, closeToast, toastProps }) => {
-  console.log("🚀 ~ ToastContent ~ type:", type)
   
   const style = toastStyles[type] || toastStyles.success;
   const Icon = style?.icon;

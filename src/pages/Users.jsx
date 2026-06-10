@@ -1,6 +1,6 @@
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import PaginationBar from "@/components/ui/pagination-bar";
 import { getUsers } from "@/api/user";
 import { PERMISSIONS } from "@/helper/permissions";
@@ -17,7 +17,7 @@ import PageHeading from "@/components/PageHeading";
 import FiltersBar from "@/components/Users/FiltersBar";
 
 export default function UsersList() {
-  
+
   const { checkPermission } = usePermissions();
 
   const [isOpen, setIsOpen] = useState(false);
@@ -44,26 +44,26 @@ export default function UsersList() {
   } = paginationData || {};
 
 
-  const fetchUsers = useCallback(async () => {
+  const fetchUsers = async () => {
     setLoading(true);
     try {
       const res = await getUsers({
         page: currentPage,
-        limit: 2,
+        limit: 1,
         ...filters
       });
-      if (res.data.users.length === 0 && currentPage > 1) {
+
+      if (res?.data?.users?.length === 0 && currentPage > 1) {
         setCurrentPage(1);
-        return;
       }
-      setUsersData(res.data.users);
-      setPaginationData(res.data.paginationData);
+      setUsersData(res?.data?.users);
+      setPaginationData(res?.data?.paginationData);
     } catch (error) {
       console.log("Error : ", error);
     } finally {
       setLoading(false);
     }
-  }, [currentPage, filters]);
+  }
 
   useEffect(() => {
     const isCurrentPageChanged = prevCurrentPageRef.current !== currentPage;
@@ -79,7 +79,7 @@ export default function UsersList() {
       fetchUsers();
     }, 500);
     return () => clearTimeout(debounceTimeout);
-  }, [currentPage, fetchUsers, filters]);
+  }, [currentPage, filters]);
 
   const getRoles = async () => {
     try {
@@ -105,8 +105,6 @@ export default function UsersList() {
   }, [filters, setSearchParams]);
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setLoading(true);
     setSearchParams((prev) => {
       prev.set("page", currentPage);
       return prev;

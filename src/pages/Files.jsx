@@ -163,8 +163,8 @@ export default function Files() {
       key: "owner",
       header: "Owner",
       width: "w-[15%]",
-      cellClassName: "flex items-center gap-2",
-      render: (row) => !row?.isGoBackRow && <OwnerNameCell row={row} />,
+      // cellClassName: "flex items-center gap-2",
+      render: (row) => (!row?.isGoBackRow) && <OwnerNameCell row={row} />,
     },
     {
       key: "actions",

@@ -59,6 +59,7 @@ const DocumentPreview = ({ setIsOpen, item }) => {
         if (textTypes.includes(type)) return <TextRenderer fileUrl={preSignedUrl} />;
 
         return <UnsupportedRenderer />;
+
     };
 
     const handleDownload = () => {
@@ -85,7 +86,6 @@ const DocumentPreview = ({ setIsOpen, item }) => {
                     </div>
 
                     <div className="flex items-center gap-2 shrink-0">
-                        {/* Modified: Removed hidden md:block so it is visible everywhere */}
                         <button
                             onClick={() => setShowDetails(!showDetails)}
                             className={`p-1.5 rounded-md transition-colors cursor-pointer border ${showDetails

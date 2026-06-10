@@ -20,6 +20,8 @@ const SecurityAndCredentials = () => {
     const [showPasswordForm, setShowPasswordForm] = useState(false);
     const [loading, setLoading] = useState(false);
 
+    const isDisabled = Object.values(securityData).every((value) => value.trim() !== "") || Object.values(errors).every((error) => error === "");
+
     const validateField = (name, value) => {
 
         switch (name) {
@@ -222,7 +224,7 @@ const SecurityAndCredentials = () => {
                             <Button
                                 type="submit"
                                 className="bg-[#2b7fff] cursor-pointer disabled:cursor-not-allowed text-blue-50 h-9 text-xs w-full sm:w-auto"
-                                disabled={loading}
+                                disabled={loading || isDisabled}
                             >
                                 {loading
                                     ? "Updating..."

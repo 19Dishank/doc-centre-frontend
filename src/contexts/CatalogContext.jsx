@@ -22,7 +22,7 @@ const CatalogProvider = ({ children }) => {
     const getPreferencesCatalog = async () => {
         try {
             const res = await fetchPreferencesCatalog();
-            setPreferencesCatalog(res.notificationsCatalog);
+            setPreferencesCatalog(res.data.notificationsCatalog);
         } catch (error) {
             console.error("Error fetching preferences catalog:", error);
         }

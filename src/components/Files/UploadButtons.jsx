@@ -23,7 +23,6 @@ const UploadButtons = ({ getFiles, parentId, setNewFolderRow }) => {
         setIsUploading(true);
         try {
             const file = event.target.files?.[0];
-            console.log("Selected file for upload:", file);
             if (!file) {
                 console.log("No file selected");
                 return;
@@ -38,11 +37,9 @@ const UploadButtons = ({ getFiles, parentId, setNewFolderRow }) => {
             const { url, documentId } = getSignedURLResponse.data;
             const uploadResponse = await uploadOnSignedURL(url, file);
             if (uploadResponse.status === 200) {
-                const res = await completeUpload(documentId);
-                console.log("Complete upload response :", res);
+                await completeUpload(documentId);
             } else {
-                const res = await failedUpload(documentId);
-                console.log("Failed upload response :", res);
+                await failedUpload(documentId);
             }
         } catch (error) {
             console.log("Error during file upload process:", error?.response);

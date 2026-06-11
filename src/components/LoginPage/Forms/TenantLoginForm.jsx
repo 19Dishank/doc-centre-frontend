@@ -1,4 +1,4 @@
-import { loginUser } from "@/api/auth";
+import { loginUser, logoutUser } from "@/api/auth";
 import { Button } from "@/components/ui/button";
 import FormField from "@/components/ui/form-field";
 import { useAuthContext } from "@/contexts/AuthContext";
@@ -7,13 +7,16 @@ import { setTokens } from "@/helper/tokens";
 import { ArrowRight } from "lucide-react";
 import { useState } from "react";
 import { NavLink, useNavigate, useSearchParams } from "react-router-dom";
+import AccountConflictModal from "../AccountConflictModal";
 
 const TenantLoginForm = () => {
 
-    const { setIsAuthenticated } = useAuthContext();
+    const { isAuthenticated, setIsAuthenticated, user} = useAuthContext();
+    const currentEmail = user?.email;
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
     const email = searchParams.get("email") || "";
+    const [showConflictModal, setShowConflictModal] = useState(isAuthenticated);
 
     const [loginData, setLoginData] = useState({ email: email, password: "" });
     const [errors, setErrors] = useState({ email: "", password: "" });
@@ -80,18 +83,38 @@ const TenantLoginForm = () => {
         setLoading(false);
     };
 
+    const onUseCurrent = () => {
+        navigate("/dashboard");
+    }
+
+    const onUseEntered = () => {
+        logoutUser();
+        setShowConflictModal(false);
+    }
+
     return (
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-            <FormField label="Email Id" name="email" value={loginData.email} onChange={handleChange} placeholder="Enter your email" error={errors.email} disabled={!!email} />
-            <FormField label="Password" name="password" value={loginData.password} onChange={handleChange} placeholder="Enter your password" error={errors.password} isPasswordField={true} />
-            <NavLink to="/forgot-password" className="text-xs text-[#2b7fff] self-end -mt-2">
-                Forgot password?
-            </NavLink>
-            <Button type="submit" className="cursor-pointer font-semibold rounded-lg bg-[#2b7fff] text-blue-50 mt-2 w-full h-11" disabled={loading}>
-                {loading ? "Signing In..." : "Sign In"}
-                <ArrowRight className="size-4 ml-1" />
-            </Button>
-        </form>
+        <>
+            <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+                <FormField label="Email Id" name="email" value={loginData.email} onChange={handleChange} placeholder="Enter your email" error={errors.email} disabled={!!email} />
+                <FormField label="Password" name="password" value={loginData.password} onChange={handleChange} placeholder="Enter your password" error={errors.password} isPasswordField={true} />
+                <NavLink to="/forgot-password" className="text-xs text-[#2b7fff] self-end -mt-2">
+                    Forgot password?
+                </NavLink>
+                <Button type="submit" className="cursor-pointer font-semibold rounded-lg bg-[#2b7fff] text-blue-50 mt-2 w-full h-11" disabled={loading}>
+                    {loading ? "Signing In..." : "Sign In"}
+                    <ArrowRight className="size-4 ml-1" />
+                </Button>
+            </form>
+
+            {showConflictModal && (
+                <AccountConflictModal
+                    currentEmail={currentEmail}
+                    enteredEmail={loginData.email}
+                    onUseCurrent={onUseCurrent}
+                    onUseEntered={onUseEntered}
+                />
+            )}
+        </>
     );
 };
 

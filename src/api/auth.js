@@ -247,6 +247,5 @@ export const logoutUser = async () => {
         throw error;
     } finally {
         clearTokens();
-        window.location.replace(import.meta.env.VITE_APP_BASE_URL.replace("slug", "app") + `/login`);
     }
 };

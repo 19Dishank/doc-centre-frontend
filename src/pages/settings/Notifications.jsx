@@ -74,7 +74,7 @@ export default function Notifications() {
           </CardDescription>
         </CardHeader>
         <CardContent className="flex p-0 flex-col">
-          {emailNotifications.map(({ title, description, name }, index) => (
+          {emailNotifications?.map(({ title, description, name }, index) => (
             <Fragment key={name}>
               <div className="flex py-4 justify-between items-start sm:items-center gap-4">
                 <div className="flex flex-col gap-1 min-w-0">

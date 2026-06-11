@@ -25,7 +25,7 @@ export default function Notifications() {
 
   const initialFormData = {
     emailNotifications: userNotificationPreferences?.emailNotifications,
-    inAppNotifications: userNotificationPreferences?.inAppNotifications,
+    // inAppNotifications: userNotificationPreferences?.inAppNotifications,
   }
 
   const [formData, setFormData] = useState(initialFormData);
@@ -95,7 +95,7 @@ export default function Notifications() {
         </CardContent>
       </Card>
 
-      <Card className="shadow-sm p-4 sm:p-6 flex flex-col gap-4">
+      {/* <Card className="shadow-sm p-4 sm:p-6 flex flex-col gap-4">
         <CardHeader className="p-0 gap-1">
           <div className="flex items-center gap-2">
             <Bell className="size-4 text-[#2b7fff] shrink-0" />
@@ -125,7 +125,7 @@ export default function Notifications() {
             </Fragment>
           ))}
         </CardContent>
-      </Card>
+      </Card> */}
 
       <Separator />
 

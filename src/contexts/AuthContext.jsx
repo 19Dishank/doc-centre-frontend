@@ -29,10 +29,7 @@ const AuthProvider = ({ children }) => {
         }
     }
 
-    const value = useMemo(() => (
-        { isAuthenticated, setIsAuthenticated, user, userNotificationPreferences, permissions, loading, getUserDetails }
-    ), [isAuthenticated, user, userNotificationPreferences, permissions, loading]);
-
+    
     useEffect(() => {
 
         if (!isAuthenticated) {
@@ -57,6 +54,10 @@ const AuthProvider = ({ children }) => {
 
 
     }, [isAuthenticated]);
+    
+    const value = useMemo(() => (
+        { isAuthenticated, setIsAuthenticated, user, userNotificationPreferences, permissions, loading, getUserDetails }
+    ), [isAuthenticated, user, userNotificationPreferences, permissions, loading]);
 
     return (
         <AuthContext.Provider value={value}>

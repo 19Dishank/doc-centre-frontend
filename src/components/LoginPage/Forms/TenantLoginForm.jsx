@@ -89,6 +89,7 @@ const TenantLoginForm = () => {
 
     const onUseEntered = () => {
         logoutUser();
+        setIsAuthenticated(false);
         setShowConflictModal(false);
     }
 

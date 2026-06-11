@@ -1,52 +1,58 @@
-import { AlertCircle, Bell, CheckCircle2, Info } from "lucide-react";
+import { Bell } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
-import { formatTime } from "@/helper/formatTime";
 import { socket } from "@/helper/socketService";
 import { fetchNotifications } from "@/api/notifications";
+import Notification from "./Notification";
 
 const NotificationsDropdown = ({ notificationsDropdownRef, isNotificationsOpen, setIsNotificationsOpen, setProfileOpen }) => {
 
     const [notifications, setNotifications] = useState([]);
-
-    const hasUnread = notifications?.some(n => n.isRead === false);
+    const [unreadCount, setUnreadCount] = useState(null);
 
     const getNotifications = async () => {
         try {
             const res = await fetchNotifications();
-            setNotifications(res.data.notifications);
+            setNotifications(res.data.notification);
+            setUnreadCount(res.data.unreadCount);
         } catch (error) {
             console.log("Error fetching notifications:", error);
         }
     };
 
     useEffect(() => {
-
         // eslint-disable-next-line react-hooks/set-state-in-effect
         getNotifications();
+    }, []);
+
+    useEffect(() => {
 
         const handleReceiveNotification = (message) => {
-            const newNotification = message;
-            setNotifications((prev) => [newNotification, ...prev]);
+            console.log("Received new notification via socket:", message);
+            setNotifications((prev) => [...prev, message]);
         };
 
+        const handleNotificationRead = ({ notificationId }) => {
+            setNotifications(prev =>
+                prev.map(n => n._id === notificationId ? { ...n, isRead: true } : n)
+            );
+        };
+
+        const handleUnreadCountUpdate = (message) => {
+            console.log("Unread count updated via socket:", message.count);
+            setUnreadCount(message.count);
+        }
+
         socket.on("notification:received", handleReceiveNotification);
+        socket.on("notification:read", handleNotificationRead);
+        socket.on("notification:unread-count", handleUnreadCountUpdate);
 
         return () => {
             socket.off("notification:received", handleReceiveNotification);
+            socket.off("notification:read", handleNotificationRead);
+            socket.off("notification:unread-count", handleUnreadCountUpdate);
         };
-    }, []);
-
-    const getNotificationIcon = (type) => {
-        switch (type) {
-            case "success":
-                return <CheckCircle2 className="size-4 text-emerald-500 shrink-0 mt-0.5" />;
-            case "error":
-                return <AlertCircle className="size-4 text-red-500 shrink-0 mt-0.5" />;
-            default:
-                return <Info className="size-4 text-blue-500 shrink-0 mt-0.5" />;
-        }
-    };
+    }, [notifications]);
 
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -70,15 +76,18 @@ const NotificationsDropdown = ({ notificationsDropdownRef, isNotificationsOpen, 
                 <Button
                     variant="ghost"
                     size="icon"
-                    className="size-9 cursor-pointer relative"
+                    className="size-9 cursor-pointer relative flex items-center justify-center"
                     onClick={() => {
                         setIsNotificationsOpen(!isNotificationsOpen);
                         setProfileOpen(false);
                     }}
                 >
-                    <Bell className="size-4" />
-                    {hasUnread && (
-                        <span className="size-2 rounded-full bg-[#e7000b] absolute right-2 top-2 border-2 border-white" />
+                    <Bell className="size-5 text-gray-700" />
+
+                    {unreadCount > 0 && (
+                        <span className="absolute top-0.5 left-4 flex h-3.5 min-w-3.5 items-center justify-center rounded-full bg-[#e7000b] px-1 text-[9px] font-medium leading-none text-white ring-2 ring-white">
+                            {unreadCount > 9 ? "9+" : unreadCount}
+                        </span>
                     )}
                 </Button>
 
@@ -88,7 +97,7 @@ const NotificationsDropdown = ({ notificationsDropdownRef, isNotificationsOpen, 
                         <div className="p-4 border-b border-zinc-100 flex justify-between items-center bg-zinc-50/50">
                             <h3 className="font-semibold text-sm text-zinc-900">Notifications</h3>
                             <span className="text-xs text-zinc-500 bg-zinc-200/60 px-2 py-0.5 rounded-full font-medium">
-                                {notifications?.filter(n => n.isRead === false).length} New
+                                {unreadCount} Unread
                             </span>
                         </div>
 
@@ -98,26 +107,7 @@ const NotificationsDropdown = ({ notificationsDropdownRef, isNotificationsOpen, 
                                     No notifications yet.
                                 </div>
                             ) : notifications?.map((n) => (
-                                <div
-                                    key={n._id}
-                                    className={`p-4 flex gap-3 transition-colors hover:bg-zinc-50/80 cursor-pointer ${n.isRead === false ? "bg-blue-50/20" : ""}`}
-                                >
-                                    {getNotificationIcon(n.type)}
-                                    <div className="flex-1 space-y-1">
-                                        <div className="flex items-center justify-between gap-2">
-                                            <p className={`text-xs font-medium text-zinc-900 ${n.isRead === false ? "font-semibold" : ""}`}>
-                                                {n.title}
-                                            </p>
-                                            <span className="text-[10px] text-zinc-400 shrink-0">{formatTime(n.createdAt, "Just Now")}</span>
-                                        </div>
-                                        <p className="text-xs text-zinc-500 leading-normal line-clamp-2">
-                                            {n.message}
-                                        </p>
-                                    </div>
-                                    {n.isRead === false && (
-                                        <div className="size-1.5 rounded-full bg-blue-500 shrink-0 self-center" />
-                                    )}
-                                </div>
+                                <Notification notification={n} getNotifications={getNotifications} />
                             ))}
                         </div>
 

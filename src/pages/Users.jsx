@@ -1,6 +1,6 @@
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import PaginationBar from "@/components/ui/pagination-bar";
 import { getUsers } from "@/api/user";
 import { PERMISSIONS } from "@/helper/permissions";
@@ -27,13 +27,6 @@ export default function UsersList() {
   const [paginationData, setPaginationData] = useState(null);
   const [searchParams, setSearchParams] = useSearchParams();
   const [currentPage, setCurrentPage] = useState(Number(searchParams.get("page")) || 1);
-  const prevCurrentPageRef = useRef(null);
-
-  const [filters, setFilters] = useState({
-    q: searchParams.get("q") || "",
-    sort: searchParams.get("sort") || "",
-    type: searchParams.get("type") || "",
-  });
 
   const {
     totalItems,
@@ -44,7 +37,7 @@ export default function UsersList() {
   } = paginationData || {};
 
 
-  const fetchUsers = async () => {
+  const fetchUsers = async (filters) => {
     setLoading(true);
     try {
       const res = await getUsers({
@@ -64,28 +57,6 @@ export default function UsersList() {
       setLoading(false);
     }
   }
-
-  useEffect(() => {
-    const isCurrentPageChanged = prevCurrentPageRef.current !== currentPage;
-    prevCurrentPageRef.current = currentPage;
-
-    if (isCurrentPageChanged) {
-      fetchUsers();
-      return;
-    }
-
-    setCurrentPage(1);
-    const debounceTimeout = setTimeout(() => {
-      fetchUsers();
-      setSearchParams((prev) => {
-        filters.q ? prev.set("q", filters.q) : prev.delete("q");
-        filters.sort ? prev.set("sort", filters.sort) : prev.delete("sort");
-        filters.type ? prev.set("type", filters.type) : prev.delete("type");
-        return prev;
-      })
-    }, 500);
-    return () => clearTimeout(debounceTimeout);
-  }, [currentPage, filters]);
 
   const getRoles = async () => {
     try {
@@ -173,8 +144,9 @@ export default function UsersList() {
       </div>
 
       <FiltersBar
-        filters={filters}
-        setFilters={setFilters}
+        currentPage={currentPage}
+        setCurrentPage={setCurrentPage}
+        fetchUsers={fetchUsers}
         roles={roles}
       />
 

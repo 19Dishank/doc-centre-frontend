@@ -2,8 +2,17 @@ import { Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useEffect, useRef, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 
-const FiltersBar = ({ filters, setFilters }) => {
+const FiltersBar = ({ parentId, setCurrentPage, currentPage, getFiles }) => {
+    const [searchParams, setSearchParams] = useSearchParams();
+
+    const [filters, setFilters] = useState({
+        q: searchParams.get("q") || "",
+        sort: searchParams.get("sort") || "createdAt_desc",
+        type: searchParams.get("type") || "",
+    });
 
     const sortOptions = [
         { label: "Name (A-Z)", value: "name_asc" },
@@ -20,6 +29,36 @@ const FiltersBar = ({ filters, setFilters }) => {
         { label: "Folders", value: "folder" },
         { label: "Documents", value: "file" },
     ]
+
+    const prevParentIdRef = useRef(parentId);
+    const prevCurrentPageRef = useRef(currentPage);
+
+    useEffect(() => {
+
+        const isParentIdChanged = prevParentIdRef.current !== parentId;
+        prevParentIdRef.current = parentId;
+
+        const isCurrentPageChanged = prevCurrentPageRef.current !== currentPage;
+        prevCurrentPageRef.current = currentPage;
+
+        if (isParentIdChanged || isCurrentPageChanged) {
+            getFiles();
+            return;
+        }
+
+        setCurrentPage(1);
+        const delayDebounceFn = setTimeout(() => {
+            getFiles(filters);
+            setSearchParams((prev) => {
+                filters.q ? prev.set("q", filters.q) : prev.delete("q");
+                filters.sort ? prev.set("sort", filters.sort) : prev.delete("sort");
+                filters.type ? prev.set("type", filters.type) : prev.delete("type");
+                return prev;
+            });
+        }, 500);
+
+        return () => clearTimeout(delayDebounceFn);
+    }, [filters, parentId, currentPage]);
 
     return (
         <div className="flex flex-col gap-3 md:flex-row md:items-center">

@@ -1,7 +1,7 @@
 import { Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { fetchFiles } from "@/api/file";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { PERMISSIONS } from "@/helper/permissions";
 import { usePermissions } from "@/hooks/usePermissions";
 import { NavLink, useSearchParams } from "react-router-dom";
@@ -50,12 +50,6 @@ export default function Files() {
       ? [goBackRow, ...tableRows]
       : tableRows;
 
-  const [filters, setFilters] = useState({
-    q: searchParams.get("q") || "",
-    sort: searchParams.get("sort") || "createdAt_desc",
-    type: searchParams.get("type") || "",
-  });
-
   useEffect(() => {
     setSearchParams((prev) => {
       prev.set("page", currentPage);
@@ -68,7 +62,8 @@ export default function Files() {
     setNavigationBar(prev => prev.slice(0, index + 1))
   }
 
-  const getFiles = async () => {
+  const getFiles = async (filters) => {
+    console.log("Fetching files with filters:", filters);
     setLoading(true);
     try {
       const res = await fetchFiles(parentId, {
@@ -76,7 +71,7 @@ export default function Files() {
         limit: 5,
         ...filters,
         sort: undefined,
-        [filters.sort.split("_")[0]]: filters.sort.split("_")[1]
+        [filters?.sort?.split("_")[0]]: filters?.sort?.split("_")[1]
       });
       setTableRows(res.data.documents);
       setPaginationData(res.data.pagination);
@@ -86,36 +81,6 @@ export default function Files() {
       setLoading(false);
     }
   }
-
-  const prevParentIdRef = useRef(parentId);
-  const prevCurrentPageRef = useRef(currentPage);
-
-  useEffect(() => {
-
-    const isParentIdChanged = prevParentIdRef.current !== parentId;
-    prevParentIdRef.current = parentId;
-
-    const isCurrentPageChanged = prevCurrentPageRef.current !== currentPage;
-    prevCurrentPageRef.current = currentPage;
-
-    if (isParentIdChanged || isCurrentPageChanged) {
-      getFiles();
-      return;
-    }
-
-    setCurrentPage(1);
-    const delayDebounceFn = setTimeout(() => {
-      getFiles();
-      setSearchParams((prev) => {
-        filters.q ? prev.set("q", filters.q) : prev.delete("q");
-        filters.sort ? prev.set("sort", filters.sort) : prev.delete("sort");
-        filters.type ? prev.set("type", filters.type) : prev.delete("type");
-        return prev;
-      });
-    }, 500);
-
-    return () => clearTimeout(delayDebounceFn);
-  }, [filters, parentId, currentPage]);
 
   const columns = [
     {
@@ -199,7 +164,7 @@ export default function Files() {
         <UploadButtons getFiles={getFiles} parentId={parentId} setNewFolderRow={setNewFolderRow} />
       </div>
 
-      <FiltersBar filters={filters} setFilters={setFilters} />
+      <FiltersBar parentId={parentId} setCurrentPage={setCurrentPage} currentPage={currentPage} getFiles={getFiles} />
 
       <div className="rounded-xl border border-zinc-200 bg-white shadow-sm">
         <DataTable

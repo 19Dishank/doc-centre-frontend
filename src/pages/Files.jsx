@@ -182,7 +182,7 @@ export default function Files() {
   return (
     <div className="flex h-full flex-col gap-6 w-full max-w-full p-1">
 
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between border-b border-zinc-100 pb-4">
+      <div className="flex justify-between gap-2 items-center border-b border-zinc-100 pb-4">
         <PageHeading
           heading="Files"
           subheading="Manage your files and folders."

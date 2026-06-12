@@ -3,8 +3,8 @@ import { Button } from "../ui/button";
 import { useMemo, useState } from "react";
 import { deleteRole } from "@/api/role";
 import { toastNotification } from "@/helper/toastNotification";
-import ConfirmationModal from "../ConfirmationModel";
-import RoleModel from "./RoleModel";
+import ConfirmationModal from "../ConfirmationModal";
+import RoleModal from "./RoleModal";
 import { PERMISSIONS } from "@/helper/permissions";
 import { usePermissions } from "@/hooks/usePermissions";
 
@@ -132,7 +132,7 @@ const Role = ({ currentRoleId, handleRoleChange, role, getAvailableRoles }) => {
             )}
 
             {showEditModel && (
-                <RoleModel
+                <RoleModal
                     setIsOpen={setShowEditModel}
                     getAvailableRoles={getAvailableRoles}
                     currentRole={role}

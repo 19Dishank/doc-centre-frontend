@@ -6,7 +6,7 @@ import { Separator } from "../ui/separator";
 import { useState } from "react";
 import { revokeApiKey } from "@/api/api";
 import { toastNotification } from "@/helper/toastNotification";
-import ConfirmationModal from "../ConfirmationModel";
+import ConfirmationModal from "../ConfirmationModal";
 
 const APIKeyDetails = ({ item, index, getApiKeys }) => {
 
@@ -77,6 +77,7 @@ const APIKeyDetails = ({ item, index, getApiKeys }) => {
                                 variant="outline"
                                 size="icon"
                                 className="shrink-0 md:hidden cursor-alias"
+                                onClick={() => setIsVisibleKey(!isVisibleKey)}
                             >
                                 {isVisibleKey ? (
                                     <EyeOff className="size-4" />
@@ -101,7 +102,7 @@ const APIKeyDetails = ({ item, index, getApiKeys }) => {
                                 onClick={() => setIsConfirmationModalOpen(true)}
                                 className="cursor-pointer shrink-0 text-red-600 hover:bg-red-50 hover:text-red-700 gap-2 flex-1 md:flex-initial"
                             >
-                                <Trash2 className="size-4" /> Revoke
+                                <Trash2 className="size-4" /> Delete
                             </Button>
                         </div>
                     </div>

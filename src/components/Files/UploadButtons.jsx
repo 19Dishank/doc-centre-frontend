@@ -21,6 +21,7 @@ const UploadButtons = ({ getFiles, parentId, setNewFolderRow }) => {
 
     const onChangeFile = async (event) => {
         setIsUploading(true);
+        let documentId = null;
         try {
             const file = event.target.files?.[0];
             if (!file) {
@@ -34,15 +35,19 @@ const UploadButtons = ({ getFiles, parentId, setNewFolderRow }) => {
                 size: file.size,
             };
             const getSignedURLResponse = await getSignedURL(payload);
-            const { url, documentId } = getSignedURLResponse.data;
+            documentId = getSignedURLResponse.data.documentId;
+            const { url } = getSignedURLResponse.data;
             const uploadResponse = await uploadOnSignedURL(url, file);
+            console.log("🚀 ~ onChangeFile ~ uploadResponse:", uploadResponse)
+            console.log("Upload success with status:", uploadResponse.status);
             if (uploadResponse.status === 200) {
                 await completeUpload(documentId);
-            } else {
-                await failedUpload(documentId);
-            }
+            } 
         } catch (error) {
             console.log("Error during file upload process:", error?.response);
+            if (error?.response?.status < 200 || error?.response?.status >= 300) {
+                await failedUpload(documentId);
+            }
             toastNotification(
                 error?.response?.data?.message
                 || error?.response?.data?.errors?.[0]?.msg

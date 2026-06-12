@@ -8,10 +8,11 @@ import { ArrowRight } from "lucide-react";
 import { useState } from "react";
 import { NavLink, useNavigate, useSearchParams } from "react-router-dom";
 import AccountConflictModal from "../AccountConflictModal";
+import { authChannel } from "@/helper/authChannel.js";
 
 const TenantLoginForm = () => {
 
-    const { isAuthenticated, setIsAuthenticated, user} = useAuthContext();
+    const { isAuthenticated, setIsAuthenticated, user } = useAuthContext();
     const currentEmail = user?.email;
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
@@ -77,6 +78,10 @@ const TenantLoginForm = () => {
             setTokens(res.data.accessToken, res.data.refreshToken);
             navigate("/dashboard");
             setIsAuthenticated(true);
+            authChannel.postMessage({
+                type: "ACCOUNT_CHANGED"
+            });
+
         } else {
             toastNotification(res?.data?.message || "Login failed. Please try again.", "error");
         }

@@ -73,7 +73,7 @@ const SearchBar = () => {
     }, []);
 
     return (
-        <div ref={containerRef} className="relative w-full max-w-45 sm:max-w-xs md:max-w-md ml-auto sm:mx-2">
+        <div ref={containerRef} className="relative">
             <div className="relative w-full">
                 <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                     <Search className="size-4 text-zinc-400" />
@@ -82,7 +82,7 @@ const SearchBar = () => {
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder="Search..."
-                    className="w-full h-9 pl-9 pr-4 text-sm text-zinc-900 placeholder-zinc-400 bg-zinc-50 border border-zinc-200 rounded-lg focus-visible:ring-1 focus-visible:ring-zinc-400 focus-visible:ring-offset-0 focus:bg-white transition-all duration-150"
+                    className="w-40 sm:w-64 h-9 pl-9 pr-4 text-sm text-zinc-900 placeholder-zinc-400 bg-zinc-50 border border-zinc-200 rounded-lg focus-visible:ring-1 focus-visible:ring-zinc-400 focus-visible:ring-offset-0 focus:bg-white transition-all duration-150"
                     onFocus={() => setIsOpen(true)}
                 />
             </div>
@@ -99,7 +99,7 @@ const SearchBar = () => {
                                 <NavLink
                                     key={index}
                                     to={item.path}
-                                    onClick={() => setIsOpen(false)}
+                                    onClick={() => {setIsOpen(false);  setSearchQuery("");} }
                                     className={({ isActive }) =>
                                         `flex items-center gap-2.5 px-2.5 py-2 rounded-md text-sm transition-colors cursor-pointer ${isActive
                                             ? "bg-zinc-100 text-zinc-900 font-medium"

@@ -6,7 +6,7 @@ import { PERMISSIONS } from "@/helper/permissions";
 import { usePermissions } from "@/hooks/usePermissions";
 import { toastNotification } from "@/helper/toastNotification";
 import ShareDocumentModal from "@/components/Files/ShareDocumentModal";
-import ConfirmationModal from "@/components/ConfirmationModel";
+import ConfirmationModal from "@/components/ConfirmationModal";
 
 const ActionsCell = ({ row: item, getFiles }) => {
 

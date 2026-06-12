@@ -1,12 +1,14 @@
 import { Bell } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button } from "../ui/button";
 import { socket } from "@/helper/socketService";
-import { fetchNotifications } from "@/api/notifications";
+import { fetchNotifications, markAllNotificationsAsRead } from "@/api/notifications";
 import Notification from "./Notification";
 
-const NotificationsDropdown = ({ notificationsDropdownRef, isNotificationsOpen, setIsNotificationsOpen, setProfileOpen }) => {
+const NotificationsDropdown = () => {
 
+    const notificationsDropdownRef = useRef(null);
+    const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
     const [notifications, setNotifications] = useState([]);
     const [unreadCount, setUnreadCount] = useState(null);
 
@@ -28,8 +30,7 @@ const NotificationsDropdown = ({ notificationsDropdownRef, isNotificationsOpen, 
     useEffect(() => {
 
         const handleReceiveNotification = (message) => {
-            console.log("Received new notification via socket:", message);
-            setNotifications((prev) => [...prev, message]);
+            setNotifications((prev) => [message, ...prev]);
         };
 
         const handleNotificationRead = ({ notificationId }) => {
@@ -39,7 +40,6 @@ const NotificationsDropdown = ({ notificationsDropdownRef, isNotificationsOpen, 
         };
 
         const handleUnreadCountUpdate = (message) => {
-            console.log("Unread count updated via socket:", message.count);
             setUnreadCount(message.count);
         }
 
@@ -70,6 +70,15 @@ const NotificationsDropdown = ({ notificationsDropdownRef, isNotificationsOpen, 
         };
     }, []);
 
+    const handleAllMarkAsRead = async () => {
+        try {
+            await markAllNotificationsAsRead();
+            setNotifications(prev => prev.map(n => ({ ...n, isRead: true })));
+        } catch (error) {
+            console.error("Error marking all notifications as read:", error);
+        }
+    }
+
     return (
         <>
             <div className="relative" ref={notificationsDropdownRef}>
@@ -77,10 +86,7 @@ const NotificationsDropdown = ({ notificationsDropdownRef, isNotificationsOpen, 
                     variant="ghost"
                     size="icon"
                     className="size-9 cursor-pointer relative flex items-center justify-center"
-                    onClick={() => {
-                        setIsNotificationsOpen(!isNotificationsOpen);
-                        setProfileOpen(false);
-                    }}
+                    onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
                 >
                     <Bell className="size-5 text-gray-700" />
 
@@ -93,7 +99,7 @@ const NotificationsDropdown = ({ notificationsDropdownRef, isNotificationsOpen, 
 
 
                 {isNotificationsOpen && (
-                    <div className="absolute right-0 mt-2 w-80 md:w-96 bg-white border border-zinc-200 rounded-xl shadow-xl z-50 overflow-hidden transform origin-top-right animate-in fade-in slide-in-from-top-2 duration-150">
+                    <div className="fixed md:absolute right-4 md:right-0 left-4 md:left-auto top-16 md:top-auto mt-2 md:w-96 bg-white border border-zinc-200 rounded-xl shadow-xl z-50 overflow-hidden transform origin-top md:origin-top-right animate-in fade-in slide-in-from-top-2 duration-150">
                         <div className="p-4 border-b border-zinc-100 flex justify-between items-center bg-zinc-50/50">
                             <h3 className="font-semibold text-sm text-zinc-900">Notifications</h3>
                             <span className="text-xs text-zinc-500 bg-zinc-200/60 px-2 py-0.5 rounded-full font-medium">
@@ -106,16 +112,21 @@ const NotificationsDropdown = ({ notificationsDropdownRef, isNotificationsOpen, 
                                 <div className="p-4 text-center text-sm text-zinc-500 py-20">
                                     No notifications yet.
                                 </div>
-                            ) : notifications?.map((n) => (
-                                <Notification notification={n} getNotifications={getNotifications} />
+                            ) : notifications?.map((n, idx) => (
+                                <Notification key={idx} notification={n} getNotifications={getNotifications} />
                             ))}
                         </div>
 
-                        <div className="p-2 border-t border-zinc-100 text-center bg-zinc-50/50">
-                            <button className="text-xs font-medium text-zinc-600 hover:text-zinc-900 w-full py-1.5 rounded-md hover:bg-zinc-100 transition-colors">
-                                Mark all as read
-                            </button>
-                        </div>
+                        {notifications?.length !== 0 && unreadCount !== 0 && (
+                            <div
+                                onClick={handleAllMarkAsRead}
+                                className="cursor-pointer p-2 border-t border-zinc-100 text-center bg-zinc-50/50"
+                            >
+                                <button className="cursor-pointer text-xs font-medium text-zinc-600 hover:text-zinc-900 w-full py-1.5 rounded-md hover:bg-zinc-100 transition-colors">
+                                    Mark all as read
+                                </button>
+                            </div>
+                        )}
                     </div>
                 )}
             </div>

@@ -31,11 +31,6 @@ export const SocketProvider = ({ children }) => {
             }
         }
 
-        socket.on("connect", () => {
-            console.log("Connected:", socket.id);
-            socket.emit("hello", "Hello from client!");
-        });
-
         socket.on("hello", (message) => {
             console.log("Received from server:", message);
             socket.emit("helloResponse", `Hello from client in response i have received! ${message}`);

@@ -4,6 +4,7 @@ import { resetPassword } from "@/api/auth";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import FormField from "../ui/form-field";
 import { passwordRegex } from "@/constants";
+import FormContainer from "../ui/form-container";
 
 const PasswordInput = () => {
 
@@ -90,32 +91,18 @@ const PasswordInput = () => {
     if (!email) return <Navigate to="/forgot-password" replace />;
 
     return (
-        <div className="bg-white flex p-12 flex-col justify-center items-center flex-1">
-            <div className="max-w-lg flex flex-col gap-8 w-full">
-
-                <div className="flex flex-col gap-2">
-                    <h1
-                        className="font-bold text-zinc-950 tracking-tight"
-                        style={{
-                            fontSize: "30px",
-                            lineHeight: "36px",
-                            letterSpacing: "-0.02em",
-                        }}>
-                        Set Password
-                    </h1>
-                    <p className="text-[#71717b] text-sm leading-6">Choose a strong password for your account</p>
-                </div>
-
-                <div className="flex flex-col gap-4">
-                    <FormField label="Password" name="password" value={resetPasswordData.password} onChange={handleChange} placeholder="Enter your password" error={errors.password} isPasswordField={true} />
-                    <FormField label="Confirm Password" name="confirmPassword" value={resetPasswordData.confirmPassword} onChange={handleChange} placeholder="Confirm your password" error={errors.confirmPassword} isPasswordField={true} />
-                </div>
-
-                <Button onClick={handleSubmit} disabled={loading} className=" cursor-pointer font-semibold rounded-lg bg-[#2b7fff] text-blue-50 w-full" style={{ height: "44px" }}>
-                    {loading ? "Setting Password..." : "Set Password"}
-                </Button>
+        <FormContainer
+            heading="Set New Password"
+            subheading="Please choose a strong password to keep your account secure."
+        >
+            <div className="flex flex-col gap-4">
+                <FormField label="Password" name="password" value={resetPasswordData.password} onChange={handleChange} placeholder="Enter your password" error={errors.password} isPasswordField={true} />
+                <FormField label="Confirm Password" name="confirmPassword" value={resetPasswordData.confirmPassword} onChange={handleChange} placeholder="Confirm your password" error={errors.confirmPassword} isPasswordField={true} />
             </div>
-        </div>
+            <Button onClick={handleSubmit} disabled={loading} className=" cursor-pointer font-semibold rounded-lg bg-[#2b7fff] text-blue-50 w-full" style={{ height: "44px" }}>
+                {loading ? "Setting Password..." : "Set Password"}
+            </Button>
+        </FormContainer>
     );
 }
 

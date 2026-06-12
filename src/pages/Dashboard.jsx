@@ -10,7 +10,6 @@ import { useMemo } from "react";
 export default function Dashboard() {
 
   const { user } = useAuthContext();
-  // console.log(sadadas)
 
   const { checkPermission } = usePermissions();
   const displayName = user?.firstName || user?.lastName ? `${user.firstName || ""} ${user.lastName || ""}`.trim() : user?.email || "User";

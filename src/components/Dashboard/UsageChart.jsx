@@ -3,6 +3,7 @@ import { ChartContainer, ChartTooltip } from "@/components/ui/chart";
 import { CartesianGrid, Line, LineChart, XAxis, YAxis, ResponsiveContainer } from "recharts";
 
 const UsageChart = () => {
+
     const data = [
         { day: "Day 1", api: 32, storage: 88 },
         { day: "Day 5", api: 45, storage: 95 },

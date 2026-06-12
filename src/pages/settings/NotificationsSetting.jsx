@@ -1,4 +1,4 @@
-import { Bell, Loader, Mail, Save } from "lucide-react";
+import { Loader, Mail, Save } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
@@ -11,11 +11,11 @@ import { changePreferences } from "@/api/user";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { useCatalogContext } from "@/contexts/CatalogContext";
 
-export default function Notifications() {
+export default function NotificationsSetting() {
 
-  const { userNotificationPreferences } = useAuthContext();
+  const { userNotificationPreferences, getUserDetails } = useAuthContext();
   const { preferencesCatalog } = useCatalogContext();
-  const { emailNotifications, inAppNotifications } = preferencesCatalog || {};
+  const { emailNotifications } = preferencesCatalog || {};
 
   // const availableFrequencies = [
   //   { label: "Real-time", value: "realtime" },
@@ -47,6 +47,7 @@ export default function Notifications() {
     try {
       const res = await changePreferences(formData);
       console.log("Preferences updated: ", res);
+      getUserDetails();
       toastNotification("Preferences updated successfully.", "success");
     } catch (error) {
       toastNotification(error.response?.data?.message || "An error occurred while updating preferences.", "error");

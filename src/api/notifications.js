@@ -19,3 +19,13 @@ export const markNotificationAsRead = async (notificationId) => {
         throw error;
     }
 }
+
+export const markAllNotificationsAsRead = async () => {
+    try {
+        const response = await axiosInstance.put("/notifications/read-all");
+        return response.data;
+    } catch (error) {
+        console.error("Error marking all notifications as read:", error);
+        throw error;
+    }
+}

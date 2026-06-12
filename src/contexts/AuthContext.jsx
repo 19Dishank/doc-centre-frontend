@@ -1,5 +1,6 @@
 /* eslint-disable react-refresh/only-export-components */
 import { fetchMe } from "@/api/user";
+import { authChannel } from "@/helper/authChannel.js";
 import { socket } from "@/helper/socketService";
 import { getTokens } from "@/helper/tokens";
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
@@ -29,7 +30,18 @@ const AuthProvider = ({ children }) => {
         }
     }
 
-    
+    useEffect(() => {
+
+        authChannel.onmessage = async (event) => {
+            if (event.data.type === "ACCOUNT_CHANGED") {
+                await getUserDetails();
+            }
+        };
+
+        return () => authChannel.close();
+    }, []);
+
+
     useEffect(() => {
 
         if (!isAuthenticated) {
@@ -45,16 +57,8 @@ const AuthProvider = ({ children }) => {
             socket.connect();
         }
 
-        socket.on("connect", () => {
-            console.log("Connected:", socket.id);
-            socket.on("hello", (message) => {
-                console.log("Received message:", message);
-            });
-        });
-
-
     }, [isAuthenticated]);
-    
+
     const value = useMemo(() => (
         { isAuthenticated, setIsAuthenticated, user, userNotificationPreferences, permissions, loading, getUserDetails }
     ), [isAuthenticated, user, userNotificationPreferences, permissions, loading]);

@@ -9,7 +9,7 @@ const FormContainer = ({ heading, subheading, linkText, linkUrl, linkHelperText,
 
     return (
         <div className="bg-white flex justify-center items-center flex-1" style={{ width: "660px" }}>
-            <div className="max-w-xl flex gap-8 px-12 flex-col w-full">
+            <div className="max-w-xl flex gap-8 px-4 sm:px-12 flex-col w-full">
                 {slug !== "app" && <CompanyLogo />}
                 <div className="flex flex-col gap-2">
                     <h1 className="font-bold text-zinc-900 tracking-tight" style={{ fontSize: "28px", lineHeight: "1.2" }}>

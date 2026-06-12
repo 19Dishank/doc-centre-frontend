@@ -5,7 +5,7 @@ import PaginationBar from "@/components/ui/pagination-bar";
 import { getUsers } from "@/api/user";
 import { PERMISSIONS } from "@/helper/permissions";
 import { usePermissions } from "@/hooks/usePermissions";
-import UserModel from "@/components/Users/UserModel";
+import UserModal from "@/components/Users/UserModal";
 import { fetchRoles } from "@/api/role";
 import { useSearchParams } from "react-router-dom";
 import { DataTable } from "@/components/DataTable";
@@ -157,7 +157,7 @@ export default function UsersList() {
 
   return (
     <div className="h-full flex flex-col gap-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex items-center justify-between gap-4">
 
         <PageHeading
           heading="Users"
@@ -166,7 +166,7 @@ export default function UsersList() {
 
         {canInviteUser && (
           <Button
-            className="font-semibold bg-[#2b7fff] text-blue-50 gap-2 w-full sm:w-auto cursor-pointer"
+            className="font-semibold bg-[#2b7fff] text-blue-50 gap-2 w-fit mt-auto cursor-pointer"
             onClick={() => setIsOpen(true)}
           >
             <Plus className="size-4" />
@@ -204,7 +204,7 @@ export default function UsersList() {
         </div>)}
 
       {isOpen && (
-        <UserModel
+        <UserModal
           setIsOpen={setIsOpen}
           fetchUsers={fetchUsers}
           roles={roles}

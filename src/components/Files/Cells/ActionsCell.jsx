@@ -1,5 +1,5 @@
 import { deleteFile, deleteFolder, downloadFile } from "@/api/file";
-import ConfirmationModal from "@/components/ConfirmationModel";
+import ConfirmationModal from "@/components/ConfirmationModal";
 import { Button } from "@/components/ui/button";
 import { PERMISSIONS } from "@/helper/permissions";
 import { toastNotification } from "@/helper/toastNotification";

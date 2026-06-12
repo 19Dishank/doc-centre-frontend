@@ -43,7 +43,6 @@ export default function RecycleBin() {
         setLoading(true);
         try {
             const res = await fetchBinData();
-            console.log("Bin data:", res);
             setTableRows([...res.data.folders, ...res.data.docs]);
         } catch (error) {
             console.error("Error fetching files:", error);
@@ -115,7 +114,7 @@ export default function RecycleBin() {
 
             <div className="flex justify-between border-b border-zinc-100 pb-3">
                 <div className="flex flex-col gap-1">
-                    <h1 className="font-semibold text-2xl tracking-tight text-zinc-950">Recycle Bin</h1>
+                    <h1 className="font-semibold text-2xl md:text-3xl leading-8 tracking-tight text-zinc-950">Recycle Bin</h1>
                     <p className="text-zinc-500 text-sm">Manage your deleted files and folders.</p>
                 </div>
                 <NavLink to="/files" className="cursor-pointer mt-auto flex items-center gap-1 text-sm text-zinc-500 hover:text-zinc-700">

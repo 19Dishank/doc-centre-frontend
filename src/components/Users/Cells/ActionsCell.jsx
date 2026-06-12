@@ -4,9 +4,9 @@ import { useMemo, useState } from "react";
 import { deleteUser } from "@/api/user";
 import { PERMISSIONS } from "@/helper/permissions";
 import { usePermissions } from "@/hooks/usePermissions";
-import UserModel from "@/components/Users/UserModel";
+import UserModal from "@/components/Users/UserModal";
 import { useAuthContext } from "@/contexts/AuthContext";
-import ConfirmationModal from "@/components/ConfirmationModel";
+import ConfirmationModal from "@/components/ConfirmationModal";
 import { toastNotification } from "@/helper/toastNotification";
 
 const ActionsCell = ({ row: currentUser, fetchUsers, roles, setCurrentPage, currentPageItems }) => {
@@ -62,7 +62,7 @@ const ActionsCell = ({ row: currentUser, fetchUsers, roles, setCurrentPage, curr
             )}
 
             {isEditing && (
-                <UserModel setIsOpen={setIsEditing} user={currentUser} fetchUsers={fetchUsers} roles={roles} />
+                <UserModal setIsOpen={setIsEditing} user={currentUser} fetchUsers={fetchUsers} roles={roles} />
             )}
 
             {isDeleting && (

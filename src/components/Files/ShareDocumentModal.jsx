@@ -105,85 +105,90 @@ const ShareDocumentModal = ({ setIsOpen, documentId }) => {
 
     return (
         <div className="fixed inset-0 z-100 flex items-center justify-center bg-zinc-950/40 backdrop-blur">
+            <Card className="w-120 overflow-hidden animate-in fade-in zoom-in-95 duration-150 border border-zinc-200 bg-white shadow-xl shadow-zinc-900/10 rounded-2xl p-0 gap-0">
+                <div className="h-1 w-full bg-linear-to-r from-blue-500 via-blue-600 to-blue-500" />
 
-            <Card className="w-120 p-6 shadow-2xl gap-4">
-                <CardHeader className="flex items-start justify-between gap-1 border-b border-zinc-200 p-0">
-                    <div className="flex flex-col gap-1">
-                        <CardTitle className="text-lg font-semibold leading-7">
-                            Share Document
-                        </CardTitle>
-                        <CardDescription className="text-sm leading-5">
-                            Generate a secure share link with expiry time.
-                        </CardDescription>
-                    </div>
+                <div className="p-6 shadow-2xl flex flex-col gap-4 w-full">
 
-                    <Button
-                        variant="ghost"
-                        size="icon"
-                        className="size-8 rounded-full -mr-1 -mt-1 hover:bg-zinc-100"
-                        onClick={() => setIsOpen(false)}
-                    >
-                        <X className="size-4" />
-                    </Button>
-
-                </CardHeader>
-
-                <CardContent className="flex flex-col gap-4 p-0">
-                    <FormField
-                        name="expiryTime"
-                        label="Expiry Time (in minutes)"
-                        error={errors.expiryTime}
-                        required
-                        value={formData.expiryTime}
-                        onChange={handleChange}
-                        placeholder="Enter expiry time"
-                        type="number"
-                        min={1}
-                        max={60}
-                        disabled={!!shareLink}
-                    />
-
-                    {shareLink && (
-                        <div className="flex flex-col gap-2">
-                            <Label className="text-sm font-medium">Share Link</Label>
-                            <div className="flex items-center justify-between gap-3 rounded-lg border border-zinc-200 bg-zinc-50 p-3">
-                                <p className="max-w-[320px] truncate text-sm text-zinc-700">
-                                    {shareLink}
-                                </p>
-                                <Button
-                                    className='cursor-pointer'
-                                    type="button"
-                                    variant="outline"
-                                    size="icon"
-                                    onClick={handleCopy}
-                                >
-                                    {copied ? <Check className="size-4" /> : <Copy className="size-4" />}
-                                </Button>
-                            </div>
+                    <CardHeader className="flex items-start justify-between gap-1 border-b border-zinc-200 p-0">
+                        <div className="flex flex-col gap-1">
+                            <CardTitle className="text-lg font-semibold leading-7 mr-auto">
+                                Share Document
+                            </CardTitle>
+                            <CardDescription className="text-sm leading-5">
+                                Generate a secure share link with expiry time.
+                            </CardDescription>
                         </div>
-                    )}
 
-                </CardContent>
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            className="cursor-pointer size-8 rounded-full -mr-1 -mt-1 hover:bg-zinc-100"
+                            onClick={() => setIsOpen(false)}
+                        >
+                            <X className="size-4" />
+                        </Button>
 
-                <CardFooter className="justify-end gap-2 bg-white px-0">
+                    </CardHeader>
 
-                    <Button
-                        variant="outline"
-                        onClick={() => setIsOpen(false)}
-                    >
-                        Cancel
-                    </Button>
+                    <CardContent className="flex flex-col gap-4 p-0">
+                        <FormField
+                            name="expiryTime"
+                            label="Expiry Time (in minutes)"
+                            error={errors.expiryTime}
+                            required
+                            value={formData.expiryTime}
+                            onChange={handleChange}
+                            placeholder="Enter expiry time"
+                            type="number"
+                            min={1}
+                            max={60}
+                            disabled={!!shareLink}
+                        />
 
-                    {!shareLink && (<Button
-                        className="bg-[#2b7fff] font-semibold text-blue-50 cursor-pointer"
-                        onClick={handleSubmit}
-                        disabled={loading || !formData.expiryTime || errors.expiryTime}
-                    >
-                        {loading ? "Generating..." : "Generate Link"}
-                    </Button>)}
+                        {shareLink && (
+                            <div className="flex flex-col gap-2">
+                                <Label className="text-sm font-medium">Share Link</Label>
+                                <div className="flex items-center justify-between gap-3 rounded-lg border border-zinc-200 bg-zinc-50 p-3">
+                                    <p className="max-w-[320px] truncate text-sm text-zinc-700">
+                                        {shareLink}
+                                    </p>
+                                    <Button
+                                        className='cursor-pointer'
+                                        type="button"
+                                        variant="outline"
+                                        size="icon"
+                                        onClick={handleCopy}
+                                    >
+                                        {copied ? <Check className="size-4" /> : <Copy className="size-4" />}
+                                    </Button>
+                                </div>
+                            </div>
+                        )}
 
-                </CardFooter>
+                    </CardContent>
 
+                    <CardFooter className="justify-end gap-2 bg-white px-0 pb-0">
+
+                        <Button
+                            variant="outline"
+                            onClick={() => setIsOpen(false)}
+                            className="text-zinc-700 cursor-pointer"
+                        >
+                            Cancel
+                        </Button>
+
+                        {!shareLink && (<Button
+                            className="bg-[#2b7fff] font-semibold text-blue-50 cursor-pointer"
+                            onClick={handleSubmit}
+                            disabled={loading || !formData.expiryTime || errors.expiryTime}
+                        >
+                            {loading ? "Generating..." : "Generate Link"}
+                        </Button>)}
+
+                    </CardFooter>
+
+                </div>
             </Card>
 
         </div>

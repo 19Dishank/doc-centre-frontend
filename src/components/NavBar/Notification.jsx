@@ -9,9 +9,9 @@ const Notification = ({ notification }) => {
 
     const getNotificationIcon = (type) => {
         switch (type) {
-            case "success":
+            case "SUCCESS":
                 return <CheckCircle2 className="size-4 text-emerald-500 shrink-0 mt-0.5" />;
-            case "error":
+            case "ALERT":
                 return <AlertCircle className="size-4 text-red-500 shrink-0 mt-0.5" />;
             default:
                 return <Info className="size-4 text-blue-500 shrink-0 mt-0.5" />;
@@ -22,7 +22,6 @@ const Notification = ({ notification }) => {
     const handleMarkAsRead = async () => {
         if (notification.isRead) return;
 
-        console.log("Marking notification as read:", notification._id);
         try {
             await markNotificationAsRead(notification._id);
         } catch (error) {

@@ -20,7 +20,7 @@ const SecurityAndCredentials = () => {
     const [showPasswordForm, setShowPasswordForm] = useState(false);
     const [loading, setLoading] = useState(false);
 
-    const isDisabled = Object.values(securityData).every((value) => value.trim() !== "") || Object.values(errors).every((error) => error === "");
+    const isDisabled = Object.values(securityData).some((value) => value.trim() === "")
 
     const validateField = (name, value) => {
 

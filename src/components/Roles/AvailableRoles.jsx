@@ -1,7 +1,7 @@
 import { Plus, ShieldAlert } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useMemo, useState } from "react";
-import RoleModel from "./RoleModel";
+import RoleModal from "./RoleModal";
 import Role from "./Role";
 import { usePermissions } from "@/hooks/usePermissions";
 import { PERMISSIONS } from "@/helper/permissions";
@@ -79,7 +79,7 @@ const AvailableRoles = ({
       </div>
 
       {isOpen && (
-        <RoleModel
+        <RoleModal
           setIsOpen={setIsOpen}
           getAvailableRoles={getAvailableRoles}
         />

@@ -7,7 +7,7 @@ const UsersList = lazy(() => import("@/pages/Users"));
 const Roles = lazy(() => import("@/pages/Roles"));
 const BillingPage = lazy(() => import("@/pages/settings/BillingPage"));
 const Organization = lazy(() => import("@/pages/settings/Organization"));
-const Notifications = lazy(() => import("@/pages/settings/Notifications"));
+const NotificationsSetting = lazy(() => import("@/pages/settings/NotificationsSetting"));
 // const DangerZone = lazy(() => import("@/pages/settings/DangerZone"));
 const LoginPage = lazy(() => import("@/pages/LoginPage"));
 const EmailInput = lazy(() => import("@/components/ForgotPasswordPage/EmailInput"));
@@ -117,7 +117,7 @@ export const protectedRoutes = [
     },
     {
         path: "/settings/notifications",
-        element: <Notifications />,
+        element: <NotificationsSetting />,
     },
     // {
     //     path: "/settings/danger-zone",

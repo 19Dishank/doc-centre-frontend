@@ -77,6 +77,12 @@ export default function UsersList() {
     setCurrentPage(1);
     const debounceTimeout = setTimeout(() => {
       fetchUsers();
+      setSearchParams((prev) => {
+        filters.q ? prev.set("q", filters.q) : prev.delete("q");
+        filters.sort ? prev.set("sort", filters.sort) : prev.delete("sort");
+        filters.type ? prev.set("type", filters.type) : prev.delete("type");
+        return prev;
+      })
     }, 500);
     return () => clearTimeout(debounceTimeout);
   }, [currentPage, filters]);
@@ -94,15 +100,6 @@ export default function UsersList() {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     getRoles();
   }, []);
-
-  useEffect(() => {
-    setSearchParams((prev) => {
-      filters.q ? prev.set("q", filters.q) : prev.delete("q");
-      filters.sort ? prev.set("sort", filters.sort) : prev.delete("sort");
-      filters.type ? prev.set("type", filters.type) : prev.delete("type");
-      return prev;
-    })
-  }, [filters, setSearchParams]);
 
   useEffect(() => {
     setSearchParams((prev) => {

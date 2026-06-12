@@ -58,15 +58,6 @@ export default function Files() {
 
   useEffect(() => {
     setSearchParams((prev) => {
-      filters.q ? prev.set("q", filters.q) : prev.delete("q");
-      filters.sort ? prev.set("sort", filters.sort) : prev.delete("sort");
-      filters.type ? prev.set("type", filters.type) : prev.delete("type");
-      return prev;
-    })
-  }, [filters]);
-
-  useEffect(() => {
-    setSearchParams((prev) => {
       prev.set("page", currentPage);
       return prev;
     });
@@ -115,6 +106,12 @@ export default function Files() {
     setCurrentPage(1);
     const delayDebounceFn = setTimeout(() => {
       getFiles();
+      setSearchParams((prev) => {
+        filters.q ? prev.set("q", filters.q) : prev.delete("q");
+        filters.sort ? prev.set("sort", filters.sort) : prev.delete("sort");
+        filters.type ? prev.set("type", filters.type) : prev.delete("type");
+        return prev;
+      });
     }, 500);
 
     return () => clearTimeout(delayDebounceFn);

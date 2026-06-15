@@ -110,31 +110,22 @@ const ProfileDetailsCard = () => {
     };
 
     return (
-
         <Card className="p-4 sm:p-6 flex flex-col gap-5 shadow-sm">
-
             <CardHeader className="p-0 gap-1">
-
                 <div className="flex items-center gap-2">
-
                     <div className="size-9 rounded-lg bg-[#2b7fff]/10 flex justify-center items-center shrink-0">
                         <User className="size-5 text-[#2b7fff]" />
                     </div>
-
                     <h2 className="font-semibold text-lg leading-7 text-zinc-950">
                         Profile Details
                     </h2>
-
                 </div>
-
                 <p className="text-zinc-600 text-sm leading-5">
                     Update your core personal information and reachable contact addresses.
                 </p>
-
             </CardHeader>
 
             <CardContent className="p-0">
-
                 <form
                     onSubmit={handleProfileDetails}
                     className="space-y-5"
@@ -168,7 +159,6 @@ const ProfileDetailsCard = () => {
                     </div> */}
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-zinc-200 border-t">
-
                         <FormField
                             label="First Name"
                             name="firstName"
@@ -177,7 +167,6 @@ const ProfileDetailsCard = () => {
                             onChange={handleProfileChange}
                             error={errors.firstName}
                         />
-
                         <FormField
                             label="Last Name"
                             name="lastName"
@@ -186,53 +175,34 @@ const ProfileDetailsCard = () => {
                             onChange={handleProfileChange}
                             error={errors.lastName}
                         />
-
                         <div className="flex flex-col gap-1.5">
-
                             <label className="font-medium text-sm text-zinc-800">
                                 Email Address
                             </label>
-
                             <div className="flex items-center gap-2 w-full h-10 px-3 text-sm border border-zinc-200 bg-zinc-50 text-zinc-600 rounded-lg cursor-not-allowed select-none">
-
                                 <Mail className="size-4 text-[#2b7fff] shrink-0" />
-
                                 <span className="font-semibold">
                                     {user.email}
                                 </span>
-
                             </div>
-
                         </div>
-
                         <div className="flex flex-col gap-1.5">
-
                             <label className="font-medium text-sm text-zinc-800">
                                 Assigned Privilege Role
                             </label>
-
                             <div className="flex items-center gap-2 w-full h-10 px-3 text-sm border border-zinc-200 bg-zinc-50 text-zinc-600 rounded-lg cursor-not-allowed select-none">
-
                                 <Shield className="size-4 text-[#2b7fff] shrink-0" />
-
                                 <span className="font-semibold">
                                     {user.role.name}
                                 </span>
-
                             </div>
-
                         </div>
-
                     </div>
-
                     <div className="cursor-pointer px-0 pt-2 bg-white flex flex-col-reverse sm:flex-row justify-end gap-2">
-
                         {hasChanges && (<Button
                             type="button"
                             onClick={() => {
-
                                 setProfileData(initialProfileData);
-
                                 setErrors({
                                     firstName: "",
                                     lastName: "",
@@ -243,28 +213,20 @@ const ProfileDetailsCard = () => {
                         >
                             Cancel
                         </Button>)}
-
                         <Button
                             type="submit"
                             className="cursor-pointer bg-[#2b7fff] text-blue-50 gap-2 h-9 w-full sm:w-auto disabled:cursor-not-allowed"
                             disabled={!hasChanges || loading}
                         >
-
                             <Save className="size-4" />
-
                             {loading
                                 ? "Saving..."
                                 : "Save Profile Changes"
                             }
-
                         </Button>
-
                     </div>
-
                 </form>
-
             </CardContent>
-
         </Card>
     );
 };

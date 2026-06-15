@@ -14,10 +14,10 @@ const RecentUploadFile = ({ item, loading }) => {
     const displayExtension = item?.originalFileName?.split(".").pop();
     const { user: { _id: userId } } = useAuthContext();
 
-    const isMe = item.uploadedBy._id === userId;
-    const ownerName = item.uploadedBy.firstName && item.uploadedBy.lastName
+    const isMe = item?.uploadedBy?._id === userId;
+    const ownerName = item?.uploadedBy?.firstName && item?.uploadedBy?.lastName
         ? `${item.uploadedBy.firstName} ${item.uploadedBy.lastName}`
-        : item.uploadedBy.email;
+        : item?.uploadedBy?.email;
 
     if (loading) return <div className="mb-4 last:mb-0 px-5 h-15"><Skeleton className="h-full w-full" /></div>;
 
@@ -33,13 +33,13 @@ const RecentUploadFile = ({ item, loading }) => {
                         {item.originalFileName}
                     </span>
                     <span className="text-zinc-500 text-xs truncate">
-                        {formatSize(item.size)} <span className="mx-1">•</span> {formatTime(item.createdAt, "Just now")}
+                        {formatSize(item.size)} <span className="mx-1">•</span> {formatTime(item.createdAt)}
                     </span>
                 </div>
 
                 <div className="flex items-center gap-2 shrink-0">
-                    {(item.uploadedBy.firstName && item.uploadedBy.lastName)
-                        ? (<UIAvatar firstName={item.uploadedBy.firstName} lastName={item.uploadedBy.lastName} userId={item.uploadedBy._id} />)
+                    {(item?.uploadedBy?.firstName && item?.uploadedBy?.lastName)
+                        ? (<UIAvatar firstName={item?.uploadedBy?.firstName} lastName={item?.uploadedBy?.lastName} userId={item?.uploadedBy?._id} />)
                         : <User className="size-8 p-1.5 rounded-full bg-[#2b7fff] text-white text-xs" />
                     }
                     <span className="hidden sm:inline-block text-zinc-500 text-xs w-35 lg:w-25 truncate">

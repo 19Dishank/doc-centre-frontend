@@ -7,6 +7,7 @@ import { useState } from "react";
 import { toastNotification } from "@/helper/toastNotification";
 import { createNewRole, updateRole } from "@/api/role";
 import FormField from "../ui/form-field";
+import { createPortal } from "react-dom";
 
 const RoleModal = ({ setIsOpen, getAvailableRoles, currentRole }) => {
 
@@ -83,7 +84,7 @@ const RoleModal = ({ setIsOpen, getAvailableRoles, currentRole }) => {
         }
     };
 
-    return (
+    return createPortal(
         <div className="bg-zinc-950/40 flex fixed inset-0 justify-center items-center z-100 backdrop-blur">
             <Card className="w-120 overflow-hidden animate-in fade-in zoom-in-95 duration-150 border border-zinc-200 bg-white shadow-xl shadow-zinc-900/10 rounded-2xl p-0 gap-0">
                 <div className="h-1 w-full bg-linear-to-r from-blue-500 via-blue-600 to-blue-500" />
@@ -131,6 +132,7 @@ const RoleModal = ({ setIsOpen, getAvailableRoles, currentRole }) => {
                 </div>
             </Card>
         </div>
+        , document.body
     );
 };
 

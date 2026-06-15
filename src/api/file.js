@@ -15,35 +15,15 @@ export const getSignedURL = async (payload) => {
 export const uploadOnSignedURL = async (signedURL, file) => {
     try {
         console.log("Signed URL : ", file.type);
-        const res = await axios.put(signedURL, file, {
+        const response = await axios.put(signedURL, file, {
             headers: {
                 "Content-Type": file.type,
             },
         });
-        console.log("Upload response : ", res);
-        return res;
+        console.log("Upload response : ", response);
+        return response;
     } catch (error) {
         console.error("Error uploading file to signed URL:", error);
-        throw error;
-    }
-};
-
-export const completeUpload = async (id) => {
-    try {
-        const response = await axiosInstance.post(`/docs/${id}/complete`, {});
-        return response.data;
-    } catch (error) {
-        console.error("Error completing upload:", error);
-        throw error;
-    }
-};
-
-export const failedUpload = async (id) => {
-    try {
-        const response = await axiosInstance.post(`/docs/${id}/failed`, {});
-        return response.data;
-    } catch (error) {
-        console.error("Error marking upload as failed:", error);
         throw error;
     }
 };
@@ -186,8 +166,8 @@ export const createShareLink = async (id, payload) => {
 
 export const fetchBinData = async () => {
     try {
-        const res = await axiosInstance.get("/docs/restore-docs");
-        return res.data;
+        const response = await axiosInstance.get("/docs/restore-docs");
+        return response.data;
     } catch (error) {
         console.error("Error fetching recycle bin data:", error);
         throw error;
@@ -196,8 +176,8 @@ export const fetchBinData = async () => {
 
 export const restoreFile = async (id) => {
     try {
-        const res = await axiosInstance.put(`/docs/${id}/restore-doc`);
-        return res.data;
+        const response = await axiosInstance.put(`/docs/${id}/restore-doc`);
+        return response.data;
     } catch (error) {
         console.error("Error restoring file:", error);
         throw error;
@@ -206,8 +186,8 @@ export const restoreFile = async (id) => {
 
 export const restoreFolder = async (id) => {
     try {
-        const res = await axiosInstance.put(`/docs/${id}/restore-folder`);
-        return res.data;
+        const response = await axiosInstance.put(`/docs/${id}/restore-folder`);
+        return response.data;
     } catch (error) {
         console.error("Error restoring folder:", error);
         throw error;
@@ -216,8 +196,8 @@ export const restoreFolder = async (id) => {
 
 export const fetchSharedDocumentDetails = async (id) => {
     try {
-        const res = await axiosInstance.get(`/docs/shared/${id}`);
-        return res.data;
+        const response = await axiosInstance.get(`/docs/shared/${id}`);
+        return response.data;
     } catch (error) {
         console.error("Error fetching shared document details:", error);
         throw error;

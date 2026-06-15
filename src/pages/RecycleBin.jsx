@@ -9,6 +9,7 @@ import { DataTable } from "@/components/DataTable";
 import { formatSize } from "@/helper/formatSize";
 import FileNameCell from "@/components/Files/Cells/FileNameCell";
 import ActionsCell from "@/components/RecycleBin/ActionsCell";
+import { formatTime } from "@/helper/formatTime";
 
 export default function RecycleBin() {
 
@@ -86,10 +87,10 @@ export default function RecycleBin() {
             render: (row) => row?.size ? formatSize(row.size) : "—",
         },
         {
-            key: "createdAt",
-            header: "Uploaded At",
+            key: "deletedAt",
+            header: "Deleted At",
             width: "w-[10%]",
-            render: (row) => row?.createdAt ? new Date(row.createdAt).toLocaleDateString() : "—",
+            render: (row) => formatTime(row.deletedAt),
         },
         // {
         //     key: "owner",
@@ -115,7 +116,7 @@ export default function RecycleBin() {
             <div className="flex justify-between border-b border-zinc-100 pb-3">
                 <div className="flex flex-col gap-1">
                     <h1 className="font-semibold text-2xl md:text-3xl leading-8 tracking-tight text-zinc-950">Recycle Bin</h1>
-                    <p className="text-zinc-500 text-sm">Manage your deleted files and folders.</p>
+                    <p className="text-zinc-500 text-sm">Manage your deleted files and folders. These items will be permanently deleted after 7 days.</p>
                 </div>
                 <NavLink to="/files" className="cursor-pointer mt-auto flex items-center gap-1 text-sm text-zinc-500 hover:text-zinc-700">
                     <Button variant="outline" className="cursor-pointer">

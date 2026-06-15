@@ -24,6 +24,7 @@ const SearchBar = () => {
     const [searchQuery, setSearchQuery] = useState("");
     const [isOpen, setIsOpen] = useState(false);
     const containerRef = useRef(null);
+    const inputRef = useRef(null); 
     const { checkPermission, checkRole } = usePermissions();
 
     const canViewDocument = useMemo(() => checkPermission(PERMISSIONS.VIEW_DOCUMENT), [checkPermission]);
@@ -72,6 +73,23 @@ const SearchBar = () => {
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
 
+    useEffect(() => {
+        const handleKeyDown = (e) => {
+            if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+                e.preventDefault();
+                inputRef.current?.focus();
+            } else if (e.key === "Escape") {
+                setIsOpen(false);
+                inputRef.current?.blur();
+            }
+        };
+
+        document.addEventListener("keydown", handleKeyDown);
+        return () => document.removeEventListener("keydown", handleKeyDown);
+    }, []);
+
+    const isMac = typeof window !== "undefined" && navigator.userAgent.toUpperCase().indexOf("MAC") >= 0;
+
     return (
         <div ref={containerRef} className="relative">
             <div className="relative w-full">
@@ -79,12 +97,21 @@ const SearchBar = () => {
                     <Search className="size-4 text-zinc-400" />
                 </div>
                 <Input
+                    ref={inputRef} 
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder="Search..."
-                    className="w-40 sm:w-64 h-9 pl-9 pr-4 text-sm text-zinc-900 placeholder-zinc-400 bg-zinc-50 border border-zinc-200 rounded-lg focus-visible:ring-1 focus-visible:ring-zinc-400 focus-visible:ring-offset-0 focus:bg-white transition-all duration-150"
+                    className="w-40 sm:w-64 h-9 pl-9 pr-12 text-sm text-zinc-900 placeholder-zinc-400 bg-zinc-50 border border-zinc-200 rounded-lg focus-visible:ring-1 focus-visible:ring-zinc-400 focus-visible:ring-offset-0 focus:bg-white transition-all duration-150"
                     onFocus={() => setIsOpen(true)}
                 />
+
+                {!isOpen && !searchQuery && (
+                    <div className="absolute inset-y-0 right-0 hidden sm:flex items-center pr-3 pointer-events-none">
+                        <kbd className="inline-flex items-center gap-0.5 h-5 select-none rounded border border-zinc-200 bg-zinc-100 px-1.5 font-sans text-[10px] font-medium text-zinc-400 opacity-100">
+                            <span>{isMac ? "⌘" : "Ctrl"}</span>K
+                        </kbd>
+                    </div>
+                )}
             </div>
 
             {isOpen && (
@@ -99,7 +126,7 @@ const SearchBar = () => {
                                 <NavLink
                                     key={index}
                                     to={item.path}
-                                    onClick={() => {setIsOpen(false);  setSearchQuery("");} }
+                                    onClick={() => { setIsOpen(false); setSearchQuery(""); }}
                                     className={({ isActive }) =>
                                         `flex items-center gap-2.5 px-2.5 py-2 rounded-md text-sm transition-colors cursor-pointer ${isActive
                                             ? "bg-zinc-100 text-zinc-900 font-medium"

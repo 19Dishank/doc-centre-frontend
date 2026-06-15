@@ -63,7 +63,6 @@ export default function Files() {
   }
 
   const getFiles = async (filters) => {
-    console.log("Fetching files with filters:", filters);
     setLoading(true);
     try {
       const res = await fetchFiles(parentId, {

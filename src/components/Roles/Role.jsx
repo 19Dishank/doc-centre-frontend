@@ -7,8 +7,12 @@ import ConfirmationModal from "../ConfirmationModal";
 import RoleModal from "./RoleModal";
 import { PERMISSIONS } from "@/helper/permissions";
 import { usePermissions } from "@/hooks/usePermissions";
+import { useAuthContext } from "@/contexts/AuthContext";
 
 const Role = ({ currentRoleId, handleRoleChange, role, getAvailableRoles }) => {
+
+    const { user } = useAuthContext();
+    const isOwnRole = user?.role?._id === role._id;
 
     const { checkPermission } = usePermissions();
     const [isOpen, setIsOpen] = useState(false);
@@ -19,7 +23,7 @@ const Role = ({ currentRoleId, handleRoleChange, role, getAvailableRoles }) => {
 
     const canUpdateRole = useMemo(() => checkPermission(PERMISSIONS.UPDATE_ROLE), [checkPermission]);
     const canDeleteRole = useMemo(() => checkPermission(PERMISSIONS.DELETE_ROLE), [checkPermission]);
-    const displayOptions = canUpdateRole || canDeleteRole;
+    const displayOptions = (canUpdateRole || canDeleteRole) && !isOwnRole;
 
     const handleOptionClick = (e) => {
         e.stopPropagation();

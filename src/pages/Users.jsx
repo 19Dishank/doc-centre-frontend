@@ -110,7 +110,7 @@ export default function UsersList() {
       key: "lastActive",
       header: "Last Active",
       width: "w-[25%]",
-      render: (row) => row.lastActivateAt ? formatTime(row.lastActivateAt) : "—",
+      render: (row) => row.lastActivateAt ? formatTime(row.lastActivateAt, "Active Now") : "—",
     },
     {
       key: "actions",

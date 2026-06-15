@@ -217,7 +217,7 @@ const SecurityAndCredentials = () => {
                                     setSecurityData(initialData);
                                     setErrors(initialData);
                                 }}
-                                className="border-zinc-200 text-zinc-700 h-9 text-xs w-full sm:w-auto"
+                                className="border-zinc-200 text-zinc-700 h-9 text-xs w-full cursor-pointer sm:w-auto"
                             >
                                 Cancel
                             </Button>

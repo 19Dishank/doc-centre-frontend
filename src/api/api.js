@@ -2,8 +2,8 @@ import axiosInstance from "@/helper/axiosInstance";
 
 export const generateApiKey = async (keyName) => {
     try {
-        const res = await axiosInstance.post("/api-key", { name: keyName });
-        return res.data;
+        const response = await axiosInstance.post("/api-key", { name: keyName });
+        return response.data;
     } catch (error) {
         console.error("Error generating API key: ", error);
         throw error;
@@ -12,8 +12,8 @@ export const generateApiKey = async (keyName) => {
 
 export const fetchApiKeys = async () => {
     try {
-        const res = await axiosInstance.get("/api-key");
-        return res.data;
+        const response = await axiosInstance.get("/api-key");
+        return response.data;
     } catch (error) {
         console.error("Error fetching API keys: ", error);
         throw error;
@@ -22,8 +22,8 @@ export const fetchApiKeys = async () => {
 
 export const revokeApiKey = async (id) => {
     try {
-        const res = await axiosInstance.delete(`/api-key/${id}`);
-        return res.data;
+        const response = await axiosInstance.delete(`/api-key/${id}`);
+        return response.data;
     } catch (error) {
         console.error("Error revoking API key: ", error);
         throw error;

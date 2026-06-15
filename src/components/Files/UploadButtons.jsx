@@ -8,10 +8,11 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip
 import { useEffect, useMemo, useRef, useState } from "react";
 import { PERMISSIONS } from "@/helper/permissions";
 import { usePermissions } from "@/hooks/usePermissions";
-import { completeUpload, failedUpload, getSignedURL, uploadOnSignedURL } from "@/api/file";
+import { getSignedURL, uploadOnSignedURL } from "@/api/file";
 import { toastNotification } from "@/helper/toastNotification";
+import { socket } from "@/helper/socketService";
 
-const UploadButtons = ({ getFiles, parentId, setNewFolderRow }) => {
+const UploadButtons = ({ parentId, setNewFolderRow, getFiles }) => {
 
     const { checkPermission } = usePermissions();
     const canUploadDocument = useMemo(() => checkPermission(PERMISSIONS.UPLOAD_DOCUMENT), [checkPermission]);
@@ -21,7 +22,6 @@ const UploadButtons = ({ getFiles, parentId, setNewFolderRow }) => {
 
     const onChangeFile = async (event) => {
         setIsUploading(true);
-        let documentId = null;
         try {
             const file = event.target.files?.[0];
             if (!file) {
@@ -35,28 +35,22 @@ const UploadButtons = ({ getFiles, parentId, setNewFolderRow }) => {
                 size: file.size,
             };
             const getSignedURLResponse = await getSignedURL(payload);
-            documentId = getSignedURLResponse.data.documentId;
             const { url } = getSignedURLResponse.data;
             const uploadResponse = await uploadOnSignedURL(url, file);
-            console.log("🚀 ~ onChangeFile ~ uploadResponse:", uploadResponse)
-            console.log("Upload success with status:", uploadResponse.status);
             if (uploadResponse.status === 200) {
-                await completeUpload(documentId);
-            } 
-        } catch (error) {
-            console.log("Error during file upload process:", error?.response);
-            if (error?.response?.status < 200 || error?.response?.status >= 300) {
-                await failedUpload(documentId);
+                setTimeout(() => {
+                    setIsUploading(false);
+                }, 5000);
             }
+        } catch (error) {
+            setIsUploading(false);
             toastNotification(
                 error?.response?.data?.message
                 || error?.response?.data?.errors?.[0]?.msg
                 || "File upload failed. Please try again.", "error");
             console.error("File upload failed :", error);
         } finally {
-            getFiles();
             event.target.value = "";
-            setIsUploading(false);
         }
     };
 
@@ -74,7 +68,7 @@ const UploadButtons = ({ getFiles, parentId, setNewFolderRow }) => {
     }
 
     useEffect(() => {
-        
+
         const handleKeyDown = (event) => {
             event.stopPropagation();
             if (event.ctrlKey && event.altKey && event.code === "KeyU") {
@@ -96,6 +90,22 @@ const UploadButtons = ({ getFiles, parentId, setNewFolderRow }) => {
             document.removeEventListener("keydown", handleKeyDown);
         };
     }, []);
+
+
+    useEffect(() => {
+
+        const handleDocumentUploadedEvent = () => {
+            getFiles();
+            setIsUploading(false);
+        };
+
+        socket.on("document-uploaded", handleDocumentUploadedEvent);
+        return () => {
+            socket.off("document-uploaded", handleDocumentUploadedEvent);
+        };
+
+    }, [parentId]);
+
 
     return (
         <>

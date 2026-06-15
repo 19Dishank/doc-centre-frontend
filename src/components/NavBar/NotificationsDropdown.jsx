@@ -30,6 +30,7 @@ const NotificationsDropdown = () => {
     useEffect(() => {
 
         const handleReceiveNotification = (message) => {
+            console.log("Received notification:", message);
             setNotifications((prev) => [message, ...prev]);
         };
 

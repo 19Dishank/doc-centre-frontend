@@ -12,7 +12,7 @@ export const formatTime = (time, text) => {
     const month = 30 * day;
     const year = 365 * day;
 
-    if (diff < 5 * minute) return text || "Active Now";
+    if (diff < 5 * minute) return text || "Just Now";
     if (diff < hour) return `${Math.floor(diff / (5 * minute)) * 5} minutes ago`;
     if (diff < day) return `${Math.floor(diff / hour)} hours ago`;
     if (diff < week) return `${Math.floor(diff / day)} days ago`;

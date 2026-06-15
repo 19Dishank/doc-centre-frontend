@@ -65,7 +65,7 @@ const Notification = ({ notification }) => {
                     <p className={`text-xs font-medium text-zinc-900 ${!notification.isRead ? "font-semibold" : ""}`}>
                         {notification.title}
                     </p>
-                    <span className="text-[10px] text-zinc-400 shrink-0">{formatTime(notification.createdAt, "Just Now")}</span>
+                    <span className="text-[10px] text-zinc-400 shrink-0">{formatTime(notification.createdAt)}</span>
                 </div>
                 <p className="text-xs text-zinc-500 leading-normal line-clamp-2">
                     {notification.message}

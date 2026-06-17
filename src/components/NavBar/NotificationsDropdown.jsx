@@ -14,6 +14,7 @@ const NotificationsDropdown = () => {
 
     const getNotifications = async () => {
         try {
+            console.log("Fetching notifications...");
             const res = await fetchNotifications();
             setNotifications(res.data.notification);
             setUnreadCount(res.data.unreadCount);
@@ -136,3 +137,6 @@ const NotificationsDropdown = () => {
 };
 
 export default NotificationsDropdown;
+
+
+

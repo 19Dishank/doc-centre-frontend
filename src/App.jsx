@@ -34,12 +34,17 @@ export default function App() {
         errorElement: <ErrorPage />,
         children: [
           {
-            element: <AuthLayout />,
-            children:
-              publicRoutes.map(({ path, element }) => ({
-                path,
-                element: <PublicRoute>{element}</PublicRoute>,
-              }))
+            element: <PublicRoute />,
+            children: [
+              {
+                element: <AuthLayout />,
+                children:
+                  publicRoutes.map(({ path, element }) => ({
+                    path,
+                    element
+                  }))
+              }
+            ]
           },
           {
             element: <AppLayout />,
@@ -52,7 +57,7 @@ export default function App() {
                 ...protectedRoutes
                   .map(({ path, element, isRouteAccessible }) => ({
                     path,
-                    element: loading ? <Loader styles={"min-h-screen"} /> : <ProtectedRoute isRouteAccessible={isRouteAccessible}>{element}</ProtectedRoute>,
+                    element: <ProtectedRoute isRouteAccessible={isRouteAccessible}>{element}</ProtectedRoute>,
                   }))
               ]
           },

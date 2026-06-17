@@ -35,7 +35,7 @@ const Permissions = ({ currentRoleId, currentRole, getAvailableRoles }) => {
             default: return <FileText className={iconClasses} />;
         }
     };
-
+    
     const handlePermissionChange = (permissionId, checked, module, name) => {
         if (!name.startsWith("View")) {
             const viewPermissionId = permissionsCatalog
@@ -80,7 +80,7 @@ const Permissions = ({ currentRoleId, currentRole, getAvailableRoles }) => {
         }
     };
 
-    const handelSelectAllChange = (module) => {
+    const handleSelectAllChange = (module) => {
         const category = permissionsCatalog.find(cat => cat.module === module);
         if (!category) return;
         const categoryPermissionIds = category.permissions.map(perm => perm.permissionId);
@@ -162,7 +162,7 @@ const Permissions = ({ currentRoleId, currentRole, getAvailableRoles }) => {
                                                 className="cursor-pointer size-4 rounded border-zinc-300 text-blue-600 focus:ring-blue-500 data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600 shrink-0"
                                                 disabled={(!canAssignPermissions || currentRoleId === user.role._id)}
                                                 checked={category.permissions.every(perm => permissions?.includes(perm.permissionId))}
-                                                onCheckedChange={() => handelSelectAllChange(category.module)}
+                                                onCheckedChange={() => handleSelectAllChange(category.module)}
                                             />
                                             <label
                                                 htmlFor={"select_all_" + category.module}
@@ -237,27 +237,3 @@ const Permissions = ({ currentRoleId, currentRole, getAvailableRoles }) => {
 };
 
 export default Permissions;
-
-export const DebugFooter = ({ hasChanges, handleReset, isSaving, updatePermissions }) => {
-    return (
-        <div className="p-4 border-t border-zinc-200 flex flex-col-reverse sm:flex-row justify-end bg-zinc-50/50 shrink-0 gap-2">
-            {hasChanges && (
-                <Button
-                    variant="outline"
-                    onClick={handleReset}
-                    className="w-full sm:w-auto text-xs h-10 sm:h-9 cursor-pointer"
-                >
-                    Reset
-                </Button>
-            )}
-            <Button
-                disabled={!hasChanges || isSaving}
-                onClick={updatePermissions}
-                className="cursor-pointer bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium px-4 h-10 sm:h-9 gap-1.5 shadow-sm rounded-lg transition-all w-full sm:w-auto"
-            >
-                <Save className="size-3.5" />
-                {isSaving ? "Saving Config..." : "Save Changes"}
-            </Button>
-        </div>
-    )
-}

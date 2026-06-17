@@ -1,23 +1,16 @@
-import { loginUser, logoutUser } from "@/api/auth";
+import { loginUser } from "@/api/auth";
 import { Button } from "@/components/ui/button";
 import FormField from "@/components/ui/form-field";
-import { useAuthContext } from "@/contexts/AuthContext";
 import { toastNotification } from "@/helper/toastNotification";
-import { setTokens } from "@/helper/tokens";
 import { ArrowRight } from "lucide-react";
 import { useState } from "react";
 import { NavLink, useNavigate, useSearchParams } from "react-router-dom";
-import AccountConflictModal from "../AccountConflictModal";
-import { authChannel } from "@/helper/authChannel.js";
 
-const TenantLoginForm = () => {
+const ConnectForm = () => {
 
-    const { isAuthenticated, setIsAuthenticated, user } = useAuthContext();
-    const currentEmail = user?.email;
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
     const email = searchParams.get("email") || "";
-    const [showConflictModal, setShowConflictModal] = useState(isAuthenticated && !!email);
 
     const [loginData, setLoginData] = useState({ email: email, password: "" });
     const [errors, setErrors] = useState({ email: "", password: "" });
@@ -79,28 +72,12 @@ const TenantLoginForm = () => {
         setLoading(true);
         const res = await loginUser(loginData);
         if (res.success) {
-            setTokens(res.data.accessToken, res.data.refreshToken);
-            navigate("/dashboard");
-            setIsAuthenticated(true);
-            authChannel.postMessage({
-                type: "ACCOUNT_CHANGED"
-            });
-
+            navigate("/connect/authorize")
         } else {
             toastNotification(res?.data?.message || "Login failed. Please try again.", "error");
         }
         setLoading(false);
     };
-
-    const onUseCurrent = () => {
-        navigate("/dashboard");
-    }
-
-    const onUseEntered = () => {
-        logoutUser();
-        setIsAuthenticated(false);
-        setShowConflictModal(false);
-    }
 
     return (
         <>
@@ -115,17 +92,8 @@ const TenantLoginForm = () => {
                     <ArrowRight className="size-4 ml-1" />
                 </Button>
             </form>
-
-            {showConflictModal && (
-                <AccountConflictModal
-                    currentEmail={currentEmail}
-                    enteredEmail={loginData.email}
-                    onUseCurrent={onUseCurrent}
-                    onUseEntered={onUseEntered}
-                />
-            )}
         </>
     );
 };
 
-export default TenantLoginForm;
+export default ConnectForm;

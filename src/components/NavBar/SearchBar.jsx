@@ -24,7 +24,7 @@ const SearchBar = () => {
     const [searchQuery, setSearchQuery] = useState("");
     const [isOpen, setIsOpen] = useState(false);
     const containerRef = useRef(null);
-    const inputRef = useRef(null); 
+    const inputRef = useRef(null);
     const { checkPermission, checkRole } = usePermissions();
 
     const canViewDocument = useMemo(() => checkPermission(PERMISSIONS.VIEW_DOCUMENT), [checkPermission]);
@@ -97,7 +97,7 @@ const SearchBar = () => {
                     <Search className="size-4 text-zinc-400" />
                 </div>
                 <Input
-                    ref={inputRef} 
+                    ref={inputRef}
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder="Search..."

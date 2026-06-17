@@ -4,19 +4,23 @@ import { memo, useState } from "react";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { Loader, Plus } from "lucide-react";
+import NewlyGeneratedKeyDisplay from "./NewlyGeneratedKeyDisplay";
 
 const NewAPIKeyForm = ({ getApiKeys }) => {
 
     const [newKeyName, setNewKeyName] = useState("")
     const [loading, setLoading] = useState(false);
+    const [apiKey, setApiKey] = useState(null);
 
     const handleGenerateKey = async e => {
         setLoading(true);
         try {
             e.preventDefault()
             if (!newKeyName.trim()) return
-            await generateApiKey(newKeyName.trim());
+            const res = await generateApiKey(newKeyName.trim());
+            console.log("🚀 ~ handleGenerateKey ~ res:", res)
             setNewKeyName("");
+            setApiKey(res.data.apiKey);
             getApiKeys();
             toastNotification("API key generated successfully!", "success");
         } catch (error) {
@@ -27,20 +31,27 @@ const NewAPIKeyForm = ({ getApiKeys }) => {
         }
     }
 
+            console.log("🚀 ~ NewAPIKeyForm ~ apiKey:", apiKey)
     return (
-        <form onSubmit={handleGenerateKey} className="flex gap-2 flex-1 w-full">
-            <Input
-                id="key-name"
-                placeholder="e.g., Production Web App"
-                value={newKeyName}
-                onChange={e => setNewKeyName(e.target.value)}
-                className="text-sm bg-zinc-50"
-            />
-            <GenerateButton
-                loading={loading}
-                disabled={!newKeyName.trim() || loading}
-            />
-        </form>
+        <>
+            <form onSubmit={handleGenerateKey} className="flex gap-2 flex-1 w-full">
+                <Input
+                    id="key-name"
+                    placeholder="e.g., Production Web App"
+                    value={newKeyName}
+                    onChange={e => setNewKeyName(e.target.value)}
+                    className="text-sm bg-zinc-50"
+                />
+                <GenerateButton
+                    loading={loading}
+                    disabled={!newKeyName.trim() || loading}
+                />
+            </form>
+
+            {apiKey && (
+                <NewlyGeneratedKeyDisplay apiKey={apiKey} setApiKey={setApiKey} />
+            )}
+        </>
     )
 }
 

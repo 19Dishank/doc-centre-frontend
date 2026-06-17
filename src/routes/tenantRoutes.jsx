@@ -10,6 +10,7 @@ const Organization = lazy(() => import("@/pages/settings/Organization"));
 const NotificationsSetting = lazy(() => import("@/pages/settings/NotificationsSetting"));
 // const DangerZone = lazy(() => import("@/pages/settings/DangerZone"));
 const LoginPage = lazy(() => import("@/pages/LoginPage"));
+const ConsentScreen = lazy(() => import("@/pages/ConsentScreen"));
 const EmailInput = lazy(() => import("@/components/ForgotPasswordPage/EmailInput"));
 const OTPInput = lazy(() => import("@/components/ForgotPasswordPage/OTPInput"));
 const PasswordInput = lazy(() => import("@/components/ForgotPasswordPage/PasswordInput"));
@@ -25,6 +26,14 @@ export const publicRoutes = [
     {
         path: "/login",
         element: <LoginPage />,
+    },
+    {
+        path: "/connect",
+        element: <LoginPage />,
+    },
+    {
+        path: "/connect/authorize",
+        element: <ConsentScreen />,
     },
     {
         path: "/forgot-password",

@@ -1,36 +1,127 @@
-import { memo, useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
-import APIKeyDetails from "./APIKeyDetails";
+import { memo, useEffect, useState } from "react";
+import { DataTable } from "../DataTable";
+import { Trash2 } from "lucide-react";
+import { Button } from "../ui/button";
+import ConfirmationModal from "../ConfirmationModal";
+import { revokeApiKey } from "@/api/api";
+import { toastNotification } from "@/helper/toastNotification";
 
 const ActiveAPIKeys = ({ apiKeys, getApiKeys }) => {
+
+    const formatKey = keySuffix => {
+        return `••••••••••••••••••••••••••••${keySuffix}`
+    }
 
     useEffect(() => {
         getApiKeys();
     }, []);
 
+    const columns = [
+        {
+            key: "name",
+            header: "Name",
+            width: "w-[15%]",
+        },
+        {
+            key: "key_suffix",
+            header: "API Key",
+            width: "w-[25%]",
+            render: (row) => (
+                <span className="font-mono">
+                    {formatKey(row?.key_suffix)}
+                </span>
+            ),
+        },
+        {
+            key: "isActive",
+            header: "Status",
+            width: "w-[10%]",
+            render: (row) => (
+                <span
+                    className={`px-2 py-1 rounded text-xs ${row.isActive
+                        ? "bg-green-100 text-green-700"
+                        : "bg-red-100 text-red-700"
+                        }`}
+                >
+                    {row.isActive ? "Active" : "Inactive"}
+                </span>
+            ),
+        },
+        {
+            key: "createdAt",
+            header: "Created At",
+            width: "w-[15%]",
+            render: (row) =>
+                new Date(row.createdAt).toLocaleString(),
+        },
+        {
+            key: "actions",
+            header: "Actions",
+            width: "w-[15%]",
+            align: "right",
+            render: (row) => <ActionsCell row={row} getApiKeys={getApiKeys} />,
+        },
+    ];
+
     return (
-        <Card className="p-4 sm:p-6">
-            <CardHeader className="p-0 gap-1 mb-6">
-                <CardTitle className="text-base leading-6">Active API Keys</CardTitle>
-            </CardHeader>
-            <CardContent className="p-0 flex flex-col gap-6">
-                {apiKeys.length === 0 ? (
-                    <p className="text-sm text-zinc-500 text-center py-4">
-                        No API keys generated yet.
-                    </p>
-                ) : (
-                    apiKeys.map((item, index) => (
-                        <APIKeyDetails
-                            key={item._id}
-                            item={item}
-                            index={index}
-                            getApiKeys={getApiKeys}
-                        />
-                    ))
-                )}
-            </CardContent>
-        </Card>
+        <>
+            <DataTable
+                columns={columns}
+                data={apiKeys}
+                emptyMessage="No Keys Found"
+            />
+        </>
     );
 };
 
 export default memo(ActiveAPIKeys);
+
+const ActionsCell = ({ row: item, getApiKeys }) => {
+
+    const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
+    const [isDeleting, setIsDeleting] = useState(false);
+
+    const handleDeleteKey = async (id) => {
+        setIsDeleting(true);
+        try {
+            await revokeApiKey(id);
+            getApiKeys();
+            toastNotification("API key revoked successfully!", "success");
+        } catch (error) {
+            console.error("Error deleting API key: ", error);
+        } finally {
+            setIsDeleting(false);
+            setIsConfirmationModalOpen(false);
+        }
+    }
+
+    return (
+        <>
+            <div className="flex justify-end items-center gap-0.5">
+                <Button
+                    onClick={() => setIsConfirmationModalOpen(true)}
+                    variant="ghost"
+                    size="icon"
+                    className="size-8 text-red-400 hover:text-red-600 hover:bg-red-50 cursor-pointer"
+                >
+                    <Trash2 className="size-3.5" />
+                </Button>
+            </div>
+
+            {isConfirmationModalOpen && (
+                <ConfirmationModal
+                    setIsOpen={setIsConfirmationModalOpen}
+                    heading={`Delete API Key "${item.name}"`}
+                    subheading={`Are you sure you want to delete API Key "${item.name}"? This action cannot be undone.`}
+                    onConfirm={() => handleDeleteKey(item._id)}
+                    onCancel={() => setIsConfirmationModalOpen(false)}
+                    type="danger"
+                    loading={isDeleting}
+                    confirmText="Yes, delete it"
+                    loadingText="Deleting..."
+                />
+            )}
+
+        </>
+    )
+}

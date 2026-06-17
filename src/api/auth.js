@@ -1,6 +1,8 @@
 import axiosInstance from "@/helper/axiosInstance";
+import { getSubdomain } from "@/helper/getSubdomain";
 import { toastNotification } from "@/helper/toastNotification";
 import { clearTokens, getTokens } from "@/helper/tokens";
+import axios from "axios";
 
 export const refreshAccessToken = async () => {
     try {
@@ -12,6 +14,33 @@ export const refreshAccessToken = async () => {
         return response.data;
     } catch (error) {
         console.error("Error refreshing access token:", error);
+        throw error;
+    }
+};
+
+export const getSignedURLForLogoUpload = async (payload) => {
+    try {
+        const response = await axiosInstance.post(
+            `/tenants/logo-upload-url`,
+            payload
+        );
+        return response.data;
+    } catch (error) {
+        console.error("Error getting presigned URL for logo upload:", error);
+        throw error;
+    }
+}
+
+export const uploadLogoToS3 = async (presignedUrl, file) => {
+    try {
+        const response = await axios.put(presignedUrl, file, {
+            headers: {
+                'Content-Type': file.type,
+            },
+        });
+        return response;
+    } catch (error) {
+        console.error("Error uploading logo to S3:", error);
         throw error;
     }
 };
@@ -34,6 +63,17 @@ export const createTenant = async (tenantData) => {
     }
 };
 
+export const fetchLogo = async () => {
+    try {
+        const slug = getSubdomain();
+        const response = await axiosInstance.get(`/tenants/logo-url?slug=${slug}`);
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching logo:", error);
+        throw error;
+    }
+}
+
 export const validateSecureToken = async (token) => {
     try {
         console.log("Validating secure token:", token);
@@ -42,6 +82,19 @@ export const validateSecureToken = async (token) => {
         return response.data;
     } catch (error) {
         console.error("Error validating secure token:", error);
+        throw error;
+    }
+};
+
+export const resendVerificationEmail = async (token) => {
+    try {
+        const response = await axiosInstance.post(
+            `/tenants/resend-email`,
+            { token }
+        );
+        return response.data;
+    } catch (error) {
+        console.error("Error resending verification email:", error);
         throw error;
     }
 };
@@ -107,6 +160,16 @@ export const validateEmailVerificationToken = async (token) => {
     }
 };
 
+export const validateTenant = async (slug) => {
+    try {
+        const response = await axiosInstance.get(`/auth/${slug}`);
+        return response.data;
+    } catch (error) {
+        console.error("Error validating tenant:", error);
+        throw error;
+    }
+}
+
 export const loginUser = async (credentials) => {
     try {
         const response = await axiosInstance.post(
@@ -116,7 +179,7 @@ export const loginUser = async (credentials) => {
         return response.data;
     } catch (error) {
         console.error("Error logging in:", error);
-        throw error;
+        return error?.response || { success: false, message: "An error occurred during login. Please try again." };
     }
 };
 
@@ -184,16 +247,5 @@ export const logoutUser = async () => {
         throw error;
     } finally {
         clearTokens();
-        window.location.replace(import.meta.env.VITE_APP_BASE_URL.replace("slug", "app") + `/login`);
-    }
-};
-
-export const fetchMe = async () => {
-    try {
-        const response = await axiosInstance.get(`/auth/me`);
-        return response.data;
-    } catch (error) {
-        console.error("Error fetching user data:", error);
-        throw error;
     }
 };

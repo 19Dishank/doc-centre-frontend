@@ -21,13 +21,13 @@ const GetStarted = () => {
 
                     <div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
                         <NavLink to="/onboarding" className="w-full sm:w-auto">
-                            <Button className="bg-white text-[#2b7fff] hover:bg-blue-50 px-8 gap-2 h-12 w-full sm:w-auto text-base font-semibold shadow-lg">
+                            <Button className="bg-white cursor-pointer text-[#2b7fff] hover:bg-blue-50 px-8 gap-2 h-12 w-full sm:w-auto text-base font-semibold shadow-lg">
                                 Get started
                                 <ArrowRight className="size-4" />
                             </Button>
                         </NavLink>
                         <Button
-                            className="bg-transparent text-white border-white/30 hover:bg-white/10 px-8 h-12 w-full sm:w-auto text-base"
+                            className="bg-transparent cursor-pointer text-white border-white/30 hover:bg-white/10 px-8 h-12 w-full sm:w-auto text-base"
                             variant="outline">
                             Talk to sales
                         </Button>

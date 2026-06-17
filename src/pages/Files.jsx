@@ -1,39 +1,79 @@
-import {
-  ChevronDown,
-  FolderPlus,
-  MoreHorizontal,
-  Plus,
-  Search,
-  Filter,
-  ChevronRight,
-} from "lucide-react";
+import { Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import FilesTableFormat from "@/components/Files/FilesTableView";
-import { fetchFiles, upload } from "@/api/file";
-import { useEffect, useState } from "react";
+import { fetchFiles } from "@/api/file";
+import { useEffect, useMemo, useState } from "react";
+import { PERMISSIONS } from "@/helper/permissions";
+import { usePermissions } from "@/hooks/usePermissions";
+import { NavLink, useSearchParams } from "react-router-dom";
+import { DataTable } from "@/components/DataTable";
+import { formatSize } from "@/helper/formatSize";
+import BreadcrumbNavigation from "@/components/Files/BreadcrumbNavigation";
+import FileNameCell from "@/components/Files/Cells/FileNameCell";
+import OwnerNameCell from "@/components/Files/Cells/OwnerNameCell";
+import ActionsCell from "@/components/Files/Cells/ActionsCell";
+import PaginationBar from "@/components/ui/pagination-bar";
+import FiltersBar from "@/components/Files/FiltersBar";
+import PageHeading from "@/components/PageHeading";
+import UploadButtons from "@/components/Files/UploadButtons";
 
 export default function Files() {
 
+  const { checkPermission } = usePermissions();
+
+  const [searchParams, setSearchParams] = useSearchParams();
   const [parentId, setParentId] = useState("");
   const [navigationBar, setNavigationBar] = useState([{ name: "My Files", parentId: "" }]);
-  const [createNewFolder, setCreateNewFolder] = useState(false);
-
-  const onChangeFile = async (event) => {
-    const file = event.target.files[0];
-    await upload({ file, parentId });
-    getFiles();
-  };
-
   const [tableRows, setTableRows] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [newFolderRow, setNewFolderRow] = useState(null);
+  const [goBackRow, setGoBackRow] = useState({ isGoBackRow: false });
+  const [renameMode, setRenameMode] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [paginationData, setPaginationData] = useState(null);
+  const [currentPage, setCurrentPage] = useState(Number(searchParams.get("page")) || 1);
 
-  const getFiles = async () => {
+  const {
+    totalDocuments,
+    totalPages,
+    pageSize: limit,
+    hasNextPage,
+    hasPreviousPage
+  } = paginationData || {};
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setGoBackRow({ isGoBackRow: !!parentId });
+  }, [parentId]);
+
+  const tableData = newFolderRow
+    ? [newFolderRow, ...tableRows]
+    : goBackRow.isGoBackRow
+      ? [goBackRow, ...tableRows]
+      : tableRows;
+
+  useEffect(() => {
+    setSearchParams((prev) => {
+      prev.set("page", currentPage);
+      return prev;
+    });
+  }, [currentPage]);
+
+  const handleNavigationClick = (parentId, index) => {
+    setParentId(parentId)
+    setNavigationBar(prev => prev.slice(0, index + 1))
+  }
+
+  const getFiles = async (filters) => {
+    setLoading(true);
     try {
-      setLoading(true);
-      const res = await fetchFiles(parentId);
-      console.log("Files fetched successfully:", res);
-      setTableRows(res.data.docs);
+      const res = await fetchFiles(parentId, {
+        page: currentPage,
+        limit: 5,
+        ...filters,
+        sort: undefined,
+        [filters?.sort?.split("_")[0]]: filters?.sort?.split("_")[1]
+      });
+      setTableRows(res.data.documents);
+      setPaginationData(res.data.pagination);
     } catch (error) {
       console.error("Error fetching files:", error);
     } finally {
@@ -41,88 +81,111 @@ export default function Files() {
     }
   }
 
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    getFiles();
-  }, [parentId]);
+  const columns = [
+    {
+      key: "name",
+      header: "Name",
+      width: "w-[30%]",
+      cellClassName: "font-medium",
+      render: (row) => {
+        return <FileNameCell
+          row={row}
+          setNewFolderRow={setNewFolderRow}
+          setNavigationBar={setNavigationBar}
+          parentId={parentId}
+          setParentId={setParentId}
+          getFiles={getFiles}
+          renameMode={renameMode}
+          setRenameMode={setRenameMode}
+        />;
+      },
+    },
+    {
+      key: "type",
+      header: "Type",
+      width: "w-[10%]",
+      render: (row) => !row?.isGoBackRow && (
+        <div className="uppercase">{row?.originalFileName?.split(".").pop() || "Folder"}</div>
+      ),
+    },
+    {
+      key: "size",
+      header: "Size",
+      width: "w-[10%]",
+      render: (row) => !row?.isGoBackRow && (row?.size ? formatSize(row.size) : "—"),
+    },
+    {
+      key: "createdAt",
+      header: "Uploaded At",
+      width: "w-[10%]",
+      render: (row) => !row?.isGoBackRow && (row?.createdAt ? new Date(row.createdAt).toLocaleDateString() : "—"),
+    },
+    {
+      key: "owner",
+      header: "Owner",
+      width: "w-[15%]",
+      // cellClassName: "flex items-center gap-2",
+      render: (row) => (!row?.isGoBackRow) && <OwnerNameCell row={row} />,
+    },
+    {
+      key: "actions",
+      header: "Actions",
+      width: "w-[20%]",
+      align: "right",
+      render: (row) => !row?.isGoBackRow && (
+        <ActionsCell row={row} getFiles={getFiles} setRenameMode={setRenameMode} currentPageItems={tableRows.length} setCurrentPage={setCurrentPage} />
+      ),
+    },
+  ];
 
-  console.log(tableRows);
-
-  const tableColumns = ["Name", "Type", "Size", "Modified", "Owner", "Actions"];
+  const canRestoreDocument = useMemo(() => checkPermission(PERMISSIONS.RESTORE_DOCUMENT), [checkPermission]);
 
   return (
-    <div className="flex flex-col gap-6 w-full max-w-full">
-      <div className="flex flex-col gap-4 lg:flex-row lg:justify-between lg:items-center">
-        <div className="text-sm leading-5 flex items-center gap-2 overflow-x-auto whitespace-nowrap pb-1 lg:pb-0 no-scrollbar">
-          {/* <span className="cursor-pointer font-medium text-[#2b7fff]">My Files</span> */}
-          {navigationBar.map((item, index) => {
-            return (
-              <span key={item.parentId} className="flex items-center gap-2" onClick={() => setParentId(item.parentId)}>
-                <span className="cursor-pointer font-medium text-[#2b7fff] last:font-semibold last:text-zinc-950">{item.name}</span>
-                {index < navigationBar.length - 1 && <ChevronRight className="size-4 text-[#71717b]" />}
-              </span>
-            )
-          })}
-        </div>
+    <div className="flex h-full flex-col gap-6 w-full max-w-full p-1">
 
-        <div className="flex items-center gap-2 overflow-x-auto lg:overflow-visible pb-1 lg:pb-0">
-          <Button size="sm" className="bg-[#2b7fff] text-blue-50">
-            <label htmlFor="file-input" className="cursor-pointer gap-1 flex items-center">
-              <Plus className="size-4" />
-              Upload
-              <input id="file-input" type="file" className="hidden" onChange={onChangeFile} />
-            </label>
-          </Button>
-          <Button size="sm" variant="outline" className="gap-1 shrink-0" onClick={() => setCreateNewFolder(true)}>
-            <FolderPlus className="size-4" />
-            <span className="hidden sm:inline">New Folder</span>
-          </Button>
-          {/* <div className="rounded-lg bg-white border-zinc-200 border border-solid flex shrink-0 p-px">
-            <Button variant="ghost" size="sm" className={`px-2 ${!isTableView ? "text-[#2b7fff] bg-[#2b7fff]/10" : ""}`} onClick={() => setIsTableView(false)}>
-              <LayoutGrid className="size-4" />
+      <div className="flex justify-between gap-2 items-center border-b border-zinc-100 pb-4">
+        <PageHeading
+          heading="Files"
+          subheading="Manage your files and folders."
+        />
+        {canRestoreDocument && (
+          <NavLink to="/trash" className="mt-auto">
+            <Button variant="outline" className="cursor-pointer gap-2 text-zinc-700 hover:text-zinc-900">
+              <Trash2 className="size-4 text-zinc-500" />
+              Recycle Bin
             </Button>
-            <Button variant="ghost" size="sm" className={`px-2 ${isTableView ? "text-[#2b7fff] bg-[#2b7fff]/10" : ""}`} onClick={() => setIsTableView(true)}>
-              <List className="size-4" />
-            </Button>
-          </div> */}
-          <Button variant="outline" size="sm" className="shrink-0 px-2 lg:hidden">
-            <MoreHorizontal className="size-4" />
-          </Button>
-        </div>
+          </NavLink>
+        )}
       </div>
 
-      <div className="flex flex-col gap-3 md:flex-row md:items-center">
-        <div className="relative flex-1">
-          <Search className="size-4 text-[#71717b] absolute left-3 top-1/2 -translate-y-1/2" />
-          <Input placeholder="Search files…" className="bg-white pl-9 w-full" />
-        </div>
-        <div className="flex items-center gap-2 overflow-x-auto no-scrollbar">
-          <Button variant="outline" size="sm" className="gap-1 shrink-0">
-            <Filter className="size-3.5" />
-            <span className="hidden sm:inline">Type</span>
-          </Button>
-          <Button variant="outline" size="sm" className="gap-1 shrink-0">
-            Date
-            <ChevronDown className="size-3" />
-          </Button>
-          <Button variant="outline" size="sm" className="gap-1 shrink-0 whitespace-nowrap">
-            Sort: Name
-            <ChevronDown className="size-3" />
-          </Button>
-        </div>
+      <div className="flex flex-col gap-4 sm:flex-row sm:justify-between sm:items-center">
+        <BreadcrumbNavigation navigationBar={navigationBar} handleNavigationClick={handleNavigationClick} />
+        <UploadButtons getFiles={getFiles} parentId={parentId} setNewFolderRow={setNewFolderRow} />
       </div>
 
-      <FilesTableFormat
-        parentId={parentId}
-        createNewFolder={createNewFolder}
-        setCreateNewFolder={setCreateNewFolder}
-        setParentId={setParentId}
-        tableColumns={tableColumns}
-        tableRows={tableRows}
-        loading={loading}
-        setNavigationBar={setNavigationBar}
-        getFiles={getFiles}
-      />
+      <FiltersBar parentId={parentId} setCurrentPage={setCurrentPage} currentPage={currentPage} getFiles={getFiles} />
+
+      <div className="rounded-xl border border-zinc-200 bg-white shadow-sm">
+        <DataTable
+          columns={columns}
+          data={tableData}
+          loading={loading}
+        />
+      </div>
+
+      {tableRows.length > 0 && (
+        <div className="mt-auto">
+          <PaginationBar
+            totalPages={totalPages || 0}
+            currentPage={currentPage}
+            setCurrentPage={setCurrentPage}
+            hasNextPage={hasNextPage}
+            hasPreviousPage={hasPreviousPage}
+            totalItems={totalDocuments}
+            limit={limit}
+          />
+        </div>
+      )}
 
     </div>
   );

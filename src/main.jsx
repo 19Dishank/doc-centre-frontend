@@ -1,15 +1,20 @@
-import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
 import App from "./App.jsx";
 import { ToastContainer } from "react-toastify";
 import AuthProvider from "./contexts/AuthContext";
+import { TooltipProvider } from "./components/ui/tooltip";
+import CatalogProvider from "./contexts/CatalogContext";
 
 createRoot(document.getElementById("root")).render(
-  <StrictMode>
+  // <StrictMode>
+  <TooltipProvider>
     <AuthProvider>
-      <App />
-      <ToastContainer />
+      <CatalogProvider>
+        <App />
+        <ToastContainer />
+      </CatalogProvider>
     </AuthProvider>
-  </StrictMode>
+  </TooltipProvider>
+  // </StrictMode>
 );

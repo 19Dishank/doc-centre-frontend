@@ -1,9 +1,10 @@
-import { createTenant } from "@/api/auth";
+import { createTenant, getSignedURLForLogoUpload, uploadLogoToS3 } from "@/api/auth";
 import { Button } from "@/components/ui/button";
 import FormField from "@/components/ui/form-field";
 import { emailRegex, slugRegex } from "@/constants";
 import { toastNotification } from "@/helper/toastNotification";
-import { useState } from "react";
+import { useState, useRef } from "react";
+import FileUpload from "./FileUpload";
 
 const OnBoardingForm = () => {
 
@@ -18,11 +19,13 @@ const OnBoardingForm = () => {
     };
 
     const [registrationData, setRegistrationData] = useState(initialData);
+    const [selectedFile, setSelectedFile] = useState(null);
     const [errors, setErrors] = useState(initialData);
     const [loading, setLoading] = useState(false);
 
-    const validateField = (name, value) => {
+    const fileInputRef = useRef(null);
 
+    const validateField = (name, value) => {
         switch (name) {
             case "firstName":
                 if (!value.trim()) return "First name is required";
@@ -56,13 +59,8 @@ const OnBoardingForm = () => {
                 return "";
 
             case "logo":
-                if (!value) return "";
-                try {
-                    new URL(value);
-                    return "";
-                } catch {
-                    return "Logo must be a valid URL";
-                }
+                if (!value) return "Organization logo is required";
+                return "";
 
             default:
                 return "";
@@ -95,20 +93,49 @@ const OnBoardingForm = () => {
         return Object.values(newErrors).every((error) => error === "");
     };
 
+    const createSlug = () => {
+        const generatedSlug = registrationData.orgName.toLowerCase().trim().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+        setRegistrationData((prev) => ({
+            ...prev,
+            slug: generatedSlug
+        }));
+        setErrors((prev) => ({
+            ...prev,
+            slug: validateField("slug", generatedSlug)
+        }));
+    }
+
     const handleSubmit = async (e) => {
         e.preventDefault();
-
         const isValid = validateForm();
-
         if (!isValid) return;
 
         setLoading(true);
         try {
-            console.log(registrationData)
-            const res = await createTenant(registrationData);
+            const preSignedUrlResponse = await getSignedURLForLogoUpload({
+                "slug": registrationData.slug,
+                "fileName": selectedFile.name,
+                "contentType": selectedFile.type
+            });
+            const logoKey = preSignedUrlResponse.data.key;
+            const uploadResponse = await uploadLogoToS3(preSignedUrlResponse.data.url, selectedFile);
+
+            if (uploadResponse.status !== 200) {
+                toastNotification("Failed to upload logo. Please try again.", "error");
+                setLoading(false);
+                return;
+            }
+
+            const res = await createTenant({ ...registrationData, logo: undefined, logoKey });
             console.log("Response Data:", res);
-            toastNotification("Tenant created successfully! Please check your email to complete the onboarding process.", "success");
+
+            toastNotification("Organization created successfully! Please check your email to complete the onboarding process.", "success");
+
+            if (registrationData.logo.startsWith("blob:")) URL.revokeObjectURL(registrationData.logo);
             setRegistrationData(initialData);
+            setSelectedFile(null);
+            if (fileInputRef.current) fileInputRef.current.value = "";
+
         } catch (error) {
             console.error("Error creating tenant:", error);
             toastNotification(error?.response?.data?.message || "An error occurred while creating the tenant. Please try again.", "error");
@@ -118,15 +145,16 @@ const OnBoardingForm = () => {
     };
 
     return (
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4 w-full max-w-lg mx-auto">
             <div className="grid grid-cols-2 gap-4">
                 <FormField label="First Name" name="firstName" value={registrationData.firstName} onChange={handleChange} placeholder="Jane" error={errors.firstName} />
                 <FormField label="Last Name" name="lastName" value={registrationData.lastName} onChange={handleChange} placeholder="Doe" error={errors.lastName} />
             </div>
             <FormField label="Work Email" name="email" value={registrationData.email} onChange={handleChange} placeholder="you@company.com" error={errors.email} />
-            <FormField label="Organization Name" name="orgName" value={registrationData.orgName} onChange={handleChange} placeholder="Acme Corp" error={errors.orgName} />
+            <FormField label="Organization Name" name="orgName" value={registrationData.orgName} onChange={handleChange} placeholder="Acme Corp" error={errors.orgName} onBlur={createSlug} />
             <FormField label="Organization Slogan" name="orgSlogan" value={registrationData.orgSlogan} onChange={handleChange} placeholder="Acme Corp" error={errors.orgSlogan} />
             <FormField label="Slug" name="slug" value={registrationData.slug} onChange={handleChange} placeholder="acme-corp" error={errors.slug} />
+            <FileUpload errors={errors} setErrors={setErrors} selectedFile={selectedFile} setSelectedFile={setSelectedFile} setRegistrationData={setRegistrationData} registrationData={registrationData} fileInputRef={fileInputRef} />
             <Button
                 type="submit"
                 className="mt-2 cursor-pointer h-11 font-semibold rounded-lg bg-[#2b7fff] text-blue-50 w-full disabled:cursor-not-allowed"

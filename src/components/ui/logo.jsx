@@ -1,3 +1,5 @@
+import { memo } from "react";
+
 const Logo = ({ width, height, mode }) => {
     return (
         <>
@@ -6,4 +8,4 @@ const Logo = ({ width, height, mode }) => {
     );
 };
 
-export default Logo;
+export default memo(Logo);

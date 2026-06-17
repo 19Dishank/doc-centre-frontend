@@ -21,7 +21,6 @@ const Activate = () => {
             const res = isOnboardingFlow
                 ? await validateSecureToken(token)
                 : await validateMemberToken(token);
-            console.log("Token validation response:", res);
             setTokenStatus(res.data.status);
         } catch (error) {
             console.error("Invalid or expired token:", error);

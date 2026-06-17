@@ -1,8 +1,14 @@
-
 import { Outlet } from "react-router-dom";
 import SidePanel from "./SidePanel";
+import { useAuthContext } from "@/contexts/AuthContext";
+import { Loader } from "lucide-react";
 
-export default function AuthLayout() {
+export default function AuthLayout({ children }) {
+  const { loading } = useAuthContext();
+  console.log("🚀 ~ AuthLayout ~ loading:", loading)
+
+  if (loading) return <Loader className="animate-spin" size={48} />
+  
   return (
     <main className="bg-white">
       <div className="flex flex-col lg:flex-row w-full min-h-screen">
@@ -10,7 +16,7 @@ export default function AuthLayout() {
           <SidePanel />
         </div>
         <div className="flex-1 flex items-center justify-center p-6 sm:p-12 lg:p-16">
-          <Outlet />
+          {children ? children : <Outlet />}
         </div>
       </div>
     </main>

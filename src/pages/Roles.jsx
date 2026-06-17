@@ -1,258 +1,93 @@
-import {
-  Code,
-  Eye,
-  FileText,
-  Lock,
-  MoreHorizontal,
-  Pencil,
-  Plus,
-  Save,
-  Settings,
-  Shield,
-  Trash2,
-  Users,
-} from "lucide-react";
+import { fetchRoles } from "@/api/role";
+import AvailableRoles from "@/components/Roles/AvailableRoles";
+import Permissions from "@/components/Roles/Permissions";
+import { useEffect, useState, useCallback } from "react";
+import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Skeleton } from "@/components/ui/skeleton";
-import { useState } from "react";
-import NewRoleModel from "@/components/Roles/NewRoleModel";
 
 export default function Roles() {
+  const [currentRoleId, setCurrentRoleId] = useState(null);
+  const [availableRoles, setAvailableRoles] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const [isOpen, setIsOpen] = useState(false);
+  const currentRole = availableRoles.find(role => role._id === currentRoleId) || null;
+
+  const isPermissionsVisible = currentRoleId !== null;
+
+  const handleRoleChange = useCallback((roleId) => {
+    setCurrentRoleId(roleId);
+  }, []);
+
+  const handleBackToRoles = () => {
+    setCurrentRoleId(null);
+  };
+
+  const getAvailableRoles = async () => {
+    try {
+      setIsLoading(true);
+      const res = await fetchRoles({ adminFlag: false });
+      const rolesData = res.data.roles || [];
+      setAvailableRoles(rolesData);
+
+      if (rolesData.length > 0 && !currentRoleId && window.innerWidth >= 1280) {
+        setCurrentRoleId(rolesData[0]._id);
+      }
+    } catch (err) {
+      console.error("Error fetching roles:", err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    getAvailableRoles();
+  }, []);
 
   return (
-    <main className="flex-1 overflow-hidden">
-      <div className="flex mb-6 flex-col gap-1">
-        <h1 className="font-semibold text-2xl leading-8">{`Roles & Permissions`}</h1>
-        <p className="text-[#71717b] text-sm leading-5">
-          Define what each role can access and perform within the system.
-        </p>
-      </div>
-      <div className="flex gap-6">
-        <Card className="shrink-0 p-0 gap-0 w-70">
-          <div className="border-zinc-200 border-t-0 border-r-0 border-b border-l-0 border-solid flex p-4 justify-between items-center">
-            <span className="font-semibold text-sm leading-5">Roles</span>
-            <Button size="sm" className="bg-[#2b7fff] text-blue-50 text-xs leading-4 px-2 h-7" onClick={() => setIsOpen(true)}>
-              <Plus className="size-3" />
-              New Role
-            </Button>
+    <div className="w-full max-w-7xl mx-auto self-center flex flex-col h-full min-h-0">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 shrink-0">
+        <div className="flex flex-col gap-1 min-w-0">
+          <div className="flex items-center gap-2">
+            {isPermissionsVisible && (
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={handleBackToRoles}
+                className="xl:hidden size-8 -ml-2 text-zinc-600 hover:text-zinc-950"
+              >
+                <ArrowLeft className="size-5" />
+              </Button>
+            )}
+            <h1 className="font-bold text-2xl tracking-tight text-zinc-950 truncate">
+              Roles & Permissions
+            </h1>
           </div>
-          <div className="flex flex-col">
-            <div className="cursor-pointer bg-blue-50 border-[#2b7fff] border-t-0 border-r-0 border-b-0 border-l-2 border-solid flex p-4 items-center gap-3">
-              <div className="size-8 rounded-lg bg-[#2b7fff]/10 flex justify-center items-center">
-                <Shield className="size-4 text-[#2b7fff]" />
-              </div>
-              <div className="flex-1">
-                <div className="font-medium text-sm leading-5">Admin</div>
-                <div className="text-[#71717b] text-xs leading-4">5 members</div>
-              </div>
-              <Button variant="ghost" size="icon" className="size-7">
-                <MoreHorizontal className="size-4" />
-              </Button>
-            </div>
-            <div className="border-t-border cursor-pointer border-black/1 border-t border-r-0 border-b-0 border-l-2 border-solid flex p-4 items-center gap-3">
-              <div className="size-8 rounded-lg bg-purple-100 flex justify-center items-center">
-                <Pencil className="size-4 text-purple-600" />
-              </div>
-              <div className="flex-1">
-                <div className="font-medium text-sm leading-5">Editor</div>
-                <div className="text-[#71717b] text-xs leading-4">8 members</div>
-              </div>
-              <Button variant="ghost" size="icon" className="size-7">
-                <MoreHorizontal className="size-4" />
-              </Button>
-            </div>
-            <div className="border-t-border cursor-pointer border-black/1 border-t border-r-0 border-b-0 border-l-2 border-solid flex p-4 items-center gap-3">
-              <div className="size-8 rounded-lg bg-zinc-100 flex justify-center items-center">
-                <Eye className="size-4 text-[#71717b]" />
-              </div>
-              <div className="flex-1">
-                <div className="font-medium text-sm leading-5">Viewer</div>
-                <div className="text-[#71717b] text-xs leading-4">14 members</div>
-              </div>
-              <Button variant="ghost" size="icon" className="size-7">
-                <MoreHorizontal className="size-4" />
-              </Button>
-            </div>
-            <div className="border-transparent border-t-border cursor-pointer border-t border-r-0 border-b-0 border-l-2 border-solid flex p-4 items-center gap-3">
-              <div className="size-8 rounded-lg bg-teal-100 flex justify-center items-center">
-                <Code className="size-4 text-teal-600" />
-              </div>
-              <div className="flex-1">
-                <div className="font-medium text-sm leading-5">API User</div>
-                <div className="text-[#71717b] text-xs leading-4">3 members</div>
-              </div>
-              <Button variant="ghost" size="icon" className="size-7">
-                <MoreHorizontal className="size-4" />
-              </Button>
-            </div>
-          </div>
-        </Card>
-        <Card className="p-6 flex-1 gap-4">
-          <CardHeader className="p-0 gap-2">
-            <div className="flex justify-between items-center">
-              <div className="flex items-center gap-2">
-                <div className="size-9 rounded-lg bg-[#2b7fff]/10 flex justify-center items-center">
-                  <Shield className="size-5 text-[#2b7fff]" />
-                </div>
-                <span className="font-semibold text-lg leading-7">Admin</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="text-[#2b7fff] border-[#2b7fff] border-0 border-solid h-8">
-                  <Pencil className="size-3" />
-                  Edit Role
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="text-[#e7000b] border-[#e7000b] border-0 border-solid h-8">
-                  <Trash2 className="size-3" />
-                  Delete Role
-                </Button>
-              </div>
-            </div>
-            <p className="italic text-[#71717b] text-sm leading-5">
-              Full access to all system features and settings.
-            </p>
-          </CardHeader>
-          <CardContent className="flex p-0 flex-col gap-4">
-            <div className="flex justify-between items-center">
-              <span className="font-semibold text-base leading-6">Permissions</span>
-              <span className="text-[#71717b] text-xs leading-4">16 of 16 enabled</span>
-            </div>
-            <div className="grid grid-cols-2 gap-3">
-              <div className="rounded-lg border-zinc-200 border border-solid flex p-4 flex-col gap-2">
-                <div className="flex mb-1 items-center gap-2">
-                  <FileText className="size-4 text-[#2b7fff]" />
-                  <span className="font-semibold text-sm leading-5">Files</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Checkbox defaultChecked={true} id="f1" />
-                  <label htmlFor="f1" className="text-sm leading-5">
-                    View Files
-                  </label>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Checkbox defaultChecked={true} id="f2" />
-                  <label htmlFor="f2" className="text-sm leading-5">
-                    Upload Files
-                  </label>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Checkbox defaultChecked={true} id="f3" />
-                  <label htmlFor="f3" className="text-sm leading-5">
-                    Delete Files
-                  </label>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Checkbox defaultChecked={true} id="f4" />
-                  <label htmlFor="f4" className="text-sm leading-5">
-                    Rename Files
-                  </label>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Checkbox defaultChecked={true} id="f5" />
-                  <label htmlFor="f5" className="text-sm leading-5">
-                    Download Files
-                  </label>
-                </div>
-              </div>
-              <div className="rounded-lg border-zinc-200 border border-solid flex p-4 flex-col gap-2">
-                <div className="flex mb-1 items-center gap-2">
-                  <Users className="size-4 text-[#2b7fff]" />
-                  <span className="font-semibold text-sm leading-5">Users</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Checkbox defaultChecked={true} id="u1" />
-                  <label htmlFor="u1" className="text-sm leading-5">
-                    View Users
-                  </label>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Checkbox defaultChecked={true} id="u2" />
-                  <label htmlFor="u2" className="text-sm leading-5">
-                    Invite Users
-                  </label>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Checkbox defaultChecked={true} id="u3" />
-                  <label htmlFor="u3" className="text-sm leading-5">
-                    Remove Users
-                  </label>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Checkbox defaultChecked={true} id="u4" />
-                  <label htmlFor="u4" className="text-sm leading-5">
-                    Assign Roles
-                  </label>
-                </div>
-              </div>
-              <div className="rounded-lg border-zinc-200 border border-solid flex p-4 flex-col gap-2">
-                <div className="flex mb-1 items-center gap-2">
-                  <Settings className="size-4 text-[#71717b]" />
-                  <Skeleton className="w-16 h-4" />
-                </div>
-                <div className="flex items-center gap-2">
-                  <Skeleton className="size-4 rounded-sm" />
-                  <Skeleton className="w-28 h-4" />
-                </div>
-                <div className="flex items-center gap-2">
-                  <Skeleton className="size-4 rounded-sm" />
-                  <Skeleton className="w-36 h-4" />
-                </div>
-                <div className="flex items-center gap-2">
-                  <Skeleton className="size-4 rounded-sm" />
-                  <Skeleton className="w-32 h-4" />
-                </div>
-              </div>
-              <div className="rounded-lg border-zinc-200 border border-solid flex p-4 flex-col gap-2">
-                <div className="flex mb-1 items-center gap-2">
-                  <Lock className="size-4 text-[#2b7fff]" />
-                  <span className="font-semibold text-sm leading-5">Roles</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Checkbox defaultChecked={true} id="r1" />
-                  <label htmlFor="r1" className="text-sm leading-5">
-                    View Roles
-                  </label>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Checkbox defaultChecked={true} id="r2" />
-                  <label htmlFor="r2" className="text-sm leading-5">
-                    Create Roles
-                  </label>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Checkbox defaultChecked={true} id="r3" />
-                  <label htmlFor="r3" className="text-sm leading-5">
-                    Edit Roles
-                  </label>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Checkbox defaultChecked={true} id="r4" />
-                  <label htmlFor="r4" className="text-sm leading-5">
-                    Delete Roles
-                  </label>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-          <CardFooter className="p-0 gap-2">
-            <Button className="bg-[#2b7fff] text-blue-50 w-full">
-              <Save className="size-4" />
-              Save Changes
-            </Button>
-          </CardFooter>
-        </Card>
+          <p className="text-zinc-500 text-sm">
+            Define what each role can access and perform within the system.
+          </p>
+        </div>
       </div>
 
-      {isOpen && <NewRoleModel setIsOpen={setIsOpen} />}
-    </main>
+      <div className="flex gap-6 w-full flex-1 relative">
+        <div className={`w-full xl:w-80 ${isPermissionsVisible ? "hidden xl:block" : "block"}`}>
+          <AvailableRoles
+            currentRoleId={currentRoleId}
+            handleRoleChange={handleRoleChange}
+            availableRoles={availableRoles}
+            getAvailableRoles={getAvailableRoles}
+            isLoading={isLoading}
+          />
+        </div>
+        <div className={`flex-1 w-full min-w-0 mb-10! ${!isPermissionsVisible ? "hidden xl:block" : "block"}`}>
+          <Permissions
+            currentRoleId={currentRoleId}
+            currentRole={currentRole}
+            getAvailableRoles={getAvailableRoles}
+          />
+        </div>
+      </div>
+      
+    </div>
   );
 }

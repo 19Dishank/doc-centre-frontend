@@ -11,7 +11,7 @@ const Header = () => {
 
                 <div className="flex items-center gap-4">
                     <NavLink to="/login">
-                        <Button className="bg-[#2b7fff] hover:bg-[#2b7fff]/90 text-blue-50 text-sm px-5">
+                        <Button className="cursor-pointer bg-[#2b7fff] hover:bg-[#2b7fff]/90 text-blue-50 text-sm px-5">
                             Sign in
                         </Button>
                     </NavLink>

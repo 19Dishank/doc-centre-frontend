@@ -3,6 +3,7 @@ import { ChartContainer, ChartTooltip } from "@/components/ui/chart";
 import { CartesianGrid, Line, LineChart, XAxis, YAxis, ResponsiveContainer } from "recharts";
 
 const UsageChart = () => {
+
     const data = [
         { day: "Day 1", api: 32, storage: 88 },
         { day: "Day 5", api: 45, storage: 95 },
@@ -12,6 +13,22 @@ const UsageChart = () => {
         { day: "Day 25", api: 78, storage: 122 },
         { day: "Day 30", api: 92, storage: 128 },
     ];
+
+    // const [usageData, setUsageData] = useState([]);
+
+    // const getUsageData = async () => {
+    //     try {
+    //         const res = await fetchUsageData();
+    //         setUsageData(res.data.usage);
+    //     } catch (error) {
+    //         console.error("Error fetching usage data:", error);
+    //     }
+    // };
+
+    // useEffect(() => {
+    //     // eslint-disable-next-line react-hooks/set-state-in-effect
+    //     getUsageData();
+    // }, []);
 
     return (
         <Card className="p-4 md:p-6 flex flex-col gap-4">
@@ -23,7 +40,6 @@ const UsageChart = () => {
                     </p>
                 </div>
 
-                {/* Legend: Stacks on mobile, inline on tablet+ */}
                 <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
                     <div className="text-xs leading-4 flex items-center gap-2">
                         <span className="size-2 rounded-full bg-[#2b7fff]" />
@@ -37,11 +53,7 @@ const UsageChart = () => {
             </CardHeader>
 
             <CardContent className="p-0">
-                {/* 
-                   Changed fixed height to a responsive aspect ratio.
-                   h-[250px] for mobile, h-[350px] for larger screens.
-                */}
-                <div className="w-full h-[250px] md:h-[350px]">
+                <div className="w-full h-62.5 md:h-87.5">
                     <ChartContainer
                         config={{
                             api: { label: "API", color: "oklch(0.623 0.214 259.815)" },
@@ -58,10 +70,10 @@ const UsageChart = () => {
                                 data={data}
                                 margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
                             >
-                                <CartesianGrid 
-                                    strokeDasharray="3 3" 
-                                    stroke="oklch(0.92 0.004 286.32)" 
-                                    vertical={false} 
+                                <CartesianGrid
+                                    strokeDasharray="3 3"
+                                    stroke="oklch(0.92 0.004 286.32)"
+                                    vertical={false}
                                 />
                                 <XAxis
                                     dataKey="day"

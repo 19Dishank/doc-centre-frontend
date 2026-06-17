@@ -4,7 +4,6 @@ import { defineConfig } from "vite";
 import { fileURLToPath } from "url";
 import tailwindcss from "@tailwindcss/vite";
 
-// Fix for "__dirname is not defined" in ES modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -26,7 +25,7 @@ export default defineConfig({
 
     proxy: {
       "/api": {
-        target: 'http://192.168.100.117:3000',
+        target: 'https://7qzvqdrz-3000.inc1.devtunnels.ms',
         changeOrigin: true
       },
     },

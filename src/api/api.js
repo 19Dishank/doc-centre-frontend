@@ -29,3 +29,13 @@ export const revokeApiKey = async (id) => {
         throw error;
     }
 }
+
+export const fetchActivityLogs = async () => {
+    try {
+        const response = await axiosInstance.get("/api-key/activity-logs");
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching activity logs: ", error);
+        throw error;
+    }
+}

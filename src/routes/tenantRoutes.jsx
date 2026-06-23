@@ -18,8 +18,6 @@ const SuccessPage = lazy(() => import("@/pages/SuccessPage"));
 const UserSettings = lazy(() => import("@/pages/settings/UserSettings"));
 const APIKeysPage = lazy(() => import("@/pages/credentials/APIKeysPage"));
 const APIActivityLogPage = lazy(() => import("@/pages/credentials/APIActivityLogPage"));
-const IPWhitelistingPage = lazy(() => import("@/pages/credentials/IPWhitelistingPage"));
-const DocumentationPage = lazy(() => import("@/pages/credentials/DocumentationPage"));
 const RecycleBin = lazy(() => import("@/pages/RecycleBin"));
 
 export const publicRoutes = [
@@ -97,14 +95,6 @@ export const protectedRoutes = [
     {
         path: "/credentials/activity-log",
         element: <APIActivityLogPage />,
-    },
-    {
-        path: "/credentials/ip-whitelisting",
-        element: <IPWhitelistingPage />,
-    },
-    {
-        path: "/credentials/documentation",
-        element: <DocumentationPage />,
     },
     {
         path: "/settings/billing",

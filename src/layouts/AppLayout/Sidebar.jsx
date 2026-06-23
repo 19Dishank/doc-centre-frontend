@@ -4,7 +4,6 @@ import { usePermissions } from "@/hooks/usePermissions";
 import {
     ActivityIcon,
     Bell,
-    BookOpen,
     Building2,
     CreditCard,
     FileText,
@@ -13,7 +12,6 @@ import {
     LayoutDashboard,
     Lock,
     Settings,
-    Shield,
     User,
     Users,
 } from "lucide-react";
@@ -68,16 +66,6 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
             name: "Activity Log",
             icon: <ActivityIcon className="size-4" />,
             path: "/credentials/activity-log",
-        },
-        {
-            name: "IP Whitelisting",
-            icon: <Shield className="size-4" />,
-            path: "/credentials/ip-whitelisting",
-        },
-        {
-            name: "Documentation",
-            icon: <BookOpen className="size-4" />,
-            path: "/credentials/documentation",
         },
     ].filter(Boolean);
 

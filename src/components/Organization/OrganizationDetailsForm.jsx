@@ -25,7 +25,7 @@ const OrganizationDetailsForm = () => {
         memberCount: 0,
         currentPlan: "",
         logo: null
-    });
+    }); 
 
     const getOrganizationDetails = async () => {
         try {

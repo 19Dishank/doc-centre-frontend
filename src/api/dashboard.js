@@ -19,3 +19,13 @@ export const fetchStorageStats = async () => {
         throw error;
     }
 };
+
+export const fetchUsageData = async () => {
+    try {
+        const response = await axiosInstance.get("/dashboard/usage");
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching usage data:", error);
+        throw error;
+    }
+};

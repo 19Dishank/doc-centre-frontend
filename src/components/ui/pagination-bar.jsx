@@ -14,7 +14,6 @@ const PaginationBar = ({
     hasNextPage,
     hasPreviousPage,
 }) => {
-
     const handlePreviousPage = () => {
         if (hasPreviousPage) {
             setCurrentPage(currentPage - 1);

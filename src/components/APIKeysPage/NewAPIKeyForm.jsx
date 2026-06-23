@@ -10,7 +10,7 @@ const NewAPIKeyForm = ({ getApiKeys }) => {
 
     const [newKeyName, setNewKeyName] = useState("")
     const [loading, setLoading] = useState(false);
-    const [apiKey, setApiKey] = useState(null);
+    const [credentials, setCredentials] = useState(null);
 
     const handleGenerateKey = async e => {
         setLoading(true);
@@ -18,9 +18,8 @@ const NewAPIKeyForm = ({ getApiKeys }) => {
             e.preventDefault()
             if (!newKeyName.trim()) return
             const res = await generateApiKey(newKeyName.trim());
-            console.log("🚀 ~ handleGenerateKey ~ res:", res)
             setNewKeyName("");
-            setApiKey(res.data.apiKey);
+            setCredentials(res.data);
             getApiKeys();
             toastNotification("API key generated successfully!", "success");
         } catch (error) {
@@ -31,7 +30,6 @@ const NewAPIKeyForm = ({ getApiKeys }) => {
         }
     }
 
-            console.log("🚀 ~ NewAPIKeyForm ~ apiKey:", apiKey)
     return (
         <>
             <form onSubmit={handleGenerateKey} className="flex gap-2 flex-1 w-full">
@@ -48,9 +46,10 @@ const NewAPIKeyForm = ({ getApiKeys }) => {
                 />
             </form>
 
-            {apiKey && (
-                <NewlyGeneratedKeyDisplay apiKey={apiKey} setApiKey={setApiKey} />
+            {credentials && (
+                <NewlyGeneratedKeyDisplay credentials={credentials} setCredentials={setCredentials} />
             )}
+
         </>
     )
 }

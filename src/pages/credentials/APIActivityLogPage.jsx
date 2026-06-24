@@ -21,6 +21,7 @@ const APIActivityLogPage = () => {
     const [stats, setStats] = useState({
         requestsMade: 892341,
         allowedQuota: 10000000,
+        plan: "Pro"
     });
 
     const usedQuotaPercentage = ((stats?.requestsMade / stats?.allowedQuota) * 100).toFixed(1);

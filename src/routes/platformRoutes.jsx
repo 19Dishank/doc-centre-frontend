@@ -5,12 +5,18 @@ const LoginPage = lazy(() => import("@/pages/LoginPage"));
 const OnBoardingPage = lazy(() => import("@/pages/OnBoardingPage"));
 const UserInvite = lazy(() => import("@/pages/UserInvite"));
 const SuccessPage = lazy(() => import("@/pages/SuccessPage"));
+const DocsPage = lazy(() => import("@/pages/DocsPage"));
 
 export const platformRoutes = [
     {
         path: "/",
         layout: "public",
         element: <HomePage />,
+    },
+    {
+        path: "/docs",
+        layout: "public",
+        element: <DocsPage />,
     },
     {
         path: "/login",

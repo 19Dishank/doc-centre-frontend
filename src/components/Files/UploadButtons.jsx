@@ -95,6 +95,7 @@ const UploadButtons = ({ parentId, setNewFolderRow, getFiles }) => {
     useEffect(() => {
 
         const handleDocumentUploadedEvent = () => {
+            console.log("Document uploaded event received");
             getFiles();
             setIsUploading(false);
         };

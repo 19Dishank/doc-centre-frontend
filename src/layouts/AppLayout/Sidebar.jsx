@@ -2,12 +2,10 @@ import Logo from "@/components/ui/logo";
 import { PERMISSIONS } from "@/helper/permissions";
 import { usePermissions } from "@/hooks/usePermissions";
 import {
-    ActivityIcon,
     Bell,
     Building2,
     CreditCard,
     FileText,
-    Key,
     KeyRound,
     LayoutDashboard,
     Lock,
@@ -56,19 +54,6 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
         },
     ].filter(Boolean);
 
-    const apiAccessSubItems = [
-        {
-            name: "API Keys",
-            icon: <Key className="size-4" />,
-            path: "/credentials/api-keys",
-        },
-        {
-            name: "Activity Log",
-            icon: <ActivityIcon className="size-4" />,
-            path: "/credentials/activity-log",
-        },
-    ].filter(Boolean);
-
     const settingsSubItems = [
         {
             name: "User",
@@ -79,6 +64,11 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
             name: "Organization",
             icon: <Building2 className="size-4" />,
             path: "/settings/organization",
+        },
+        {
+            name: "API Keys",
+            icon: <KeyRound className="size-4" />,
+            path: "/credentials/api-keys",
         },
         canViewBillingSection && {
             name: "Billing",
@@ -100,13 +90,6 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
 
     const sideBarItems = [
         ...navItems,
-        {
-            id: "apiAccess",
-            name: "API Access",
-            icon: <KeyRound className="size-4" />,
-            isOpen: openMenus.apiAccess,
-            subItems: apiAccessSubItems,
-        },
         {
             id: "settings",
             name: "Settings",

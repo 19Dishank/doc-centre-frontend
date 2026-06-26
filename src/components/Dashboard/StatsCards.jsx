@@ -3,63 +3,32 @@ import { Card, CardContent, CardHeader } from "../ui/card";
 import { Badge } from "../ui/badge";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 import { formatSize } from "@/helper/formatSize";
-import { useEffect, useState } from "react";
-import { fetchStorageStats } from "@/api/dashboard";
 import { Skeleton } from "../ui/skeleton";
 
-const StatsCards = () => {
-
-    const [stats, setStats] = useState(null);
-    const [loading, setLoading] = useState(true);
-
-    const getStorageStatsData = async () => {
-        setLoading(true);
-        try {
-            const res = await fetchStorageStats();
-            setStats(prevStats => ({ ...prevStats, storageStats: res.data.stats }));
-        } catch (error) {
-            console.error("Error fetching storage stats:", error);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    // const getAPIStatsData = async () => {
-    //     try {
-    //         const res = await fetchAPIStats();
-    //         setStats(prevStats => ({ ...prevStats, apiDetails: res.data }));
-    //     } catch (error) {
-    //         console.error("Error fetching API stats:", error);
-    //     }
-    // };
-
-    useEffect(() => {
-        // eslint-disable-next-line react-hooks/set-state-in-effect
-        getStorageStatsData();
-        // getAPIStatsData();
-    }, []);
+const StatsCards = ({ stats, loading }) => {
 
     const statsData = [
         {
             title: "Total Files",
             icon: <FileStack className="size-5 text-[#2b7fff]" />,
-            value: stats?.storageStats?.storageDetails?.totalFiles?.toLocaleString() || "0",
+            value: stats?.storageDetails?.totalFiles?.toLocaleString() || "0",
             tooltip: "Deleted files are not included in this count.",
-            badge: `${stats?.storageStats?.docsAddedThisWeek?.toLocaleString()} uploads in last 7 days`,
+            badge: `${stats?.docsAddedThisWeek?.toLocaleString() || 0} upload${stats?.docsAddedThisWeek === 1 ? '' : 's'} in last 7 days`,
         },
         {
             title: "Storage Used",
             icon: <Database className="size-5 text-[#2b7fff]" />,
-            storageLimit: formatSize(stats?.storageStats?.planDetails?.storageLimit),
-            storageUsed: formatSize(stats?.storageStats?.storageDetails?.storageUsed),
-            percentageUsed: `${((stats?.storageStats?.storageDetails?.storageUsed / stats?.storageStats?.planDetails?.storageLimit) * 100).toFixed(1)}%`,
+            storageLimit: formatSize(stats?.planDetails?.storageLimit || 0),
+            storageUsed: formatSize(stats?.storageDetails?.storageUsed || 0),
+            percentageUsed: `${(((stats?.storageDetails?.storageUsed || 0) / (stats?.planDetails?.storageLimit || 1)) * 100).toFixed(1)}%`,
             tooltip: "Recycle bin files are also included in this count.",
         },
         {
             title: "API Requests (30d)",
             icon: <ActivityIcon className="size-5 text-[#2b7fff]" />,
-            value: "1.2M",
-            badge: "+8.3% vs last month",
+            value: stats?.apiAnalytics?.totalRequests?.toLocaleString() || "0",
+            badge: stats?.apiAnalytics?.totalRequests > 0 ? "+8.3% vs last month" : "No requests this month",
+            badgeType: stats?.apiAnalytics?.totalRequests > 0 ? "success" : "neutral",
         }
     ]
 
@@ -171,7 +140,11 @@ const StorageData = ({ stats }) => {
 
 const APIData = ({ stats }) => {
 
-    const { title, icon, value, badge } = stats;
+    const { title, icon, value, badge, badgeType } = stats;
+
+    const badgeStyles = badgeType === "success"
+        ? "bg-emerald-100 text-emerald-700 hover:bg-emerald-100"
+        : "bg-zinc-100 text-zinc-600 hover:bg-zinc-100";
 
     return (
         <Card className="p-6 flex flex-col gap-4 md:col-span-2 lg:col-span-1">
@@ -185,12 +158,14 @@ const APIData = ({ stats }) => {
             </CardHeader>
             <CardContent className="p-0 flex flex-col gap-2">
                 <div className="font-bold text-2xl md:text-3xl leading-9">{value}</div>
-                <div className="flex">
-                    <Badge variant="secondary" className="bg-emerald-100 text-emerald-700 gap-1 hover:bg-emerald-100">
-                        <TrendingUp className="size-3" />
-                        {badge}
-                    </Badge>
-                </div>
+                {badge && (
+                    <div className="flex">
+                        <Badge variant="secondary" className={`${badgeStyles} gap-1`}>
+                            {badgeType === "success" && <TrendingUp className="size-3" />}
+                            {badge}
+                        </Badge>
+                    </div>
+                )}
             </CardContent>
         </Card>
     )

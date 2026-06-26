@@ -1,7 +1,5 @@
 import {
-    ActivityIcon,   
     Bell,
-    BookOpen,
     Building2,
     CreditCard,
     FileText,
@@ -9,7 +7,6 @@ import {
     LayoutDashboard,
     Lock,
     Search,
-    Shield,
     Trash2,
     User,
     Users,
@@ -41,21 +38,15 @@ const SearchBar = () => {
         canViewRoles && { name: "Roles & Permissions", icon: <Lock className="size-4" />, path: "/roles" },
     ].filter(Boolean);
 
-    const apiAccessSubItems = [
-        { name: "API Keys", icon: <Key className="size-4" />, path: "/credentials/api-keys" },
-        { name: "Activity Log", icon: <ActivityIcon className="size-4" />, path: "/credentials/activity-log" },
-        { name: "IP Whitelisting", icon: <Shield className="size-4" />, path: "/credentials/ip-whitelisting" },
-        { name: "Documentation", icon: <BookOpen className="size-4" />, path: "/credentials/documentation" },
-    ].filter(Boolean);
-
     const settingsSubItems = [
         { name: "User Settings", icon: <User className="size-4" />, path: "/settings/user" },
         canViewOrganizationSettings && { name: "Organization Settings", icon: <Building2 className="size-4" />, path: "/settings/organization" },
+        canViewBillingSection && { name: "API Keys", icon: <Key className="size-4" />, path: "/credentials/api-keys" },
         canViewBillingSection && { name: "Billing & Pricing", icon: <CreditCard className="size-4" />, path: "/settings/billing" },
         { name: "Notifications", icon: <Bell className="size-4" />, path: "/settings/notifications" },
     ].filter(Boolean);
 
-    const allActions = useMemo(() => ([...navItems, ...apiAccessSubItems, ...settingsSubItems]), [navItems, apiAccessSubItems, settingsSubItems]);
+    const allActions = useMemo(() => ([...navItems, ...settingsSubItems]), [navItems, settingsSubItems]);
 
     const filteredActions = useMemo(() => {
         return allActions.filter((item) =>

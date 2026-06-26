@@ -5,7 +5,8 @@ import { useAuthContext } from "@/contexts/AuthContext";
 import PageHeading from "@/components/PageHeading";
 import { PERMISSIONS } from "@/helper/permissions";
 import { usePermissions } from "@/hooks/usePermissions";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { fetchStorageStats } from "@/api/dashboard";
 
 export default function Dashboard() {
 
@@ -15,6 +16,26 @@ export default function Dashboard() {
   const displayName = user?.firstName || user?.lastName ? `${user.firstName || ""} ${user.lastName || ""}`.trim() : user?.email || "User";
 
   const canViewDocuments = useMemo(() => checkPermission(PERMISSIONS.VIEW_DOCUMENT), [checkPermission]);
+
+  const [stats, setStats] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  const getStorageStatsData = async () => {
+    setLoading(true);
+    try {
+      const res = await fetchStorageStats();
+      setStats(res.data);
+    } catch (error) {
+      console.error("Error fetching storage stats:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    getStorageStatsData();
+  }, []);
 
   return (
     <div className="flex flex-col gap-6">
@@ -26,13 +47,13 @@ export default function Dashboard() {
 
       <div className="flex flex-col gap-6">
         <section>
-          <StatsCards />
+          <StatsCards stats={stats} loading={loading} />
         </section>
 
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
 
           <div className="xl:col-span-2">
-            <UsageChart />
+            <UsageChart stats={stats} loading={loading} />
           </div>
 
           {canViewDocuments && (

@@ -8,7 +8,6 @@ const Roles = lazy(() => import("@/pages/Roles"));
 const BillingPage = lazy(() => import("@/pages/settings/BillingPage"));
 const Organization = lazy(() => import("@/pages/settings/Organization"));
 const NotificationsSetting = lazy(() => import("@/pages/settings/NotificationsSetting"));
-// const DangerZone = lazy(() => import("@/pages/settings/DangerZone"));
 const LoginPage = lazy(() => import("@/pages/LoginPage"));
 const ConsentScreen = lazy(() => import("@/pages/ConsentScreen"));
 const EmailInput = lazy(() => import("@/components/ForgotPasswordPage/EmailInput"));
@@ -17,7 +16,6 @@ const PasswordInput = lazy(() => import("@/components/ForgotPasswordPage/Passwor
 const SuccessPage = lazy(() => import("@/pages/SuccessPage"));
 const UserSettings = lazy(() => import("@/pages/settings/UserSettings"));
 const APIKeysPage = lazy(() => import("@/pages/credentials/APIKeysPage"));
-const APIActivityLogPage = lazy(() => import("@/pages/credentials/APIActivityLogPage"));
 const RecycleBin = lazy(() => import("@/pages/RecycleBin"));
 
 export const publicRoutes = [
@@ -87,14 +85,6 @@ export const protectedRoutes = [
     {
         path: "/credentials/api-keys",
         element: <APIKeysPage />,
-    },
-    {
-        path: "/credentials/api-keys",
-        element: <APIKeysPage />,
-    },
-    {
-        path: "/credentials/activity-log",
-        element: <APIActivityLogPage />,
     },
     {
         path: "/settings/billing",

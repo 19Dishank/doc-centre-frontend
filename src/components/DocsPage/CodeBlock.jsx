@@ -15,7 +15,7 @@ const CodeBlock = ({ code, language = "javascript" }) => {
     };
 
     return (
-        <div className="relative group my-4 rounded-lg border border-zinc-200 bg-zinc-950 font-mono text-sm leading-relaxed overflow-hidden shadow-sm">
+        <div id="code-block" className="relative group my-4 rounded-lg border border-zinc-200 bg-zinc-950 font-mono text-sm leading-relaxed overflow-hidden shadow-sm">
             <div className="flex justify-between items-center px-4 py-2 border-b border-zinc-800 bg-zinc-900/50 text-zinc-400 text-xs">
                 <span>{language}</span>
                 <button

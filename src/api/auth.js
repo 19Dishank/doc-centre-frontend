@@ -55,7 +55,7 @@ export const createTenant = async (tenantData) => {
             console.log("Tenant created successfully:", response.data);
             toastNotification("Tenant created successfully, please check your mailbox to activate your account!", "success");
         }
-        console.log("Response Data:", response) 
+        console.log("Response Data:", response)
         return response.data;
     } catch (error) {
         console.error("Error creating tenant:", error);
@@ -241,7 +241,8 @@ export const resetPassword = async (resetPasswordData) => {
 
 export const logoutUser = async () => {
     try {
-        await axiosInstance.post(`/auth/logout`);
+        const { refreshToken } = getTokens();
+        await axiosInstance.post(`/auth/logout`, { refreshToken });
     } catch (error) {
         console.error("Error logging out:", error);
         throw error;

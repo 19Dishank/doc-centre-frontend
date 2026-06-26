@@ -15,6 +15,7 @@ import PaginationBar from "@/components/ui/pagination-bar";
 import FiltersBar from "@/components/Files/FiltersBar";
 import PageHeading from "@/components/PageHeading";
 import UploadButtons from "@/components/Files/UploadButtons";
+import { socket } from "@/helper/socketService";
 
 export default function Files() {
 
@@ -80,6 +81,18 @@ export default function Files() {
       setLoading(false);
     }
   }
+
+  useEffect(() => {
+    const handleDocumentCreated = (event) => {
+      console.log("Document uploaded event received:", event);
+    }
+
+    socket.on("document-uploaded", handleDocumentCreated);
+
+    return () => {
+      socket.off("document-uploaded", handleDocumentCreated);
+    }
+  }, []);
 
   const columns = [
     {

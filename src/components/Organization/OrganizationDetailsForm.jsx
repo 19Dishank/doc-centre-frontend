@@ -25,7 +25,7 @@ const OrganizationDetailsForm = () => {
         memberCount: 0,
         currentPlan: "",
         logo: null
-    }); 
+    });
 
     const getOrganizationDetails = async () => {
         try {
@@ -173,12 +173,11 @@ const OrganizationDetailsForm = () => {
             <div className="flex flex-col gap-3">
                 <Label className="font-medium uppercase text-zinc-950 text-[11px] leading-4 tracking-[0.06em]">Organization Logo</Label>
                 <div className="flex flex-row items-center gap-5">
-                    <div className="flex h-14 w-32 items-center justify-center rounded-lg border border-zinc-200 bg-zinc-50 p-2 shadow-sm transition-colors hover:bg-zinc-100/80">
-                        {!logoUrlRegex.test(formData.logo) ? (
-                            <img src={formData.logo} alt="Organization Logo" className="h-full w-full object-contain" />
-                        ) : (
-                            <CompanyLogo />
-                        )}
+                    <div className="flex w-32 items-center justify-center rounded-lg border border-zinc-200 bg-zinc-50 p-2 shadow-sm transition-colors hover:bg-zinc-100/80">
+                        {!logoUrlRegex.test(formData.logo)
+                            ? <img src={formData.logo} alt="Organization Logo" className="h-full w-full object-contain" />
+                            : <CompanyLogo />
+                        }
                     </div>
                     <div className="flex flex-col gap-1.5">
                         <label htmlFor="logo-upload" className="w-max block cursor-pointer">

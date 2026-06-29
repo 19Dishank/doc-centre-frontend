@@ -5,16 +5,19 @@ import { ToastContainer } from "react-toastify";
 import AuthProvider from "./contexts/AuthContext";
 import { TooltipProvider } from "./components/ui/tooltip";
 import CatalogProvider from "./contexts/CatalogContext";
+import { ThemeProvider } from "./contexts/ThemeContext";
 
 createRoot(document.getElementById("root")).render(
   // <StrictMode>
   <TooltipProvider>
-    <AuthProvider>
-      <CatalogProvider>
-        <App />
-        <ToastContainer />
-      </CatalogProvider>
-    </AuthProvider>
+    <ThemeProvider>
+      <AuthProvider>
+        <CatalogProvider>
+          <App />
+          <ToastContainer />
+        </CatalogProvider>
+      </AuthProvider>
+    </ThemeProvider>
   </TooltipProvider>
   // </StrictMode>
 );

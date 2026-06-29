@@ -8,19 +8,19 @@ const FormContainer = ({ heading, subheading, linkText, linkUrl, linkHelperText,
     const slug = getSubdomain();
 
     return (
-        <div className="bg-white flex justify-center items-center flex-1" style={{ width: "660px" }}>
+        <div className="bg-white dark:bg-zinc-950 flex justify-center items-center flex-1 transition-colors duration-200" style={{ width: "660px" }}>
             <div className="max-w-xl flex gap-8 px-4 sm:px-12 flex-col w-full">
                 {slug !== "app" && <CompanyLogo />}
                 <div className="flex flex-col gap-2">
-                    <h1 className="font-bold text-zinc-900 tracking-tight" style={{ fontSize: "28px", lineHeight: "1.2" }}>
+                    <h1 className="font-bold text-zinc-900 dark:text-zinc-50 tracking-tight" style={{ fontSize: "28px", lineHeight: "1.2" }}>
                         {heading}
                     </h1>
-                    <p className="text-[#71717b] text-sm leading-5">{subheading}</p>
+                    <p className="text-[#71717b] dark:text-zinc-400 text-sm leading-5">{subheading}</p>
                 </div>
                 {children}
                 <div className="text-sm leading-5 flex justify-center items-center gap-1">
-                    <span className="text-[#71717b]">{linkHelperText}</span>
-                    <NavLink to={linkUrl} className="font-medium text-[#2b7fff]">
+                    <span className="text-[#71717b] dark:text-zinc-400">{linkHelperText}</span>
+                    <NavLink to={linkUrl} className="font-medium text-[#2b7fff] dark:text-blue-400">
                         {linkText}
                     </NavLink>
                 </div>

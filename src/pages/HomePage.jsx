@@ -45,7 +45,7 @@ export default function HomePage() {
 
     return (
         <>
-            <div className="min-h-screen bg-white">
+            <div className="min-h-screen bg-background text-foreground transition-colors duration-200">
                 <Header />
                 <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12 lg:py-20">
                     <div className="flex flex-col gap-16 md:gap-20 lg:gap-24">

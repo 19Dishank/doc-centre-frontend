@@ -13,13 +13,13 @@ const Stats = () => {
             {stats.map((stat, index) => (
                 <Card 
                     key={index} 
-                    className="p-6 md:p-8 border-zinc-200 shadow-sm hover:shadow-md transition-shadow duration-300"
+                    className="p-6 md:p-8 border-zinc-200 dark:border-zinc-800 shadow-sm hover:shadow-md transition-shadow duration-300"
                 >
                     <CardContent className="flex p-0 flex-col gap-1 md:gap-2">
                         <span className="font-bold text-[#2b7fff] text-2xl md:text-3xl lg:text-4xl tracking-tight">
                             {stat.value}
                         </span>
-                        <span className="text-zinc-500 text-[10px] sm:text-xs md:text-sm font-medium uppercase tracking-wider">
+                        <span className="text-zinc-500 dark:text-zinc-400 text-[10px] sm:text-xs md:text-sm font-medium uppercase tracking-wider">
                             {stat.label}
                         </span>
                     </CardContent>

@@ -93,12 +93,12 @@ const comparisonRows = [
 
 export default function PlanComparison() {
   return (
-    <div className="w-full max-w-7xl mx-auto selection:bg-indigo-50">
+    <div className="w-full max-w-7xl mx-auto selection:bg-indigo-50 dark:selection:bg-indigo-950/30">
       <div className="text-center mb-10 md:mb-14">
-        <h2 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-4xl">
+        <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-zinc-50 sm:text-4xl">
           Compare plans
         </h2>
-        <p className="mt-2 md:mt-3 text-sm md:text-lg text-slate-500 mx-auto">
+        <p className="mt-2 md:mt-3 text-sm md:text-lg text-slate-500 dark:text-zinc-400 mx-auto">
           A detailed look at what each plan includes so you can pick the right fit.
         </p>
       </div>
@@ -107,19 +107,19 @@ export default function PlanComparison() {
         {plans.map((plan) => (
           <div 
             key={plan.id} 
-            className={`rounded-xl border bg-white p-5 shadow-sm transition-all ${
-              plan.id === 'pro' ? 'border-indigo-500/40 ring-1 ring-indigo-500/10' : 'border-slate-200'
+            className={`rounded-xl border bg-white dark:bg-zinc-900 p-5 shadow-sm transition-all ${
+              plan.id === 'pro' ? 'border-indigo-500/40 ring-1 ring-indigo-500/10' : 'border-slate-200 dark:border-zinc-800'
             }`}
           >
-            <div className="flex items-center justify-between border-b border-slate-100 pb-4 mb-4">
+            <div className="flex items-center justify-between border-b border-slate-100 dark:border-zinc-800 pb-4 mb-4">
               <div>
-                <h3 className={`text-lg font-bold ${plan.id === 'pro' ? 'text-indigo-600' : 'text-slate-900'}`}>
+                <h3 className={`text-lg font-bold ${plan.id === 'pro' ? 'text-indigo-600 dark:text-indigo-450' : 'text-slate-900 dark:text-zinc-100'}`}>
                   {plan.name}
                 </h3>
-                <p className="text-xs text-slate-400 mt-0.5">{plan.description}</p>
+                <p className="text-xs text-slate-400 dark:text-zinc-500 mt-0.5">{plan.description}</p>
               </div>
               {plan.badge && (
-                <span className="inline-flex items-center rounded-full bg-indigo-50 px-2.5 py-0.5 text-xs font-medium text-indigo-700 ring-1 ring-inset ring-indigo-700/10">
+                <span className="inline-flex items-center rounded-full bg-indigo-50 dark:bg-indigo-950/50 px-2.5 py-0.5 text-xs font-medium text-indigo-700 dark:text-indigo-300 ring-1 ring-inset ring-indigo-700/10 dark:ring-indigo-300/20">
                   {plan.badge}
                 </span>
               )}
@@ -130,13 +130,13 @@ export default function PlanComparison() {
                 const value = row[plan.id];
                 return (
                   <div key={idx} className="flex items-center justify-between text-xs py-1">
-                    <dt className="text-slate-500 font-medium">{row.label}</dt>
-                    <dd className="text-slate-800 font-normal">
+                    <dt className="text-slate-500 dark:text-zinc-400 font-medium">{row.label}</dt>
+                    <dd className="text-slate-800 dark:text-zinc-200 font-normal">
                       {typeof value === 'boolean' ? (
                         value ? (
                           <Check className="h-4 w-4 text-indigo-500" strokeWidth={3} />
                         ) : (
-                          <Minus className="h-4 w-4 text-slate-300" strokeWidth={2} />
+                          <Minus className="h-4 w-4 text-slate-300 dark:text-zinc-700" strokeWidth={2} />
                         )
                       ) : (
                         <span>{value}</span>
@@ -150,26 +150,26 @@ export default function PlanComparison() {
         ))}
       </div>
 
-      <div className="hidden md:block overflow-hidden border border-slate-200/80 bg-white shadow-sm rounded-2xl">
+      <div className="hidden md:block overflow-hidden border border-slate-200/80 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm rounded-2xl">
         <div className="overflow-x-auto">
           <table className="w-full border-collapse text-left table-fixed">
             <thead>
-              <tr className="border-b border-slate-200 bg-slate-50/70">
-                <th className="p-5 text-sm font-semibold text-slate-600 w-1/4">Features</th>
+              <tr className="border-b border-slate-200 dark:border-zinc-800 bg-slate-50/70 dark:bg-zinc-800/40">
+                <th className="p-5 text-sm font-semibold text-slate-600 dark:text-zinc-300 w-1/4">Features</th>
                 {plans.map((plan) => (
                   <th key={plan.id} className="p-5 w-1/4 relative">
                     <div className="flex flex-col gap-1">
                       <div className="flex items-center justify-between min-h-6">
-                        <span className={`text-base font-bold ${plan.id === 'pro' ? 'text-indigo-600' : 'text-slate-900'}`}>
+                        <span className={`text-base font-bold ${plan.id === 'pro' ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-900 dark:text-zinc-100'}`}>
                           {plan.name}
                         </span>
                         {plan.badge && (
-                          <span className="inline-flex items-center rounded-full bg-indigo-50 px-2 py-0.5 text-xs font-medium text-indigo-700 ring-1 ring-inset ring-indigo-700/10">
+                          <span className="inline-flex items-center rounded-full bg-indigo-50 dark:bg-indigo-950/50 px-2 py-0.5 text-xs font-medium text-indigo-700 dark:text-indigo-300 ring-1 ring-inset ring-indigo-700/10 dark:ring-indigo-300/20">
                             {plan.badge}
                           </span>
                         )}
                       </div>
-                      <span className="text-xs font-normal text-slate-400 line-clamp-1">
+                      <span className="text-xs font-normal text-slate-400 dark:text-zinc-500 line-clamp-1">
                         {plan.description}
                       </span>
                     </div>
@@ -177,24 +177,24 @@ export default function PlanComparison() {
                 ))}
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-slate-100 dark:divide-zinc-800">
               {comparisonRows.map((row, index) => (
-                <tr key={index} className="hover:bg-slate-50/40 transition-colors">
-                  <td className="p-4 text-sm font-medium text-slate-600 truncate">
+                <tr key={index} className="hover:bg-slate-50/40 dark:hover:bg-zinc-800/20 transition-colors">
+                  <td className="p-4 text-sm font-medium text-slate-600 dark:text-zinc-300 truncate">
                     {row.label}
                   </td>
                   {plans.map((plan) => {
                     const value = row[plan.id];
                     return (
-                      <td key={plan.id} className="p-4 text-sm text-slate-700 break-words">
+                      <td key={plan.id} className="p-4 text-sm text-slate-700 dark:text-zinc-300 break-words">
                         {typeof value === 'boolean' ? (
                           value ? (
                             <Check className="h-5 w-5 text-indigo-500" strokeWidth={2.5} />
                           ) : (
-                            <Minus className="h-5 w-5 text-slate-300" strokeWidth={1.5} />
+                            <Minus className="h-5 w-5 text-slate-300 dark:text-zinc-700" strokeWidth={1.5} />
                           )
                         ) : (
-                          <span className="font-normal text-slate-700">{value}</span>
+                          <span className="font-normal text-slate-700 dark:text-zinc-300">{value}</span>
                         )}
                       </td>
                     );

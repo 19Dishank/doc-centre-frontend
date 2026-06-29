@@ -12,14 +12,14 @@ const TrustedBy = () => {
 
     return (
         <section className="flex flex-col items-center gap-6 py-4">
-            <span className="uppercase text-zinc-500 text-[10px] sm:text-xs leading-4 tracking-[0.2em] font-medium">
+            <span className="uppercase text-zinc-500 dark:text-zinc-400 text-[10px] sm:text-xs leading-4 tracking-[0.2em] font-medium">
                 Trusted by leading teams
             </span>
             <div className="flex flex-wrap justify-center items-center gap-x-8 gap-y-6 md:gap-x-12 lg:justify-between w-full opacity-60">
                 {companies.map((company) => (
                     <div 
                         key={company.name} 
-                        className="text-zinc-950 flex items-center gap-2 grayscale hover:grayscale-0 transition-all duration-300"
+                        className="text-zinc-950 dark:text-zinc-300 flex items-center gap-2 grayscale hover:grayscale-0 transition-all duration-300"
                     >
                         {company.icon}
                         <span className="font-semibold text-sm md:text-base">{company.name}</span>

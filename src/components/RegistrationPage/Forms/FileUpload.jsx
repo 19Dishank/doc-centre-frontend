@@ -95,7 +95,7 @@ const FileUpload = ({
 
     return (
         <div className="flex flex-col gap-2">
-            <label className="text-sm font-medium text-slate-700">
+            <label className="text-sm font-medium text-slate-700 dark:text-zinc-350">
                 Organization Logo
             </label>
 
@@ -112,33 +112,33 @@ const FileUpload = ({
                         ${errors.logo
                             ? "border-red-400"
                             : isDragging
-                                ? "border-blue-500 bg-blue-50"
-                                : "border-slate-300 hover:bg-slate-50"
+                                ? "border-blue-500 bg-blue-50 dark:bg-blue-950/20"
+                                : "border-slate-300 dark:border-zinc-800 hover:bg-slate-50 dark:hover:bg-zinc-900/50"
                         }
                     `}
                 >
                     <UploadCloud
                         className={`h-8 w-8 ${
-                            isDragging ? "text-blue-500" : "text-slate-400"
+                            isDragging ? "text-blue-500" : "text-slate-400 dark:text-zinc-500"
                         }`}
                     />
 
-                    <span className="text-sm font-medium text-slate-600">
+                    <span className="text-sm font-medium text-slate-600 dark:text-zinc-400">
                         Drag & drop logo here
                     </span>
 
-                    <span className="text-xs text-slate-400">
+                    <span className="text-xs text-slate-400 dark:text-zinc-500">
                         or click to upload
                     </span>
 
-                    <span className="text-xs text-slate-400">
+                    <span className="text-xs text-slate-400 dark:text-zinc-500">
                         PNG, JPG, or SVG up to 1MB
                     </span>
                 </div>
             ) : (
-                <div className="relative flex items-center justify-between border border-slate-200 rounded-lg p-3 bg-slate-50">
+                <div className="relative flex items-center justify-between border border-slate-200 dark:border-zinc-800 rounded-lg p-3 bg-slate-50 dark:bg-zinc-900">
                     <div className="flex items-center gap-3">
-                        <div className="h-16 w-16 rounded border bg-white flex items-center justify-center overflow-hidden">
+                        <div className="h-16 w-16 rounded border dark:border-zinc-800 bg-white dark:bg-zinc-800 flex items-center justify-center overflow-hidden">
                             <img
                                 src={registrationData.logo}
                                 alt="Logo preview"
@@ -147,11 +147,11 @@ const FileUpload = ({
                         </div>
 
                         <div className="flex flex-col">
-                            <span className="text-sm font-medium text-slate-700 truncate max-w-50">
+                            <span className="text-sm font-medium text-slate-700 dark:text-zinc-300 truncate max-w-50">
                                 {selectedFile?.name || "Uploaded Image"}
                             </span>
 
-                            <span className="text-xs text-slate-400">
+                            <span className="text-xs text-slate-400 dark:text-zinc-500">
                                 {(selectedFile?.size / 1024).toFixed(1)} KB
                             </span>
                         </div>
@@ -162,7 +162,7 @@ const FileUpload = ({
                         variant="ghost"
                         size="icon"
                         onClick={handleRemoveFile}
-                        className="h-8 w-8 rounded-full text-slate-500 hover:text-red-500 hover:bg-red-50"
+                        className="h-8 w-8 rounded-full text-slate-500 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20"
                     >
                         <X className="h-4 w-4" />
                     </Button>

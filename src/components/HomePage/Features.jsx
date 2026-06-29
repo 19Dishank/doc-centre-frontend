@@ -42,10 +42,10 @@ const Features = () => {
                 <Badge className="w-fit px-4 py-1" variant="secondary">
                     Features
                 </Badge>
-                <h2 className="font-bold text-3xl md:text-4xl tracking-tight max-w-2xl text-zinc-950">
+                <h2 className="font-bold text-3xl md:text-4xl tracking-tight max-w-2xl text-zinc-950 dark:text-zinc-50">
                     Everything you need to manage documents
                 </h2>
-                <p className="max-w-xl text-zinc-500 text-base md:text-lg">
+                <p className="max-w-xl text-zinc-500 dark:text-zinc-400 text-base md:text-lg">
                     From upload to archive, DocuCentral handles the entire document lifecycle so your team can focus on the
                     work that matters.
                 </p>
@@ -53,17 +53,17 @@ const Features = () => {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
                 {FeaturesList.map((feature, index) => (
-                    <Card key={index} className="p-8 group hover:border-[#2b7fff]/50 transition-all duration-300 shadow-sm hover:shadow-md border-zinc-200">
+                    <Card key={index} className="p-8 group hover:border-[#2b7fff]/50 transition-all duration-300 shadow-sm hover:shadow-md border-zinc-200 dark:border-zinc-800">
                         <CardHeader className="p-0 gap-4">
                             <div className="size-12 rounded-xl bg-[#2b7fff]/10 flex justify-center items-center group-hover:scale-110 transition-transform duration-300">
                                 {feature.icon}
                             </div>
-                            <CardTitle className="text-xl font-bold text-zinc-950">
+                            <CardTitle className="text-xl font-bold text-zinc-950 dark:text-zinc-100">
                                 {feature.title}
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="p-0 mt-3">
-                            <p className="leading-relaxed text-zinc-500 text-sm md:text-base">
+                            <p className="leading-relaxed text-zinc-500 dark:text-zinc-400 text-sm md:text-base">
                                 {feature.description}
                             </p>
                         </CardContent>

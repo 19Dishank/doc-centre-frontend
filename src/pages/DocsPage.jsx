@@ -13,7 +13,7 @@ import Reference from "@/components/DocsPage/Reference";
 
 export default function DocsPage() {
   return (
-    <div className="min-h-screen bg-zinc-50/50 flex flex-col text-zinc-800 antialiased ">
+    <div className="min-h-screen bg-background dark:bg-zinc-950 flex flex-col text-foreground transition-colors duration-200 antialiased">
       <Header />
       <div className="flex-1 flex max-w-7xl w-full mx-auto relative px-4 sm:px-6 lg:px-8">
         <Sidebar />

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { createPortal } from "react-dom";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card"; // Adjust imports based on your file structure
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card"; 
 import { Button } from "@/components/ui/button";
 import { X, Copy, Check, Eye, EyeOff, AlertTriangle, Download } from "lucide-react";
 

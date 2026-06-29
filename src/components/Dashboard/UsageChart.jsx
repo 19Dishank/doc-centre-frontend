@@ -7,16 +7,6 @@ const UsageChart = ({ stats, loading }) => {
 
     const usageData = stats?.apiAnalytics?.requestsOverTime
 
-    // const data = [
-    //     { day: "Day 1", api: 32, storage: 88 },
-    //     { day: "Day 5", api: 45, storage: 95 },
-    //     { day: "Day 10", api: 38, storage: 101 },
-    //     { day: "Day 15", api: 62, storage: 108 },
-    //     { day: "Day 20", api: 55, storage: 115 },
-    //     { day: "Day 25", api: 78, storage: 122 },
-    //     { day: "Day 30", api: 92, storage: 128 },
-    // ]
-
     return (
         <Card className="p-4 md:p-6 flex flex-col gap-4">
             <CardHeader className="p-0 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -74,7 +64,7 @@ const UsageChart = ({ stats, loading }) => {
                                         }}
                                         axisLine={false}
                                         tickLine={false}
-                                        dy={10} // Padding for the labels
+                                        dy={10} 
                                     />
                                     <YAxis
                                         tick={{

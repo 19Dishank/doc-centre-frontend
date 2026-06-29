@@ -1,14 +1,12 @@
-import { ChevronRight } from 'lucide-react'; // Or your preferred icon library
+import { ChevronRight } from 'lucide-react'; 
 
 export default function BreadcrumbNavigation({ navigationBar, handleNavigationClick }) {
-    // Fallback safe check if navigationBar is not yet loaded
     if (!navigationBar || navigationBar.length === 0) return null;
 
     return (
         <div
             className="text-sm flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
             onWheel={(e) => {
-                // If the user is scrolling vertically (deltaY), redirect it horizontally
                 if (e.deltaY !== 0) {
                     e.preventDefault();
                     e.currentTarget.scrollLeft += e.deltaY;

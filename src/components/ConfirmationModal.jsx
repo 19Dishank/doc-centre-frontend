@@ -1,4 +1,4 @@
-import { createPortal } from "react-dom"; // Add this import
+import { createPortal } from "react-dom"; 
 import { X, AlertTriangle, Info, CheckCircle2, AlertCircle } from "lucide-react";
 import { Button } from "./ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "./ui/card";

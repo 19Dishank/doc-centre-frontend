@@ -24,7 +24,6 @@ export default function AudioRenderer({ file, audioUrl }) {
         }
     }, [file, audioUrl])
 
-    // Triggered when audio has buffered enough to begin playback
     const handleCanPlay = () => {
         setLoading(false)
     }

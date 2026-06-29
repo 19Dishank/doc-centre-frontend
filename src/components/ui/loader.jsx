@@ -49,28 +49,28 @@ const Loader = ({ styles = "", heading, subheading, size = "md" }) => {
     return (
         <div className={`${styles} h-full  flex-1 flex flex-col justify-center items-center font-sans animate-fade-in`}>
             <div className="flex flex-col items-center justify-center gap-6 max-w-sm text-center">
-                <div className={`relative bg-white rounded-xl shadow-md border border-slate-100 flex flex-col justify-between overflow-hidden ${currentSize.card}`}>
+                <div className={`relative bg-white dark:bg-zinc-900 rounded-xl shadow-md border border-slate-100 dark:border-zinc-800/80 flex flex-col justify-between overflow-hidden ${currentSize.card}`}>
                     
                     <div className={`absolute left-0 right-0 bg-linear-to-r from-blue-400 via-blue-600 to-blue-400 opacity-80 shadow-[0_0_12px_#2563eb] animate-[scan_2s_ease-in-out_infinite] ${currentSize.scanLine}`} />
                     
                     <div className={`w-full ${currentSize.skeletonGap}`}>
-                        <div className={`${currentSize.bar1} bg-slate-200 rounded animate-[pulse_1.5s_infinite_100ms]`} />
-                        <div className={`${currentSize.bar2} bg-slate-100 rounded animate-[pulse_1.5s_infinite_200ms]`} />
-                        <div className={`${currentSize.bar3} bg-slate-200 rounded animate-[pulse_1.5s_infinite_300ms]`} />
-                        <div className={`${currentSize.bar4} bg-slate-100 rounded animate-[pulse_1.5s_infinite_400ms]`} />
+                        <div className={`${currentSize.bar1} bg-slate-200 dark:bg-zinc-800 rounded animate-[pulse_1.5s_infinite_100ms]`} />
+                        <div className={`${currentSize.bar2} bg-slate-100 dark:bg-zinc-800/60 rounded animate-[pulse_1.5s_infinite_200ms]`} />
+                        <div className={`${currentSize.bar3} bg-slate-200 dark:bg-zinc-800 rounded animate-[pulse_1.5s_infinite_300ms]`} />
+                        <div className={`${currentSize.bar4} bg-slate-100 dark:bg-zinc-800/60 rounded animate-[pulse_1.5s_infinite_400ms]`} />
                     </div>
                     
-                    <div className={`flex items-center justify-between w-full border-t border-slate-100 ${currentSize.footer}`}>
-                        <div className={`${currentSize.footerBar} bg-blue-100 rounded`} />
+                    <div className={`flex items-center justify-between w-full border-t border-slate-100 dark:border-zinc-800/80 ${currentSize.footer}`}>
+                        <div className={`${currentSize.footerBar} bg-blue-100 dark:bg-blue-900/40 rounded`} />
                         <div className={`rounded-full bg-blue-600 animate-ping ${currentSize.pingDot}`} />
                     </div>
                 </div>
                 
                 <div className="space-y-1.5">
-                    <h3 className={`text-slate-800 font-semibold tracking-tight ${currentSize.title}`}>
+                    <h3 className={`text-slate-800 dark:text-zinc-200 font-semibold tracking-tight ${currentSize.title}`}>
                         {heading || "Loading ..."}
                     </h3>
-                    <p className={`text-slate-400 font-medium animate-[pulse_2s_infinite] ${currentSize.desc}`}>
+                    <p className={`text-slate-400 dark:text-zinc-500 font-medium animate-[pulse_2s_infinite] ${currentSize.desc}`}>
                         {subheading || "Please wait a moment"}
                     </p>
                 </div>

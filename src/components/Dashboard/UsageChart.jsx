@@ -4,18 +4,13 @@ import { formatSize } from "@/helper/formatSize";
 import { CartesianGrid, Line, LineChart, XAxis, YAxis, ResponsiveContainer } from "recharts";
 
 const UsageChart = ({ stats, loading }) => {
+    const usageData = stats?.apiAnalytics?.requestsOverTime;
 
-    const usageData = stats?.apiAnalytics?.requestsOverTime
-
-    // const data = [
-    //     { day: "Day 1", api: 32, storage: 88 },
-    //     { day: "Day 5", api: 45, storage: 95 },
-    //     { day: "Day 10", api: 38, storage: 101 },
-    //     { day: "Day 15", api: 62, storage: 108 },
-    //     { day: "Day 20", api: 55, storage: 115 },
-    //     { day: "Day 25", api: 78, storage: 122 },
-    //     { day: "Day 30", api: 92, storage: 128 },
-    // ]
+    const formatDate = (dateString) => {
+        if (!dateString) return "";
+        const date = new Date(dateString);
+        return date.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+    };
 
     return (
         <Card className="p-4 md:p-6 flex flex-col gap-4">
@@ -59,7 +54,7 @@ const UsageChart = ({ stats, loading }) => {
                             <ResponsiveContainer width="100%" height="100%">
                                 <LineChart
                                     data={usageData}
-                                    margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
+                                    margin={{ top: 10, right: 10, left: 0, bottom: 0 }}
                                 >
                                     <CartesianGrid
                                         strokeDasharray="3 3"
@@ -67,16 +62,20 @@ const UsageChart = ({ stats, loading }) => {
                                         vertical={false}
                                     />
                                     <XAxis
-                                        dataKey="day"
+                                        dataKey="date"
+                                        tickFormatter={formatDate}
                                         tick={{
                                             fontSize: 11,
                                             fill: "oklch(0.552 0.016 285.938)",
                                         }}
                                         axisLine={false}
                                         tickLine={false}
-                                        dy={10} // Padding for the labels
+                                        dy={10}
                                     />
+
                                     <YAxis
+                                        yAxisId="left"
+                                        orientation="left"
                                         tick={{
                                             fontSize: 11,
                                             fill: "oklch(0.552 0.016 285.938)",
@@ -84,14 +83,31 @@ const UsageChart = ({ stats, loading }) => {
                                         axisLine={false}
                                         tickLine={false}
                                     />
+
+                                    <YAxis
+                                        yAxisId="right"
+                                        orientation="right"
+                                        tickFormatter={(val) => formatSize(val)}
+                                        tick={{
+                                            fontSize: 11,
+                                            fill: "oklch(0.552 0.016 285.938)",
+                                        }}
+                                        axisLine={false}
+                                        tickLine={false}
+                                    />
+
                                     <ChartTooltip
+                                        labelFormatter={formatDate}
                                         formatter={(value, name) => {
                                             if (name === "requests") return [`${value}`, "API Requests"];
                                             if (name === "storageUsed") return [formatSize(value), "Storage"];
                                             return [value, name];
                                         }}
-                                        cursor={false} />
+                                        cursor={false}
+                                    />
+
                                     <Line
+                                        yAxisId="left"
                                         type="monotone"
                                         dataKey="requests"
                                         stroke="oklch(0.623 0.214 259.815)"
@@ -100,6 +116,7 @@ const UsageChart = ({ stats, loading }) => {
                                         activeDot={{ r: 4, strokeWidth: 0 }}
                                     />
                                     <Line
+                                        yAxisId="right"
                                         type="monotone"
                                         dataKey="storageUsed"
                                         stroke="oklch(0.6 0.118 184.704)"

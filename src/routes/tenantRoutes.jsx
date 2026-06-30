@@ -5,7 +5,7 @@ const Dashboard = lazy(() => import("@/pages/Dashboard"));
 const Files = lazy(() => import("@/pages/Files"));
 const UsersList = lazy(() => import("@/pages/Users"));
 const Roles = lazy(() => import("@/pages/Roles"));
-const BillingPage = lazy(() => import("@/pages/settings/BillingPage"));
+// const BillingPage = lazy(() => import("@/pages/settings/BillingPage"));
 const Organization = lazy(() => import("@/pages/settings/Organization"));
 const NotificationsSetting = lazy(() => import("@/pages/settings/NotificationsSetting"));
 const LoginPage = lazy(() => import("@/pages/LoginPage"));
@@ -86,13 +86,13 @@ export const protectedRoutes = [
         path: "/credentials/api-keys",
         element: <APIKeysPage />,
     },
-    {
-        path: "/settings/billing",
-        element: <BillingPage />,
-        isRouteAccessible: {
-            role: "Admin"
-        },
-    },
+    // {
+    //     path: "/settings/billing",
+    //     element: <BillingPage />,
+    //     isRouteAccessible: {
+    //         role: "Admin"
+    //     },
+    // },
     {
         path: "/settings/organization",
         element: <Organization />,

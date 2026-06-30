@@ -5,10 +5,10 @@ import { Loader } from "lucide-react";
 
 export default function AuthLayout({ children }) {
   const { loading } = useAuthContext();
-  console.log("🚀 ~ AuthLayout ~ loading:", loading)
+  // console.log("🚀 ~ AuthLayout ~ loading:", loading)
 
   if (loading) return <Loader className="animate-spin" size={48} />
-  
+
   return (
     <main className="bg-white">
       <div className="flex flex-col lg:flex-row w-full min-h-screen">

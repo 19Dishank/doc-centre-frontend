@@ -76,6 +76,8 @@ const NotificationsDropdown = () => {
         try {
             await markAllNotificationsAsRead();
             setNotifications(prev => prev.map(n => ({ ...n, isRead: true })));
+            // setUnreadCount(null)
+            // setIsNotificationsOpen(false)
         } catch (error) {
             console.error("Error marking all notifications as read:", error);
         }

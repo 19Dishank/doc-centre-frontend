@@ -60,14 +60,17 @@ const Notification = ({ notification }) => {
             className={`p-4 flex gap-3 transition-colors hover:bg-zinc-50/80 cursor-pointer ${!notification.isRead ? "bg-blue-50/20" : ""}`}
         >
             {getNotificationIcon(notification.type)}
-            <div className="flex-1 space-y-1">
+            <div className="flex-1 min-w-0 space-y-1">
                 <div className="flex items-center justify-between gap-2">
                     <p className={`text-xs font-medium text-zinc-900 ${!notification.isRead ? "font-semibold" : ""}`}>
                         {notification.title}
                     </p>
-                    <span className="text-[10px] text-zinc-400 shrink-0">{formatTime(notification.createdAt)}</span>
+                    <span className="text-[10px] text-zinc-400 shrink-0">
+                        {formatTime(notification.createdAt)}
+                    </span>
                 </div>
-                <p className="text-xs text-zinc-500 leading-normal line-clamp-2">
+
+                <p className="text-xs text-zinc-500 leading-normal line-clamp-2 wrap-anywhere">
                     {notification.message}
                 </p>
             </div>

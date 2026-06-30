@@ -39,14 +39,14 @@ const DocumentPreview = ({ setIsOpen, item }) => {
     const type = item?.originalFileName?.split(".").pop()?.toLowerCase();
 
     const getRenderer = () => {
-        const imageTypes = ["png", "jpg", "jpeg", "gif", "webp", "svg"];
+        const imageTypes = ["png", "jpg", "jpeg", "gif", "webp", "svg", 'jfif'];
         const videoTypes = ["mp4", "webm", "ogg", "mov"];
         const audioTypes = ["mp3", "wav", "ogg"];
         const codeTypes = ["js", "jsx", "ts", "tsx", "json", "html", "css", "py", "java", "cpp", "c", "rb", "php", "go", "rs", "swift", "kt", "sql", "sh", "bat", "pl", "r", "lua", "dart"];
         const textTypes = ["txt", "md"];
         const officeTypes = [
             'doc', 'docx', 'docm', 'dot', 'dotx', 'dotm',
-            'xls', 'xlsx', 'xlsm', 'xlsb', 'xlt', 'xltx', 'xltm', 'xlam', 
+            'xls', 'xlsx', 'xlsm', 'xlsb', 'xlt', 'xltx', 'xltm', 'xlam',
             'ppt', 'pptx', 'pptm', 'pot', 'potx', 'potm', 'ppam', 'pps', 'ppsx', 'ppsm', 'sldx', 'sldm',
         ];
 
@@ -89,8 +89,8 @@ const DocumentPreview = ({ setIsOpen, item }) => {
                         <button
                             onClick={() => setShowDetails(!showDetails)}
                             className={`p-1.5 rounded-md transition-colors cursor-pointer border ${showDetails
-                                    ? "bg-primary/10 border-primary/20 text-primary"
-                                    : "hover:bg-neutral-200 dark:hover:bg-neutral-800 border-transparent text-muted-foreground"
+                                ? "bg-primary/10 border-primary/20 text-primary"
+                                : "hover:bg-neutral-200 dark:hover:bg-neutral-800 border-transparent text-muted-foreground"
                                 }`}
                             title="Toggle Details"
                         >

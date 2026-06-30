@@ -13,8 +13,8 @@ export function DataTable({
             {/* Added an overflow wrapper to handle the scrollbar cleanly inside the card */}
             <div className="w-full overflow-x-auto">
                 {/* Changed table-fixed to table-auto so it expands naturally instead of breaking layout */}
-                <Table className="w-full table-auto min-w-[600px]"> 
-                    
+                <Table className="w-full table-auto min-w-150">
+
                     <TableHeader className="bg-zinc-50/50">
                         <TableRow>
                             {columns.map((column) => (

@@ -164,12 +164,22 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
                                                 <NavLink
                                                     key={subItem.path}
                                                     to={subItem.path}
-                                                    onClick={handleNavClick}
+                                                    onClick={(e) => {
+                                                        if (subItem.name === "Billing") {
+                                                            e.preventDefault();
+                                                            return;
+                                                        }
+                                                        handleNavClick();
+                                                    }}
+                                                    aria-disabled={subItem.name === "Billing"}
+                                                    tabIndex={subItem.name === "Billing" ? -1 : undefined}
                                                     className={({ isActive }) =>
                                                         `font-medium rounded-lg text-sm flex px-4 py-2.5 items-center gap-2
-                                                        ${isActive
-                                                            ? "bg-zinc-100 text-[#18181b]"
-                                                            : "text-[#71717b] hover:bg-zinc-100/50"}`
+                                                             ${subItem.name === "Billing"
+                                                            ? "text-zinc-400 opacity-60 cursor-not-allowed pointer-events-none grayscale"
+                                                            : isActive
+                                                                ? "bg-zinc-100 text-[#18181b]"
+                                                                : "text-[#71717b] hover:bg-zinc-100/50"}`
                                                     }
                                                 >
                                                     {subItem.icon}

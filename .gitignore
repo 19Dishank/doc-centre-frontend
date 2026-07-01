@@ -24,3 +24,6 @@ dist-ssr
 *.sw?
 
 .env
+
+# custom
+MULTI_TENANT_ARCHITECTURE.md

@@ -17,11 +17,11 @@ const OnBoardingForm = () => {
         slug: "",
         logo: ""
     };
-
     const [registrationData, setRegistrationData] = useState(initialData);
     const [selectedFile, setSelectedFile] = useState(null);
     const [errors, setErrors] = useState(initialData);
     const [loading, setLoading] = useState(false);
+    const [isSlugEdited, setIsSlugEdited] = useState(false);
 
     const fileInputRef = useRef(null);
 
@@ -70,14 +70,32 @@ const OnBoardingForm = () => {
     const handleChange = (e) => {
         const { name, value } = e.target;
 
+        if (name === "slug") {
+            setIsSlugEdited(value.trim() !== "");
+        }
+
+        let generatedSlug = registrationData.slug;
+
+        if (name === "orgName" && !isSlugEdited) {
+            generatedSlug = value
+                .toLowerCase()
+                .trim()
+                .replace(/[^a-z0-9]+/g, "-")
+                .replace(/^-+|-+$/g, "");
+        }
+
         setRegistrationData((prev) => ({
             ...prev,
-            [name]: value
+            [name]: value,
+            ...(name === "orgName" && !isSlugEdited && { slug: generatedSlug })
         }));
 
         setErrors((prev) => ({
             ...prev,
-            [name]: validateField(name, value)
+            [name]: validateField(name, value),
+            ...(name === "orgName" && !isSlugEdited && {
+                slug: validateField("slug", generatedSlug)
+            })
         }));
     };
 
@@ -94,7 +112,13 @@ const OnBoardingForm = () => {
     };
 
     const createSlug = () => {
-        const generatedSlug = registrationData.orgName.toLowerCase().trim().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+        if (isSlugEdited) return;
+        const generatedSlug = registrationData.orgName
+            .trim()
+            .toLowerCase()
+            .replace(/[^a-z0-9]+/g, "-")
+            .replace(/^-+|-+$/g, "");
+
         setRegistrationData((prev) => ({
             ...prev,
             slug: generatedSlug
@@ -134,6 +158,7 @@ const OnBoardingForm = () => {
             if (registrationData.logo.startsWith("blob:")) URL.revokeObjectURL(registrationData.logo);
             setRegistrationData(initialData);
             setSelectedFile(null);
+            setIsSlugEdited(false)
             if (fileInputRef.current) fileInputRef.current.value = "";
 
         } catch (error) {
@@ -151,7 +176,7 @@ const OnBoardingForm = () => {
                 <FormField label="Last Name" name="lastName" value={registrationData.lastName} onChange={handleChange} placeholder="Doe" error={errors.lastName} />
             </div>
             <FormField label="Work Email" name="email" value={registrationData.email} onChange={handleChange} placeholder="you@company.com" error={errors.email} />
-            <FormField label="Organization Name" name="orgName" value={registrationData.orgName} onChange={handleChange} placeholder="Acme Corp" error={errors.orgName} onBlur={createSlug} />
+            <FormField label="Organization Name" name="orgName" value={registrationData.orgName} onChange={handleChange} placeholder="Acme Corp" error={errors.orgName} />
             <FormField label="Organization Slogan" name="orgSlogan" value={registrationData.orgSlogan} onChange={handleChange} placeholder="Acme Corp" error={errors.orgSlogan} />
             <FormField label="Slug" name="slug" value={registrationData.slug} onChange={handleChange} placeholder="acme-corp" error={errors.slug} />
             <FileUpload errors={errors} setErrors={setErrors} selectedFile={selectedFile} setSelectedFile={setSelectedFile} setRegistrationData={setRegistrationData} registrationData={registrationData} fileInputRef={fileInputRef} />

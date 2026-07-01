@@ -27,37 +27,35 @@ const PaginationBar = ({
     };
 
     const displayPageNumbers = () => {
-        const pageNumbers = [];
-
-        if (totalPages <= 5) {
-            for (let i = 1; i <= totalPages; i++) {
-                pageNumbers.push(i);
-            }
-        } else {
-            if (currentPage <= 3) {
-                pageNumbers.push(1, 2, 3, "...", totalPages);
-            } else if (currentPage >= totalPages - 2) {
-                pageNumbers.push(
-                    1,
-                    "...",
-                    totalPages - 2,
-                    totalPages - 1,
-                    totalPages
-                );
-            } else {
-                pageNumbers.push(
-                    1,
-                    "...",
-                    currentPage - 1,
-                    currentPage,
-                    currentPage + 1,
-                    "...",
-                    totalPages
-                );
-            }
+        if (totalPages <= 7) {
+            return Array.from({ length: totalPages }, (_, i) => i + 1);
         }
 
-        return pageNumbers;
+        const pages = [];
+
+        // always show first page
+        pages.push(1);
+
+        if (currentPage > 3) {
+            pages.push("...");
+        }
+
+        // pages around current
+        const start = Math.max(2, currentPage - 2);
+        const end = Math.min(totalPages - 1, currentPage + 1);
+
+        for (let i = start; i <= end; i++) {
+            pages.push(i);
+        }
+
+        if (currentPage < totalPages - 2) {
+            pages.push("...");
+        }
+
+        // always show last page
+        pages.push(totalPages);
+
+        return pages;
     };
 
     return (
@@ -84,7 +82,7 @@ const PaginationBar = ({
                                         setCurrentPage(page);
                                     }
                                 }}
-                                className={` cursor-pointer ${currentPage === page ? "bg-zinc-200/80" : ""}`}
+                                className={`cursor-pointer ${currentPage === page ? "bg-zinc-200/80" : ""} ${page === "..." ? "pointer-events-none" : ""}`}
                             >
                                 {page}
                             </PaginationLink>

@@ -42,7 +42,7 @@ export default function UsersList() {
     try {
       const res = await getUsers({
         page: currentPage,
-        limit: 1,
+        limit: 5,
         ...filters
       });
 

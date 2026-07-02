@@ -1,210 +1,207 @@
-import { Check, Minus } from 'lucide-react';
+import { Check, Minus, Zap } from "lucide-react";
+import { Badge } from "../ui/badge";
+import { NavLink } from "react-router-dom";
+import { Button } from "../ui/button";
 
 const plans = [
   {
-    "id": "starter",
-    "name": "Starter",
-    "description": "For individuals and small teams getting started.",
-    "badge": null,
-    "pricing": {
-      "monthly": { "amount": 0, "currency": "USD" },
-      "yearly": { "amount": 0, "currency": "USD" }
-    },
-    "features": [
+    id: "starter",
+    name: "Starter",
+    description: "For individuals and small teams getting started.",
+    badge: null,
+    price: { monthly: "Free", yearly: "Free" },
+    highlight: false,
+    buttonText: "Get started free",
+    buttonTo: "/onboarding",
+    features: [
       "5 GB storage",
       "Up to 3 users",
-      "File upload & organization",
-      "Folder management",
-      "Full-text document search",
-      "File preview",
-      "Activity tracking",
-      "Mobile & web access",
-      "Community support"
+      "File upload & folder management",
+      "10+ file type previews",
+      "Document sharing (60 min links)",
+      "Recycle bin & restore",
+      "Real-time notifications",
+      "Community support",
     ],
-    "disabledFeatures": [
-      "API Access",
-      "OCR Processing",
-      "Audit Logs"
-    ],
-    "buttonText": "Get Started"
+    disabled: ["API Access & SSO", "Custom roles & permissions", "Usage analytics dashboard"],
   },
   {
-    "id": "pro",
-    "name": "Pro",
-    "description": "For growing teams that need collaboration and automation.",
-    "badge": "Most Popular",
-    "pricing": {
-      "monthly": { "amount": 9, "currency": "USD" },
-      "yearly": { "amount": 86, "currency": "USD", "discount": "20%" }
-    },
-    "features": [
+    id: "pro",
+    name: "Pro",
+    description: "For growing teams that need roles, API access and analytics.",
+    badge: "Most Popular",
+    price: { monthly: "$9", yearly: "$86" },
+    highlight: true,
+    buttonText: "Start 14-day trial",
+    buttonTo: "/onboarding",
+    features: [
       "100 GB storage per user",
       "Unlimited users",
-      "Role-based access control",
-      "API Access",
-      "OCR document processing",
-      "Document version history",
-      "Approval workflows",
-      "Shared folders",
-      "Advanced search & filters",
-      "Email notifications",
-      "Priority support"
+      "Everything in Starter",
+      "Custom roles & granular permissions",
+      "User invite & management",
+      "API keys + SSO integration",
+      "Usage analytics dashboard",
+      "Priority support",
     ],
-    "buttonText": "Start Free Trial"
+    disabled: ["Dedicated account manager", "White-label branding"],
   },
   {
-    "id": "elite",
-    "name": "Elite",
-    "description": "For organizations requiring security, compliance, and advanced controls.",
-    "badge": "Best Value",
-    "pricing": {
-      "monthly": { "amount": 29, "currency": "USD" },
-      "yearly": { "amount": 278, "currency": "USD", "discount": "20%" }
-    },
-    "features": [
-      "Everything in Pro",
+    id: "elite",
+    name: "Elite",
+    description: "For organizations needing security, compliance and scale.",
+    badge: "Best Value",
+    price: { monthly: "$29", yearly: "$278" },
+    highlight: false,
+    buttonText: "Upgrade to Elite",
+    buttonTo: "/onboarding",
+    features: [
       "Unlimited storage",
+      "Everything in Pro",
       "Audit logs",
-      "SSO Authentication",
-      "Advanced permissions",
-      "Custom retention policies",
-      "Team analytics dashboard",
+      "White-label branding",
+      "Custom data retention policies",
+      "Multi-region backups",
       "Dedicated account manager",
       "SLA-backed support",
-      "White-label branding",
-      "Custom integrations",
-      "Multi-location backups"
     ],
-    "buttonText": "Upgrade to Elite"
-  }
+    disabled: [],
+  },
 ];
 
 const comparisonRows = [
   { label: "Storage", starter: "5 GB", pro: "100 GB / user", elite: "Unlimited" },
-  { label: "Users / Collaborators", starter: "Up to 3", pro: "Unlimited", elite: "Unlimited" },
-  { label: "Document Search", starter: "Full-text", pro: "Advanced & filters", elite: "Advanced & filters" },
-  { label: "API Access", starter: false, pro: "Full Access", elite: "Full + Custom" },
-  { label: "OCR Processing", starter: false, pro: true, elite: true },
-  { label: "Version History", starter: false, pro: true, elite: true },
-  { label: "Audit Logs", starter: false, pro: false, elite: true },
-  { label: "SSO Authentication", starter: false, pro: false, elite: true },
-  { label: "Support", starter: "Community", pro: "Priority support", elite: "Dedicated CSM & SLA" }
+  { label: "Users", starter: "Up to 3", pro: "Unlimited", elite: "Unlimited" },
+  { label: "File type previews", starter: "10+ types", pro: "10+ types", elite: "10+ types" },
+  { label: "Share links", starter: "60 min max", pro: "60 min max", elite: "60 min max" },
+  { label: "Recycle bin", starter: true, pro: true, elite: true },
+  { label: "Real-time notifs", starter: true, pro: true, elite: true },
+  { label: "Custom roles", starter: false, pro: true, elite: true },
+  { label: "User management", starter: false, pro: true, elite: true },
+  { label: "API Access & SSO", starter: false, pro: true, elite: true },
+  { label: "Usage dashboard", starter: false, pro: true, elite: true },
+  { label: "Audit logs", starter: false, pro: false, elite: true },
+  { label: "White-label branding", starter: false, pro: false, elite: true },
+  { label: "Support", starter: "Community", pro: "Priority", elite: "Dedicated + SLA" },
 ];
 
 export default function PlanComparison() {
   return (
-    <div className="w-full max-w-7xl mx-auto selection:bg-indigo-50">
-      <div className="text-center mb-10 md:mb-14">
-        <h2 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-4xl">
-          Compare plans
+    <section id="pricing" className="flex flex-col gap-12 py-4">
+      {/* heading */}
+      <div className="text-center flex flex-col items-center gap-4">
+        <Badge className="w-fit px-4 py-1 bg-blue-50 text-[#2b7fff] border border-blue-100 rounded-full" variant="outline">
+          <Zap className="size-3" />
+          Pricing
+        </Badge>
+        <h2 className="font-bold text-3xl md:text-4xl tracking-tight text-zinc-950">
+          Simple, transparent pricing
         </h2>
-        <p className="mt-2 md:mt-3 text-sm md:text-lg text-slate-500 mx-auto">
-          A detailed look at what each plan includes so you can pick the right fit.
+        <p className="max-w-xl text-zinc-500 text-base md:text-lg">
+          Start free, upgrade when you need it. No hidden fees, cancel anytime.
         </p>
       </div>
 
-      <div className="space-y-6 md:hidden">
+      {/* plan cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
         {plans.map((plan) => (
-          <div 
-            key={plan.id} 
-            className={`rounded-xl border bg-white p-5 shadow-sm transition-all ${
-              plan.id === 'pro' ? 'border-indigo-500/40 ring-1 ring-indigo-500/10' : 'border-slate-200'
-            }`}
+          <div
+            key={plan.id}
+            className={`relative flex flex-col rounded-2xl border p-6 gap-6 ${plan.highlight
+              ? "border-[#2b7fff]/40 shadow-lg shadow-blue-500/10 bg-white ring-1 ring-[#2b7fff]/20"
+              : "border-zinc-200 bg-white shadow-sm"
+              }`}
           >
-            <div className="flex items-center justify-between border-b border-slate-100 pb-4 mb-4">
-              <div>
-                <h3 className={`text-lg font-bold ${plan.id === 'pro' ? 'text-indigo-600' : 'text-slate-900'}`}>
-                  {plan.name}
-                </h3>
-                <p className="text-xs text-slate-400 mt-0.5">{plan.description}</p>
-              </div>
-              {plan.badge && (
-                <span className="inline-flex items-center rounded-full bg-indigo-50 px-2.5 py-0.5 text-xs font-medium text-indigo-700 ring-1 ring-inset ring-indigo-700/10">
-                  {plan.badge}
-                </span>
+            {plan.badge && (
+              <span className="absolute -top-3 left-1/2 -translate-x-1/2 inline-flex items-center rounded-full bg-[#2b7fff] px-3 py-1 text-xs font-semibold text-white shadow">
+                {plan.badge}
+              </span>
+            )}
+
+            <div className="flex flex-col gap-1">
+              <h3 className={`text-lg font-bold ${plan.highlight ? "text-[#2b7fff]" : "text-zinc-900"}`}>
+                {plan.name}
+              </h3>
+              <p className="text-xs text-zinc-400">{plan.description}</p>
+            </div>
+
+            <div className="flex items-end gap-1">
+              <span className="text-4xl font-bold text-zinc-950 tracking-tight">
+                {plan.price.monthly}
+              </span>
+              {plan.price.monthly !== "Free" && (
+                <span className="text-zinc-400 text-sm mb-1.5">/user/mo</span>
               )}
             </div>
 
-            <dl className="space-y-3">
-              {comparisonRows.map((row, idx) => {
-                const value = row[plan.id];
-                return (
-                  <div key={idx} className="flex items-center justify-between text-xs py-1">
-                    <dt className="text-slate-500 font-medium">{row.label}</dt>
-                    <dd className="text-slate-800 font-normal">
-                      {typeof value === 'boolean' ? (
-                        value ? (
-                          <Check className="h-4 w-4 text-indigo-500" strokeWidth={3} />
-                        ) : (
-                          <Minus className="h-4 w-4 text-slate-300" strokeWidth={2} />
-                        )
-                      ) : (
-                        <span>{value}</span>
-                      )}
-                    </dd>
-                  </div>
-                );
-              })}
-            </dl>
+            <NavLink to={plan.buttonTo}>
+              <Button
+                className={`w-full h-10 cursor-pointer text-sm font-semibold ${plan.highlight
+                  ? "bg-[#2b7fff] hover:bg-[#2b7fff]/90 text-white shadow shadow-blue-500/20"
+                  : ""
+                  }`}
+                variant={plan.highlight ? "default" : "outline"}
+              >
+                {plan.buttonText}
+              </Button>
+            </NavLink>
+
+            <div className="flex flex-col gap-2.5 pt-2 border-t border-zinc-100">
+              {plan.features.map((f, i) => (
+                <div key={i} className="flex items-start gap-2.5 text-sm text-zinc-700">
+                  <Check className="size-4 text-emerald-500 shrink-0 mt-0.5" strokeWidth={2.5} />
+                  {f}
+                </div>
+              ))}
+              {plan.disabled.map((f, i) => (
+                <div key={i} className="flex items-start gap-2.5 text-sm text-zinc-300">
+                  <Minus className="size-4 shrink-0 mt-0.5" strokeWidth={2} />
+                  {f}
+                </div>
+              ))}
+            </div>
           </div>
         ))}
       </div>
 
-      <div className="hidden md:block overflow-hidden border border-slate-200/80 bg-white shadow-sm rounded-2xl">
-        <div className="overflow-x-auto">
-          <table className="w-full border-collapse text-left table-fixed">
-            <thead>
-              <tr className="border-b border-slate-200 bg-slate-50/70">
-                <th className="p-5 text-sm font-semibold text-slate-600 w-1/4">Features</th>
-                {plans.map((plan) => (
-                  <th key={plan.id} className="p-5 w-1/4 relative">
-                    <div className="flex flex-col gap-1">
-                      <div className="flex items-center justify-between min-h-6">
-                        <span className={`text-base font-bold ${plan.id === 'pro' ? 'text-indigo-600' : 'text-slate-900'}`}>
-                          {plan.name}
-                        </span>
-                        {plan.badge && (
-                          <span className="inline-flex items-center rounded-full bg-indigo-50 px-2 py-0.5 text-xs font-medium text-indigo-700 ring-1 ring-inset ring-indigo-700/10">
-                            {plan.badge}
-                          </span>
-                        )}
-                      </div>
-                      <span className="text-xs font-normal text-slate-400 line-clamp-1">
-                        {plan.description}
-                      </span>
-                    </div>
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100">
-              {comparisonRows.map((row, index) => (
-                <tr key={index} className="hover:bg-slate-50/40 transition-colors">
-                  <td className="p-4 text-sm font-medium text-slate-600 truncate">
-                    {row.label}
-                  </td>
-                  {plans.map((plan) => {
-                    const value = row[plan.id];
-                    return (
-                      <td key={plan.id} className="p-4 text-sm text-slate-700 break-words">
-                        {typeof value === 'boolean' ? (
-                          value ? (
-                            <Check className="h-5 w-5 text-indigo-500" strokeWidth={2.5} />
-                          ) : (
-                            <Minus className="h-5 w-5 text-slate-300" strokeWidth={1.5} />
-                          )
-                        ) : (
-                          <span className="font-normal text-slate-700">{value}</span>
-                        )}
-                      </td>
-                    );
-                  })}
-                </tr>
+      {/* comparison table — desktop */}
+      <div className="hidden md:block overflow-hidden border border-zinc-200 bg-white shadow-sm rounded-2xl">
+        <table className="w-full border-collapse text-left table-fixed">
+          <thead>
+            <tr className="border-b border-zinc-200 bg-zinc-50">
+              <th className="p-5 text-sm font-semibold text-zinc-500 w-1/4">Feature</th>
+              {plans.map((plan) => (
+                <th key={plan.id} className="p-5 w-1/4">
+                  <span className={`text-base font-bold ${plan.highlight ? "text-[#2b7fff]" : "text-zinc-900"}`}>
+                    {plan.name}
+                  </span>
+                </th>
               ))}
-            </tbody>
-          </table>
-        </div>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-zinc-100">
+            {comparisonRows.map((row, i) => (
+              <tr key={i} className="hover:bg-zinc-50/60 transition-colors">
+                <td className="p-4 text-sm font-medium text-zinc-600">{row.label}</td>
+                {plans.map((plan) => {
+                  const val = row[plan.id];
+                  return (
+                    <td key={plan.id} className="p-4 text-sm text-zinc-700">
+                      {typeof val === "boolean" ? (
+                        val
+                          ? <Check className="size-5 text-emerald-500" strokeWidth={2.5} />
+                          : <Minus className="size-5 text-zinc-300" strokeWidth={1.5} />
+                      ) : (
+                        <span>{val}</span>
+                      )}
+                    </td>
+                  );
+                })}
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
-    </div>
+    </section>
   );
 }

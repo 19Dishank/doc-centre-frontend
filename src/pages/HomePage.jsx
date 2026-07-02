@@ -47,7 +47,7 @@ export default function HomePage() {
         <>
             <div className="min-h-screen bg-white">
                 <Header />
-                <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12 lg:py-20">
+                <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-10 lg:py-10">
                     <div className="flex flex-col gap-16 md:gap-20 lg:gap-24">
                         <HeroSection />
                         <TrustedBy />

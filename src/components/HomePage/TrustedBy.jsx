@@ -2,27 +2,27 @@ import { Aperture, Boxes, Cloud, Compass, Hexagon, Triangle } from "lucide-react
 
 const TrustedBy = () => {
     const companies = [
-        { name: "Hexform", icon: <Hexagon className="size-5" /> },
-        { name: "Trilogy", icon: <Triangle className="size-5" /> },
-        { name: "Boxworks", icon: <Boxes className="size-5" /> },
-        { name: "Cloudly", icon: <Cloud className="size-5" /> },
-        { name: "Aperture", icon: <Aperture className="size-5" /> },
-        { name: "Northstar", icon: <Compass className="size-5" /> },
+        { name: "Hexform", icon: <Hexagon className="size-4" /> },
+        { name: "Trilogy", icon: <Triangle className="size-4" /> },
+        { name: "Boxworks", icon: <Boxes className="size-4" /> },
+        { name: "Cloudly", icon: <Cloud className="size-4" /> },
+        { name: "Aperture", icon: <Aperture className="size-4" /> },
+        { name: "Northstar", icon: <Compass className="size-4" /> },
     ];
 
     return (
-        <section className="flex flex-col items-center gap-6 py-4">
-            <span className="uppercase text-zinc-500 text-[10px] sm:text-xs leading-4 tracking-[0.2em] font-medium">
-                Trusted by leading teams
+        <section className="flex flex-col items-center gap-5 py-2">
+            <span className="uppercase text-zinc-400 text-[10px] tracking-[0.25em] font-semibold">
+                Trusted by leading teams worldwide
             </span>
-            <div className="flex flex-wrap justify-center items-center gap-x-8 gap-y-6 md:gap-x-12 lg:justify-between w-full opacity-60">
+            <div className="w-full border-t border-b border-zinc-100 py-5 flex flex-wrap justify-center lg:justify-between items-center gap-x-10 gap-y-5">
                 {companies.map((company) => (
-                    <div 
-                        key={company.name} 
-                        className="text-zinc-950 flex items-center gap-2 grayscale hover:grayscale-0 transition-all duration-300"
+                    <div
+                        key={company.name}
+                        className="flex items-center gap-2 text-zinc-400 hover:text-zinc-700 transition-colors duration-300 grayscale hover:grayscale-0"
                     >
                         {company.icon}
-                        <span className="font-semibold text-sm md:text-base">{company.name}</span>
+                        <span className="font-semibold text-sm tracking-tight">{company.name}</span>
                     </div>
                 ))}
             </div>

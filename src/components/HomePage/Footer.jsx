@@ -1,30 +1,64 @@
 import { FileStack } from "lucide-react";
+import { NavLink } from "react-router-dom";
 
 const Footer = () => {
+    const links = {
+        Product: [
+            { label: "Features", to: "/#features" },
+            { label: "Pricing", to: "/#pricing" },
+            { label: "Changelog", to: "/" },
+            { label: "Roadmap", to: "/" },
+        ],
+        Developers: [
+            { label: "API Docs", to: "/docs" },
+            { label: "SDK Guide", to: "/docs" },
+            { label: "API Keys", to: "/credentials/api-keys" },
+        ],
+        Legal: [
+            { label: "Privacy", to: "/privacy" },
+            { label: "Terms", to: "/terms" },
+            { label: "Security", to: "/security" },
+            { label: "Status", to: "/status" },
+        ],
+    };
+
     return (
         <footer className="bg-white border-t border-zinc-200 w-full mt-auto">
-            <div className="max-w-7xl mx-auto px-6 md:px-8 py-8 md:py-10">
-                <div className="flex flex-col md:flex-row justify-between items-center gap-6">
-                    <div className="flex items-center gap-3">
-                        <div className="size-8 rounded-lg bg-[#2b7fff] flex justify-center items-center shadow-sm">
-                            <FileStack className="size-4 text-blue-50" />
+            <div className="max-w-7xl mx-auto px-6 md:px-8 py-12 md:py-16">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-10 mb-12">
+                    {/* brand col */}
+                    <div className="col-span-2 md:col-span-1 flex flex-col gap-4">
+                        <div className="flex items-center gap-2.5">
+                            <div className="size-8 rounded-lg bg-[#2b7fff] flex items-center justify-center shadow-sm shrink-0">
+                                <FileStack className="size-4 text-white" />
+                            </div>
+                            <span className="font-bold text-zinc-900 text-base">DocCentral</span>
                         </div>
-                        <span className="text-zinc-500 text-sm">
+                        <p className="text-zinc-400 text-sm leading-relaxed max-w-xs">
+                            The modern document management platform for teams that care about organisation, security, and speed.
+                        </p>
+                        <span className="text-zinc-400 text-xs mt-auto">
                             © {new Date().getFullYear()} DocCentral. All rights reserved.
                         </span>
                     </div>
 
-                    <nav className="flex flex-wrap justify-center items-center gap-x-6 gap-y-2">
-                        {["Privacy", "Terms", "Security", "Status"].map((item) => (
-                            <a 
-                                key={item} 
-                                href={`/${item.toLowerCase()}`}
-                                className="text-zinc-500 text-sm hover:text-[#2b7fff] transition-colors duration-200"
-                            >
-                                {item}
-                            </a>
-                        ))}
-                    </nav>
+                    {/* link cols */}
+                    {Object.entries(links).map(([group, items]) => (
+                        <div key={group} className="flex flex-col gap-3">
+                            <span className="text-xs font-semibold uppercase tracking-widest text-zinc-400">
+                                {group}
+                            </span>
+                            {items.map((item) => (
+                                <NavLink
+                                    key={item.label}
+                                    to={item.to}
+                                    className="text-zinc-500 text-sm hover:text-[#2b7fff] transition-colors duration-200"
+                                >
+                                    {item.label}
+                                </NavLink>
+                            ))}
+                        </div>
+                    ))}
                 </div>
             </div>
         </footer>

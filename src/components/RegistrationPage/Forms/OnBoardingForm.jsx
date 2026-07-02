@@ -111,6 +111,7 @@ const OnBoardingForm = () => {
         return Object.values(newErrors).every((error) => error === "");
     };
 
+    // eslint-disable-next-line no-unused-vars
     const createSlug = () => {
         if (isSlugEdited) return;
         const generatedSlug = registrationData.orgName

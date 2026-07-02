@@ -51,7 +51,7 @@ export function DataTable({
                                     {columns.map((column) => (
                                         <TableCell
                                             key={column.key}
-                                            className={`first:pl-4 last:pr-4 whitespace-nowrap
+                                            className={`first:pl-4 last:pr-4 whitespace-nowrap 
                                                 ${column.cellClassName || ""} 
                                                 ${column.align === "right" ? "text-right" : "text-left"} 
                                             `}

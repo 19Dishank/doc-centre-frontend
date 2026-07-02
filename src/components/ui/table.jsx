@@ -1,5 +1,3 @@
-import * as React from "react";
-
 import { cn } from "@/lib/utils";
 
 function Table({ className, ...props }) {
@@ -58,7 +56,7 @@ function TableCell({ className, ...props }) {
   return (
     <td
       data-slot="table-cell"
-      className={cn("p-2 align-middle whitespace-nowrap [&:has([role=checkbox])]:pr-0", className)}
+      className={cn("p-2 align-middle whitespace-nowrap [&:has([role=checkbox])]:pr-0 ", className)}
       {...props}
     />
   );

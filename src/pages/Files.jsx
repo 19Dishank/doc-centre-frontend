@@ -93,7 +93,6 @@ export default function Files() {
       socket.off("document-uploaded", handleDocumentCreated);
     }
   }, []);
-
   const columns = [
     {
       key: "name",

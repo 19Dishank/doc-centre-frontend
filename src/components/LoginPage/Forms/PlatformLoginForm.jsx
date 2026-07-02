@@ -35,7 +35,7 @@ const PlatformLoginForm = () => {
         setLoading(true);
         try {
             const res = await verifyUser({ email });
-            console.log("Verification Data:", res);
+            // console.log("Verification Data:", res);
             window.location.replace(import.meta.env.VITE_APP_BASE_URL.replace("slug", res.data.slug) + `/login?email=${email}`);
         } catch (error) {
             console.error(error);

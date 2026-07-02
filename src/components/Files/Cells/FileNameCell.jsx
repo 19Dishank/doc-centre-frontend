@@ -5,6 +5,13 @@ import DocumentPreview from "../DocumentPreview";
 import { getRegistryIcon } from "@/helper/getRegistryIcon";
 import { toastNotification } from "@/helper/toastNotification";
 
+const truncateFileName = (name, maxLength = 40) => {
+    if (name.length > maxLength) {
+        return name.substring(0, maxLength) + "...";
+    }
+    return name;
+};
+
 const FileNameCell = ({
     row,
     setNewFolderRow,
@@ -21,9 +28,10 @@ const FileNameCell = ({
     const isFolder = !row.originalFileName;
     const isEditing = renameMode === row._id;
     const extension = row.originalFileName?.split(".").pop();
-    const displayName = row.originalFileName
+    const fullDisplayName = row.originalFileName
         ? row.originalFileName.split(".").slice(0, -1).join(".")
         : row.name;
+    const displayName = truncateFileName(fullDisplayName);
 
     const [input, setInput] = useState(displayName);
 
@@ -36,8 +44,8 @@ const FileNameCell = ({
         }
 
         if (key !== "Enter") return;
-        
-        if(!value || value.length < 1 || value.length > 100) {
+
+        if (!value || value.length < 1 || value.length > 100) {
             toastNotification("Folder name should contain 1 to 100 characters", "error");
             return;
         }
@@ -55,7 +63,7 @@ const FileNameCell = ({
                 getFiles();
                 return;
             } catch (error) {
-                toastNotification( 
+                toastNotification(
                     error?.response?.data?.errors?.[0]?.msg ||
                     "Error creating folder:", "error");
                 return;

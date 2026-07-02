@@ -1,4 +1,3 @@
-import { FileStack } from "lucide-react";
 import { NavLink } from "react-router-dom";
 
 const Footer = () => {
@@ -29,8 +28,9 @@ const Footer = () => {
                     {/* brand col */}
                     <div className="col-span-2 md:col-span-1 flex flex-col gap-4">
                         <div className="flex items-center gap-2.5">
-                            <div className="size-8 rounded-lg bg-[#2b7fff] flex items-center justify-center shadow-sm shrink-0">
-                                <FileStack className="size-4 text-white" />
+                            <div className="size-8 rounded-lg bg-slate-800 flex items-center justify-center shadow-sm shrink-0">
+                                {/* <FileStack className="size-4 text-white" /> */}
+                                <img src="/favicon.svg" className="size-4 text-white" />
                             </div>
                             <span className="font-bold text-zinc-900 text-base">DocCentral</span>
                         </div>

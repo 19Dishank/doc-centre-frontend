@@ -9,8 +9,9 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { PERMISSIONS } from "@/helper/permissions";
 import { usePermissions } from "@/hooks/usePermissions";
 import { getSignedURL, uploadOnSignedURL } from "@/api/file";
-import { toastNotification } from "@/helper/toastNotification";
+
 import { socket } from "@/helper/socketService";
+import ProgressToast, { progressToast } from "./ProgressToast";
 
 const UploadButtons = ({ parentId, setNewFolderRow, getFiles }) => {
 
@@ -21,13 +22,24 @@ const UploadButtons = ({ parentId, setNewFolderRow, getFiles }) => {
     const [isUploading, setIsUploading] = useState(false);
 
     const onChangeFile = async (event) => {
+        const file = event.target.files?.[0];
+        if (!file) {
+            console.log("No file selected");
+            return;
+        }
+
         setIsUploading(true);
+
+        // start tracking this upload in the toast store
+        const toastId = progressToast.start(file.name, {
+            type: file.type?.startsWith("image")
+                ? "image"
+                : file.type?.startsWith("video")
+                    ? "video"
+                    : "file",
+        });
+
         try {
-            const file = event.target.files?.[0];
-            if (!file) {
-                console.log("No file selected");
-                return;
-            }
             const payload = {
                 fileName: file.name,
                 contentType: file.type,
@@ -36,18 +48,25 @@ const UploadButtons = ({ parentId, setNewFolderRow, getFiles }) => {
             };
             const getSignedURLResponse = await getSignedURL(payload);
             const { url } = getSignedURLResponse.data;
-            const uploadResponse = await uploadOnSignedURL(url, file);
+
+            const uploadResponse = await uploadOnSignedURL(url, file, (percent) => {
+                progressToast.update(toastId, percent);
+            });
+
             if (uploadResponse.status === 200) {
+                progressToast.success(toastId);
                 setTimeout(() => {
                     setIsUploading(false);
                 }, 5000);
             }
         } catch (error) {
             setIsUploading(false);
-            toastNotification(
+            progressToast.error(
+                toastId,
                 error?.response?.data?.message
                 || error?.response?.data?.errors?.[0]?.msg
-                || "File upload failed. Please try again.", "error");
+                || "File upload failed. Please try again."
+            );
             console.error("File upload failed :", error);
         } finally {
             event.target.value = "";
@@ -153,6 +172,7 @@ const UploadButtons = ({ parentId, setNewFolderRow, getFiles }) => {
                     </Tooltip>
                 </div>
             )}
+            <ProgressToast position="top-right" />
         </>
     );
 };

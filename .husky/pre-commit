@@ -1,1 +1,9 @@
-npm run build 
+#!/usr/bin/env sh
+
+echo "🔨 Running build..."
+npm run build || {
+  echo "❌ Build failed."
+  exit 1
+}
+
+echo "✅ Build passed."

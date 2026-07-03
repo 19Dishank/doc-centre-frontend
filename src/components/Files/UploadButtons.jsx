@@ -40,6 +40,7 @@ const UploadButtons = ({ parentId, setNewFolderRow, getFiles }) => {
         });
 
         try {
+            console.log("🚀 ~ UploadButtons.jsx:43 ~ parentId:", parentId)
             const payload = {
                 fileName: file.name,
                 contentType: file.type,

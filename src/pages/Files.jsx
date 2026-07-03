@@ -1,7 +1,7 @@
 import { Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { fetchFiles } from "@/api/file";
-import { useEffect, useMemo, useState } from "react";
+import { fetchFiles, getSignedURL, uploadOnSignedURL } from "@/api/file";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { PERMISSIONS } from "@/helper/permissions";
 import { usePermissions } from "@/hooks/usePermissions";
 import { NavLink, useSearchParams } from "react-router-dom";
@@ -16,11 +16,12 @@ import FiltersBar from "@/components/Files/FiltersBar";
 import PageHeading from "@/components/PageHeading";
 import UploadButtons from "@/components/Files/UploadButtons";
 import { socket } from "@/helper/socketService";
+import { useDropzone } from "react-dropzone";
+import { toastNotification } from "@/helper/toastNotification";
+import clsx from "clsx";
+import { progressToast } from "@/components/Files/ProgressToast";
 
 export default function Files() {
-
-  const { checkPermission } = usePermissions();
-
   const [searchParams, setSearchParams] = useSearchParams();
   const [parentId, setParentId] = useState("");
   const [navigationBar, setNavigationBar] = useState([{ name: "My Files", parentId: "" }]);
@@ -31,6 +32,81 @@ export default function Files() {
   const [loading, setLoading] = useState(true);
   const [paginationData, setPaginationData] = useState(null);
   const [currentPage, setCurrentPage] = useState(Number(searchParams.get("page")) || 1);
+  const { checkPermission } = usePermissions();
+  const canUploadDocument = useMemo(() => checkPermission(PERMISSIONS.UPLOAD_DOCUMENT), [checkPermission]);
+
+  const onDrop = useCallback(async (acceptedFiles, fileRejections) => {
+    if (!canUploadDocument) {
+      toastNotification("Doesn't have permission to upload doc", "error");
+      return;
+    }
+
+    if (fileRejections.length > 0) {
+      toastNotification("Only one file can be uploaded at a time.", "error");
+      return;
+    }
+
+    const file = acceptedFiles[0];
+    if (!file) return;
+
+    console.log(file);
+    if (!file) {
+      console.log("No file selected");
+      return;
+    }
+
+
+
+    // start tracking this upload in the toast store
+    const toastId = progressToast.start(file.name, {
+      type: file.type?.startsWith("image")
+        ? "image"
+        : file.type?.startsWith("video")
+          ? "video"
+          : "file",
+    });
+
+    try {
+      console.log("🚀 ~ Files.jsx:70 ~ parentId:", parentId)
+      const payload = {
+        fileName: file.name,
+        contentType: file.type,
+        folderId: parentId ?? undefined,
+        size: file.size,
+      };
+      const getSignedURLResponse = await getSignedURL(payload);
+      const { url } = getSignedURLResponse.data;
+
+      const uploadResponse = await uploadOnSignedURL(url, file, (percent) => {
+        progressToast.update(toastId, percent);
+      });
+
+      if (uploadResponse.status === 200) {
+        progressToast.success(toastId);
+      }
+    } catch (error) {
+      progressToast.error(
+        toastId,
+        error?.response?.data?.message
+        || error?.response?.data?.errors?.[0]?.msg
+        || "File upload failed. Please try again."
+      );
+      console.error("File upload failed :", error);
+    } finally {
+      event.target.value = "";
+    }
+
+  }, [canUploadDocument, parentId]);
+
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop,
+    multiple: false,
+    maxFiles: 1,
+    noClick: true,
+    noKeyboard: true,
+  });
+
+
 
   const {
     totalDocuments,
@@ -153,52 +229,63 @@ export default function Files() {
   const canRestoreDocument = useMemo(() => checkPermission(PERMISSIONS.RESTORE_DOCUMENT), [checkPermission]);
 
   return (
-    <div className="flex h-full flex-col gap-6 w-full max-w-full p-1">
+    <div
+      {...getRootProps()}
+      className={clsx(
+        " transition-all duration-200",
+        isDragActive
+          ? "border-blue-500 bg-blue-50 ring-4 ring-blue-200"
+          : "border-gray-300 hover:border-gray-400"
+      )}
+    >
+      <input {...getInputProps()} onClick={e => e.preventDefault()} />
+      <div className="flex h-full flex-col gap-6 w-full max-w-full p-1">
 
-      <div className="flex justify-between gap-2 items-center border-b border-zinc-100 pb-4">
-        <PageHeading
-          heading="Files"
-          subheading="Manage your files and folders."
-        />
-        {canRestoreDocument && (
-          <NavLink to="/trash" className="mt-auto">
-            <Button variant="outline" className="cursor-pointer gap-2 text-zinc-700 hover:text-zinc-900">
-              <Trash2 className="size-4 text-zinc-500" />
-              Recycle Bin
-            </Button>
-          </NavLink>
-        )}
-      </div>
+        <div className="flex justify-between gap-2 items-center border-b border-zinc-100 pb-4">
+          <PageHeading
+            heading="Files"
+            subheading="Manage your files and folders."
+          />
+          {canRestoreDocument && (
+            <NavLink to="/trash" className="mt-auto">
+              <Button variant="outline" className="cursor-pointer gap-2 text-zinc-700 hover:text-zinc-900">
+                <Trash2 className="size-4 text-zinc-500" />
+                Recycle Bin
+              </Button>
+            </NavLink>
+          )}
+        </div>
 
-      <div className="flex flex-col gap-4 sm:flex-row sm:justify-between sm:items-center">
-        <BreadcrumbNavigation navigationBar={navigationBar} handleNavigationClick={handleNavigationClick} />
-        <UploadButtons getFiles={getFiles} parentId={parentId} setNewFolderRow={setNewFolderRow} />
-      </div>
+        <div className="flex flex-col gap-4 sm:flex-row sm:justify-between sm:items-center">
+          <BreadcrumbNavigation navigationBar={navigationBar} handleNavigationClick={handleNavigationClick} />
+          <UploadButtons getFiles={getFiles} parentId={parentId} setNewFolderRow={setNewFolderRow} />
+        </div>
 
-      <FiltersBar parentId={parentId} setCurrentPage={setCurrentPage} currentPage={currentPage} getFiles={getFiles} />
+        <FiltersBar parentId={parentId} setCurrentPage={setCurrentPage} currentPage={currentPage} getFiles={getFiles} />
 
-      <div className="rounded-xl border border-zinc-200 bg-white shadow-sm">
-        <DataTable
-          columns={columns}
-          data={tableData}
-          loading={loading}
-        />
-      </div>
-
-      {tableRows.length > 0 && (
-        <div className="mt-auto">
-          <PaginationBar
-            totalPages={totalPages || 0}
-            currentPage={currentPage}
-            setCurrentPage={setCurrentPage}
-            hasNextPage={hasNextPage}
-            hasPreviousPage={hasPreviousPage}
-            totalItems={totalDocuments}
-            limit={limit}
+        <div className="rounded-xl border border-zinc-200 bg-white shadow-sm">
+          <DataTable
+            columns={columns}
+            data={tableData}
+            loading={loading}
           />
         </div>
-      )}
 
+        {tableRows.length > 0 && (
+          <div className="mt-auto">
+            <PaginationBar
+              totalPages={totalPages || 0}
+              currentPage={currentPage}
+              setCurrentPage={setCurrentPage}
+              hasNextPage={hasNextPage}
+              hasPreviousPage={hasPreviousPage}
+              totalItems={totalDocuments}
+              limit={limit}
+            />
+          </div>
+        )}
+
+      </div>
     </div>
   );
 }

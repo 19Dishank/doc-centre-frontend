@@ -6,8 +6,8 @@ import { getRegistryIcon } from "@/helper/getRegistryIcon";
 import { toastNotification } from "@/helper/toastNotification";
 
 const truncateFileName = (name, maxLength = 40) => {
-    if (name.length > maxLength) {
-        return name.substring(0, maxLength) + "...";
+    if (name?.length > maxLength) {
+        return name?.substring(0, maxLength) + "...";
     }
     return name;
 };

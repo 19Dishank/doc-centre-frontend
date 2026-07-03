@@ -8,6 +8,7 @@ export function DataTable({
     loading,
     emptyMessage = "No data found",
 }) {
+
     return (
         <Card className="p-0 border-zinc-200 w-full overflow-hidden">
             {/* Added an overflow wrapper to handle the scrollbar cleanly inside the card */}
@@ -46,8 +47,8 @@ export function DataTable({
                                 </TableCell>
                             </TableRow>
                         ) : (
-                            data.map((row) => (
-                                <TableRow key={row._id}>
+                            data.map((row, idx) => {
+                                return <TableRow key={`${data._id}.${idx}`}>
                                     {columns.map((column) => (
                                         <TableCell
                                             key={column.key}
@@ -59,8 +60,8 @@ export function DataTable({
                                             {column.render ? column.render(row) : row[column.key]}
                                         </TableCell>
                                     ))}
-                                </TableRow>
-                            ))
+                                </TableRow>;
+                            })
                         )}
                     </TableBody>
                 </Table>

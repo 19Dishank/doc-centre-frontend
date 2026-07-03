@@ -20,7 +20,7 @@ const SidePanel = () => {
 
       <div className="shrink-0">
         {isTenant ? (
-          <div className="inline-flex items-center gap-3 bg-white rounded-xl px-6 py-5">
+          <div className="inline-flex items-center gap-3 bg-white brightness-95 rounded-xl px-6 py-5">
             <div className="shrink-0 company-logo-wrap">
               <CompanyLogo slug={slug} />
             </div>

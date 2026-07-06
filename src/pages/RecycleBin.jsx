@@ -10,6 +10,8 @@ import { formatSize } from "@/helper/formatSize";
 import FileNameCell from "@/components/Files/Cells/FileNameCell";
 import ActionsCell from "@/components/RecycleBin/ActionsCell";
 import { formatTime } from "@/helper/formatTime";
+import { socket } from "@/helper/socketService";
+import { SOCKET_EVENTS } from "@/helper/constants/socket.events";
 
 export default function RecycleBin() {
 
@@ -56,6 +58,30 @@ export default function RecycleBin() {
         // eslint-disable-next-line react-hooks/set-state-in-effect
         getBinData();
     }, []);
+
+    useEffect(() => {
+        const refreshRecycleBin = async (event) => {
+            console.log("🚀 ~ RecycleBin.jsx:62 ~ Document deleted event received:", event)
+            await getBinData()
+        }
+        socket.on(SOCKET_EVENTS.DOCUMENT_TRASHED, refreshRecycleBin);
+        socket.on(SOCKET_EVENTS.DOCUMENT_DELETED, refreshRecycleBin);
+        socket.on(SOCKET_EVENTS.DOCUMENT_RESTORED, refreshRecycleBin);
+
+        socket.on(SOCKET_EVENTS.FOLDER_TRASHED, refreshRecycleBin);
+        socket.on(SOCKET_EVENTS.FOLDER_RESTORED, refreshRecycleBin);
+        socket.on(SOCKET_EVENTS.FOLDER_DELETED, refreshRecycleBin);
+
+        return () => {
+            socket.off(SOCKET_EVENTS.DOCUMENT_DELETED, refreshRecycleBin);
+            socket.off(SOCKET_EVENTS.DOCUMENT_TRASHED, refreshRecycleBin);
+            socket.off(SOCKET_EVENTS.DOCUMENT_RESTORED, refreshRecycleBin);
+            socket.off(SOCKET_EVENTS.FOLDER_DELETED, refreshRecycleBin);
+            socket.off(SOCKET_EVENTS.FOLDER_RESTORED, refreshRecycleBin);
+            socket.off(SOCKET_EVENTS.FOLDER_TRASHED, refreshRecycleBin);
+        }
+    }, [])
+
 
     const columns = [
         {

@@ -20,6 +20,7 @@ import { useDropzone } from "react-dropzone";
 import { toastNotification } from "@/helper/toastNotification";
 import clsx from "clsx";
 import { progressToast } from "@/components/Files/ProgressToast";
+import { SOCKET_EVENTS } from "@/helper/constants/socket.events";
 
 export default function Files() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -67,7 +68,7 @@ export default function Files() {
     });
 
     try {
-      console.log("🚀 ~ Files.jsx:70 ~ parentId:", parentId)
+
       const payload = {
         fileName: file.name,
         contentType: file.type,
@@ -158,17 +159,37 @@ export default function Files() {
     }
   }
 
+  // useEffect(() => {
+  //   const handleDocumentCreated = (event) => {
+  //     console.log("Document uploaded event received:", event);
+  //   }
+
+  //   socket.on(SOCKET_EVENTS.DOCUMENT_UPLOADED, handleDocumentCreated);
+
+  //   return () => {
+  //     socket.off(SOCKET_EVENTS.DOCUMENT_UPLOADED, handleDocumentCreated);
+  //   }
+  // }, []);
   useEffect(() => {
-    const handleDocumentCreated = (event) => {
-      console.log("Document uploaded event received:", event);
+    const refreshFilesData = async (event) => {
+      console.log("🚀 ~ Files.jsx:174 ~ Document deleted event received:", event)
+      await getFiles()
     }
 
-    socket.on("document-uploaded", handleDocumentCreated);
+    socket.on(SOCKET_EVENTS.DOCUMENT_TRASHED, refreshFilesData);
+    socket.on(SOCKET_EVENTS.DOCUMENT_RESTORED, refreshFilesData);
+
+    socket.on(SOCKET_EVENTS.FOLDER_TRASHED, refreshFilesData);
+    socket.on(SOCKET_EVENTS.FOLDER_RESTORED, refreshFilesData);
 
     return () => {
-      socket.off("document-uploaded", handleDocumentCreated);
+      socket.off(SOCKET_EVENTS.DOCUMENT_TRASHED, refreshFilesData);
+      socket.on(SOCKET_EVENTS.DOCUMENT_RESTORED, refreshFilesData);
+      socket.off(SOCKET_EVENTS.FOLDER_TRASHED, refreshFilesData);
+      socket.off(SOCKET_EVENTS.FOLDER_RESTORED, refreshFilesData);
     }
   }, []);
+
   const columns = [
     {
       key: "name",

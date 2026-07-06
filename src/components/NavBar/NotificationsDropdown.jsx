@@ -4,6 +4,7 @@ import { Button } from "../ui/button";
 import { socket } from "@/helper/socketService";
 import { fetchNotifications, markAllNotificationsAsRead } from "@/api/notifications";
 import Notification from "./Notification";
+import { SOCKET_EVENTS } from "@/helper/constants/socket.events";
 
 const NotificationsDropdown = () => {
 
@@ -45,14 +46,14 @@ const NotificationsDropdown = () => {
             setUnreadCount(message.count);
         }
 
-        socket.on("notification:received", handleReceiveNotification);
-        socket.on("notification:read", handleNotificationRead);
-        socket.on("notification:unread-count", handleUnreadCountUpdate);
+        socket.on(SOCKET_EVENTS.NOTIFICATION_RECEIVED, handleReceiveNotification);
+        socket.on(SOCKET_EVENTS.NOTIFICATION_READ, handleNotificationRead);
+        socket.on(SOCKET_EVENTS.NOTIFICATION_UNREAD_COUNT, handleUnreadCountUpdate);
 
         return () => {
-            socket.off("notification:received", handleReceiveNotification);
-            socket.off("notification:read", handleNotificationRead);
-            socket.off("notification:unread-count", handleUnreadCountUpdate);
+            socket.off(SOCKET_EVENTS.NOTIFICATION_RECEIVED, handleReceiveNotification);
+            socket.off(SOCKET_EVENTS.NOTIFICATION_READ, handleNotificationRead);
+            socket.off(SOCKET_EVENTS.NOTIFICATION_UNREAD_COUNT, handleUnreadCountUpdate);
         };
     }, [notifications]);
 

@@ -12,6 +12,7 @@ import { getSignedURL, uploadOnSignedURL } from "@/api/file";
 
 import { socket } from "@/helper/socketService";
 import ProgressToast, { progressToast } from "./ProgressToast";
+import { SOCKET_EVENTS } from "@/helper/constants/socket.events";
 
 const UploadButtons = ({ parentId, setNewFolderRow, getFiles }) => {
 
@@ -40,7 +41,7 @@ const UploadButtons = ({ parentId, setNewFolderRow, getFiles }) => {
         });
 
         try {
-            console.log("🚀 ~ UploadButtons.jsx:43 ~ parentId:", parentId)
+            // console.log("🚀 ~ UploadButtons.jsx:43 ~ parentId:", parentId)
             const payload = {
                 fileName: file.name,
                 contentType: file.type,
@@ -120,9 +121,11 @@ const UploadButtons = ({ parentId, setNewFolderRow, getFiles }) => {
             setIsUploading(false);
         };
 
-        socket.on("document-uploaded", handleDocumentUploadedEvent);
+        socket.on(SOCKET_EVENTS.DOCUMENT_UPLOADED, handleDocumentUploadedEvent);
+        socket.on(SOCKET_EVENTS.FOLDER_CREATED, handleDocumentUploadedEvent);
         return () => {
-            socket.off("document-uploaded", handleDocumentUploadedEvent);
+            socket.off(SOCKET_EVENTS.DOCUMENT_UPLOADED, handleDocumentUploadedEvent);
+            socket.off(SOCKET_EVENTS.FOLDER_CREATED, handleDocumentUploadedEvent);
         };
 
     }, [parentId]);

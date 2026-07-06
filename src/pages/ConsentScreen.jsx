@@ -16,18 +16,18 @@ export default function ConsentScreen() {
             <div className="text-center mb-8">
                 <h1 className="text-4xl font-bold tracking-tight">
                     Connect with{" "}
-                    <span className="text-blue-500">DocCentral</span>
+                    <span className="text-blue-500">DocCenter</span>
                 </h1>
 
                 <p className="mt-3 text-muted-foreground text-base">
-                    DocCentral is requesting access to your account.
+                    DocCenter is requesting access to your account.
                 </p>
             </div>
 
             <Card className="p-6 space-y-6">
                 <div>
                     <h3 className="font-semibold text-lg">
-                        This will allow DocCentral to:
+                        This will allow DocCenter to:
                     </h3>
                 </div>
 
@@ -55,7 +55,7 @@ export default function ConsentScreen() {
             <Card className="mt-5 p-4 bg-muted/40">
                 <div className="flex gap-2">
                     <ShieldCheck className="size-5 text-primary" />
-                    <div className="text-sm text-muted-foreground">By continuing, you agree to share the requested information with DocCentral.                    </div>
+                    <div className="text-sm text-muted-foreground">By continuing, you agree to share the requested information with DocCenter.                    </div>
                 </div>
             </Card>
 
@@ -76,7 +76,7 @@ export default function ConsentScreen() {
             </div>
 
             <div className="mt-6 text-center text-sm text-muted-foreground">
-                Secure connection powered by DocCentral
+                Secure connection powered by DocCenter
             </div>
         </div>
     );

@@ -15,7 +15,7 @@ const WorkflowPanel = () => {
                     More than storage. It's your workflow, supercharged.
                 </h3>
                 <p className="text-blue-200 text-sm leading-relaxed">
-                    DocCentral is a complete platform that helps your team work faster, stay organised, and collaborate without friction.
+                    DocCenter is a complete platform that helps your team work faster, stay organised, and collaborate without friction.
                 </p>
             </div>
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">

@@ -32,13 +32,13 @@ const Footer = () => {
                                 {/* <FileStack className="size-4 text-white" /> */}
                                 <img src="/favicon.svg" className="size-4 text-white" />
                             </div>
-                            <span className="font-bold text-zinc-900 text-base">DocCentral</span>
+                            <span className="font-bold text-zinc-900 text-base">DocCenter</span>
                         </div>
                         <p className="text-zinc-400 text-sm leading-relaxed max-w-xs">
                             The modern document management platform for teams that care about organisation, security, and speed.
                         </p>
                         <span className="text-zinc-400 text-xs mt-auto">
-                            © {new Date().getFullYear()} DocCentral. All rights reserved.
+                            © {new Date().getFullYear()} DocCenter. All rights reserved.
                         </span>
                     </div>
 

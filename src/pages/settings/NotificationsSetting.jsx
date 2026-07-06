@@ -103,7 +103,7 @@ export default function NotificationsSetting() {
             <CardTitle className="text-base leading-6">In-App Notifications</CardTitle>
           </div>
           <CardDescription className="text-zinc-500 text-xs">
-            Choose what shows up inside DocCentral.
+            Choose what shows up inside DocCenter.
           </CardDescription>
         </CardHeader>
         <CardContent className="flex p-0 flex-col">
@@ -151,7 +151,7 @@ export default function NotificationsSetting() {
 
         </Button>
       </div>
-      
+
       {/* <Card className="shadow-sm p-4 sm:p-6 flex flex-col gap-4">
         <CardHeader className="p-0 gap-1">
           <div className="flex items-center gap-2">

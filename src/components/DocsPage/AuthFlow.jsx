@@ -33,7 +33,7 @@ const AuthFlow = () => {
                     On the backend, generate an SSO Token by signing a JWT with the user's email address and the SSO secret.
                 </p>
                 <CodeBlock
-                    code={`const jwt = require('jsonwebtoken');\n\nconst ssoToken = jwt.sign(\n  { email: user.email },\n  process.env.DOCCENTRAL_SSO_SECRET,\n  { expiresIn: '5m' }\n);`}
+                    code={`const jwt = require('jsonwebtoken');\n\nconst ssoToken = jwt.sign(\n  { email: user.email },\n  process.env.DOCCENTER_SSO_SECRET,\n  { expiresIn: '5m' }\n);`}
                     language="javascript"
                 />
 

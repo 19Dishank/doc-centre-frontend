@@ -21,7 +21,7 @@ const Stats = () => {
                     Join a smarter way to work in the cloud
                 </h2>
                 <p className="max-w-lg text-zinc-500 text-base">
-                    Whether you're a freelancer or part of a global team, DocCentral keeps you organised.
+                    Whether you're a freelancer or part of a global team, DocCenter keeps you organised.
                 </p>
             </div>
 

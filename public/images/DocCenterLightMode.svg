@@ -10,7 +10,7 @@
         font-weight="700" 
         fill="#0f172a" 
         text-anchor="start" 
-        letter-spacing="-1">DocCentral</text>
+        letter-spacing="-1">DocCenter</text>
 
   <rect x="50" y="38" width="180" height="3" rx="1.5" fill="#2B7FFF"/>
   <circle cx="235" cy="39.5" r="3.5" fill="#2B7FFF"/>

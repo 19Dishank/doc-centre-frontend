@@ -47,7 +47,7 @@ const HeroMockup = () => {
                     ))}
                 </div>
                 <div className="flex items-center gap-1.5 bg-zinc-50 border border-zinc-100 rounded-lg px-2 py-1.5 text-[10px] text-zinc-400 mb-2">
-                    <span className="truncate flex-1">doccentral.io/s/q4-report</span>
+                    <span className="truncate flex-1">DocCenter.io/s/q4-report</span>
                     <Copy className="size-3 shrink-0 text-zinc-400" />
                 </div>
                 <button className="w-full bg-[#2b7fff] text-white text-[11px] font-semibold rounded-lg py-1.5">

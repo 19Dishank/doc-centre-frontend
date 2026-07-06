@@ -23,7 +23,7 @@ const TokenManagement = () => {
                     To simplify backend logic, it is highly recommended to implement a helper pattern that reuses existing tokens if they exist, and falls back to a fresh SSO exchange only when necessary.
                 </p>
                 <CodeBlock
-                    code={`async function ensureSdkSession(user, sdk) {\n  if (user.docCenterTokens?.refreshToken) {\n    sdk.setTokens(user.docCenterTokens);\n    return;\n  }\n\n  const ssoToken = jwt.sign(\n    { email: user.email },\n    process.env.DOCCENTRAL_SSO_SECRET,\n    { expiresIn: '5m' }\n  );\n\n  await sdk.exchangeSSO(ssoToken);\n  user.docCenterTokens = sdk.getTokens();\n  await user.save();\n}`}
+                    code={`async function ensureSdkSession(user, sdk) {\n  if (user.docCenterTokens?.refreshToken) {\n    sdk.setTokens(user.docCenterTokens);\n    return;\n  }\n\n  const ssoToken = jwt.sign(\n    { email: user.email },\n    process.env.DOCCENTER_SSO_SECRET,\n    { expiresIn: '5m' }\n  );\n\n  await sdk.exchangeSSO(ssoToken);\n  user.docCenterTokens = sdk.getTokens();\n  await user.save();\n}`}
                     language="javascript"
                 />
                 <div className="bg-zinc-100 p-4 rounded-xl border border-zinc-200/80 my-4">

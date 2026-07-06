@@ -25,6 +25,7 @@ const PlatformLoginForm = () => {
         setError(validateEmail(e.target.value));
     };
 
+
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -38,8 +39,9 @@ const PlatformLoginForm = () => {
             // console.log("Verification Data:", res);
             window.location.replace(import.meta.env.VITE_APP_BASE_URL.replace("slug", res.data.slug) + `/login?email=${email}`);
         } catch (error) {
-            console.error(error);
-            toastNotification(error?.response?.data?.message || "An error occurred while verifying the email. Please try again.", "error");
+            console.error("", error);
+            // toastNotification(error?.response?.data?.message || "An error occurred while verifying the email. Please try again.", "error");
+            // toastNotification(error?.response?.data?.message || error.message, "error");
         } finally {
             setLoading(false);
         }

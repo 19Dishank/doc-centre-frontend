@@ -79,10 +79,12 @@ axiosInstance.interceptors.response.use(
     const originalRequest = config;
 
     if (!response) {
+      // console.log("🚀 ~ axiosInstance.js:82 ~ error:", error);
       if (error.code === "ECONNABORTED" || error?.message?.includes("timeout")) {
         toastNotification("Server timed out. Please try again.", "error");
       } else {
-        toastNotification("Network error. Please check if your Express server is running.", "error");
+        // toastNotification(`Network error. Please check if your Express server is running.`, "error");
+        toastNotification(` ${error.message}`, "error");
       }
       return Promise.reject(error);
     }

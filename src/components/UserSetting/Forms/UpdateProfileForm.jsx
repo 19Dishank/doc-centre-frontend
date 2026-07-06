@@ -40,7 +40,7 @@ const UpdateProfileForm = () => {
 
 
     const hasChanges = useMemo(() => {
-        return profileData.firstName.trim() !== user.firstName || profileData.lastName.trim() !== user.lastName;
+        return profileData.firstName?.trim() !== user?.firstName || profileData?.lastName.trim() !== user?.lastName;
     }, [profileData, user]);
 
     const [errors, setErrors] = useState({
@@ -142,7 +142,7 @@ const UpdateProfileForm = () => {
                     <div className="flex items-center gap-2 w-full h-10 px-3 text-sm border border-zinc-200 bg-zinc-50 text-zinc-600 rounded-lg cursor-not-allowed select-none">
                         <Mail className="size-4 text-[#2b7fff] shrink-0" />
                         <span className="font-semibold">
-                            {user.email}
+                            {user?.email}
                         </span>
                     </div>
                 </div>
@@ -153,7 +153,7 @@ const UpdateProfileForm = () => {
                     <div className="flex items-center gap-2 w-full h-10 px-3 text-sm border border-zinc-200 bg-zinc-50 text-zinc-600 rounded-lg cursor-not-allowed select-none">
                         <Shield className="size-4 text-[#2b7fff] shrink-0" />
                         <span className="font-semibold">
-                            {user.role.name}
+                            {user?.role.name}
                         </span>
                     </div>
                 </div>

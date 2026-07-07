@@ -12,10 +12,10 @@ export default function AuthLayout({ children }) {
   return (
     <main className="bg-white">
       <div className="flex flex-col lg:flex-row w-full min-h-screen">
-        <div className="hidden lg:flex lg:w-1/2 xl:w-[50%] 2xl:w-[50%]">
+        <div className="hidden lg:flex lg:w-[40%] xl:w-[35%] shrink-0">
           <SidePanel />
         </div>
-        <div className="flex-1 flex items-center justify-center p-6 sm:p-12 lg:p-16">
+        <div className="flex-1 flex items-center justify-center p-4 sm:p-6 lg:p-8">
           {children ? children : <Outlet />}
         </div>
       </div>

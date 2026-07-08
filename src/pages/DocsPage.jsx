@@ -1,6 +1,6 @@
 import Header from "@/components/HomePage/Header";
 import Footer from "@/components/HomePage/Footer";
-import Sidebar from "@/components/DocsPage/SideBar";
+import Sidebar from "@/components/DocsPage/Sidebar";
 import Introduction from "@/components/DocsPage/Introduction";
 import Overview from "@/components/DocsPage/Overview";
 import Installation from "@/components/DocsPage/Installation";

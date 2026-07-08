@@ -27,3 +27,4 @@ dist-ssr
 
 # custom
 MULTI_TENANT_ARCHITECTURE.md
+.vercel

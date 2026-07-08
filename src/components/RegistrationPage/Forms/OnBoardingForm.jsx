@@ -1,10 +1,11 @@
 import { createTenant, getSignedURLForLogoUpload, uploadLogoToS3 } from "@/api/auth";
 import { Button } from "@/components/ui/button";
 import FormField from "@/components/ui/form-field";
-import { emailRegex, slugRegex } from "@/constants";
+
 import { toastNotification } from "@/helper/toastNotification";
 import { useState, useRef } from "react";
 import FileUpload from "./FileUpload";
+import { normalizeSlug, validateField } from "@/utils/formValidation";
 
 const OnBoardingForm = () => {
 
@@ -48,47 +49,7 @@ const OnBoardingForm = () => {
         setStep(1);
     };
 
-    const validateField = (name, value) => {
-        switch (name) {
-            case "firstName":
-                if (!value.trim()) return "First name is required";
-                if (value.length < 2 || value.length > 50) return "First name must be between 2 and 50 characters";
-                return "";
 
-            case "lastName":
-                if (!value.trim()) return "Last name is required";
-                if (value.length < 2 || value.length > 50) return "Last name must be between 2 and 50 characters";
-                return "";
-
-            case "email":
-                if (!value.trim()) return "Email is required";
-                if (!emailRegex.test(value)) return "Please provide a valid email";
-                return "";
-
-            case "orgName":
-                if (!value.trim()) return "Organization name is required";
-                if (value.length < 2 || value.length > 100) return "Organization name must be between 2 and 100 characters";
-                return "";
-
-            case "orgSlogan":
-                if (!value.trim()) return "Organization slogan is required";
-                if (value.length > 200) return "Organization slogan cannot exceed 200 characters";
-                return "";
-
-            case "slug":
-                if (!value.trim()) return "Tenant slug is required";
-                if (value.length < 3 || value.length > 50) return "Slug must be between 3 and 50 characters";
-                if (!slugRegex.test(value)) return "Slug can only contain lowercase letters, numbers, and hyphens";
-                return "";
-
-            case "logo":
-                if (!value) return "Organization logo is required";
-                return "";
-
-            default:
-                return "";
-        }
-    };
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -153,6 +114,21 @@ const OnBoardingForm = () => {
         }));
     }
 
+
+    const handleSlugBlur = () => {
+        const normalized = normalizeSlug(registrationData.slug);
+
+        if (normalized !== registrationData.slug) {
+            setRegistrationData((prev) => ({
+                ...prev,
+                slug: normalized,
+            }));
+            setErrors((prev) => ({
+                ...prev,
+                slug: validateField("slug", normalized),
+            }));
+        }
+    };
     const handleSubmit = async (e) => {
         e.preventDefault();
         const isValid = validateForm();
@@ -183,6 +159,7 @@ const OnBoardingForm = () => {
             setRegistrationData(initialData);
             setSelectedFile(null);
             setIsSlugEdited(false)
+            setStep(1)
             if (fileInputRef.current) fileInputRef.current.value = "";
 
         } catch (error) {
@@ -214,7 +191,7 @@ const OnBoardingForm = () => {
                     </div>
                 </div>
 
-                <div className="flex-1 h-px bg-zinc-200 mx-3 max-w-[120px]" />
+                <div className="flex-1 h-px bg-zinc-200 mx-3 max-w-30" />
 
                 <div className="flex items-center gap-2.5">
                     <div className={`size-8 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-300 ${step === 2
@@ -258,10 +235,10 @@ const OnBoardingForm = () => {
                     <FormField label="Organization Slogan" name="orgSlogan" value={registrationData.orgSlogan} onChange={handleChange} placeholder="Innovating the future" error={errors.orgSlogan} />
 
                     <div className="flex flex-col gap-1 relative">
-                        <FormField label="Workspace URL / Slug" name="slug" value={registrationData.slug} onChange={handleChange} placeholder="acme-corp" error={errors.slug} />
+                        <FormField label="Workspace URL / Slug" name="slug" value={registrationData.slug} onChange={handleChange} placeholder="acme-corp" error={errors.slug} onBlur={handleSlugBlur} />
                         {registrationData.slug && !errors.slug && (
                             <span className="text-xs text-zinc-400 mt-0.5 select-none pl-1">
-                                Workspace URL: <strong className="text-zinc-600 font-semibold">{registrationData.slug}.doccentre.com</strong>
+                                Workspace URL: <strong className="text-zinc-600 font-semibold">{registrationData.slug}.doccenter.com</strong>
                             </span>
                         )}
                     </div>

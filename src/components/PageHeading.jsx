@@ -1,14 +1,16 @@
 import { memo } from "react";
 
-const PageHeading = ({heading, subheading}) => {
+const PageHeading = ({ heading, subheading }) => {
     return (
-        <div className="flex flex-col gap-1">
-            <h1 className="font-semibold text-2xl md:text-3xl leading-8 tracking-tight text-zinc-950">
+        <div className="space-y-0.5">
+            <h1 className="text-xl md:text-2xl font-semibold tracking-tight text-zinc-900">
                 {heading}
             </h1>
-            <p className="text-zinc-500 text-sm md:text-base">
-                {subheading}
-            </p>
+            {subheading && (
+                <p className="text-sm text-zinc-500">
+                    {subheading}
+                </p>
+            )}
         </div>
     );
 };

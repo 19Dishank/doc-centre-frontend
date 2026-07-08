@@ -125,18 +125,73 @@ const StorageData = ({ stats }) => {
                 </div>
             </CardHeader>
             <CardContent className="p-0 flex flex-col gap-2">
-                <div className="font-bold text-2xl md:text-3xl leading-9">
+                {/* <div className="font-bold text-2xl md:text-3xl leading-9">
                     {storageUsed}
                     <span className="font-medium text-[#71717b] text-base md:text-lg leading-7">/ {storageLimit}</span>
                 </div>
                 <div className="rounded-full border-zinc-200 border bg-zinc-100 w-full h-1.5 overflow-hidden mt-1">
                     <div className={`rounded-full ${getBarColor()} h-full transition-all duration-500`} style={{ width: `${percentageUsed}` }} />
                 </div>
-                <span className="text-[#71717b] text-xs leading-4">{percentageUsed} of total capacity</span>
+                <span className="text-[#71717b] text-xs leading-4">{percentageUsed} of total capacity</span> */}
+                <StorageUsage getBarColor={getBarColor} percentageUsed={percentageUsed} storageLimit={storageLimit} storageUsed={storageUsed} />
             </CardContent>
         </Card>
     )
 }
+
+const sizeStyles = {
+    small: {
+        wrapperGap: "gap-0.5",
+        valueText: "font-bold text-lg leading-6",
+        limitText: "font-medium text-[#71717b] text-xs leading-5",
+        barHeight: "h-1",
+        barMargin: "mt-0.5",
+        captionText: "text-[#71717b] text-[10px] leading-3",
+    },
+    default: {
+        wrapperGap: "",
+        valueText: "font-bold text-2xl md:text-3xl leading-9",
+        limitText: "font-medium text-[#71717b] text-base md:text-lg leading-7",
+        barHeight: "h-1.5",
+        barMargin: "mt-1",
+        captionText: "text-[#71717b] text-xs leading-4",
+    },
+    large: {
+        wrapperGap: "gap-1",
+        valueText: "font-bold text-3xl md:text-4xl leading-10",
+        limitText: "font-medium text-[#71717b] text-lg md:text-xl leading-8",
+        barHeight: "h-2.5",
+        barMargin: "mt-2",
+        captionText: "text-[#71717b] text-sm leading-5",
+    },
+};
+
+export const StorageUsage = ({
+    storageUsed,
+    getBarColor,
+    storageLimit,
+    percentageUsed,
+    size = "default",
+}) => {
+    const styles = sizeStyles[size] || sizeStyles.default;
+
+    return (
+        <>
+            <div className={styles.valueText}>
+                {storageUsed}
+                <span className={styles.limitText}>/ {storageLimit}</span>
+            </div>
+            <div className={`rounded-full border-zinc-200 border bg-zinc-100 w-full ${styles.barHeight} overflow-hidden ${styles.barMargin}`}>
+                <div
+                    className={`rounded-full ${getBarColor?.()} h-full transition-all duration-500`}
+                    style={{ width: `${percentageUsed}` }}
+                />
+            </div>
+            <span className={styles.captionText}>{percentageUsed} of total capacity</span>
+        </>
+    );
+};
+
 
 const APIData = ({ stats }) => {
 

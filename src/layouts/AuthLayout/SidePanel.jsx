@@ -42,7 +42,7 @@ const SidePanel = () => {
           style={{ height: "clamp(160px, 28vh, 320px)" }}
         >
           <div className="size-64 blur-2xl rounded-full bg-white/5 absolute" />
-          <div className="rotate-[-8deg] backdrop-blur-sm shadow-2xl rounded-xl bg-white/10 border-white/20 border border-solid flex absolute left-[8%] top-[8%] p-3 sm:p-4 flex-col gap-2 w-[40%] max-w-44">
+          <div className="rotate-[-8deg] backdrop-blur-sm shadow-2xl rounded-xl bg-white/10 border-white/20 border border-solid flex absolute left-[8%] top-[8%] p-3 sm:p-4 flex-col gap-2 w-[40%] max-w-44 animate-float-slow">
             <div className="flex items-center gap-2">
               <div className="size-6 sm:size-7 rounded-md bg-rose-400/90 flex justify-center items-center shrink-0">
                 <FileText className="size-3.5 sm:size-4 text-white" />
@@ -56,7 +56,7 @@ const SidePanel = () => {
             <div className="w-3/4 rounded-full bg-white/20 h-1.5" />
             <div className="w-2/3 rounded-full bg-white/20 h-1.5" />
           </div>
-          <div className="rotate-6 backdrop-blur-sm shadow-2xl rounded-xl bg-white/15 border-white/25 border border-solid flex absolute right-[6%] bottom-[6%] p-3 sm:p-4 flex-col gap-2 w-[40%] max-w-44">
+          <div className="rotate-6 backdrop-blur-sm shadow-2xl rounded-xl bg-white/15 border-white/25 border border-solid flex absolute right-[6%] bottom-[6%] p-3 sm:p-4 flex-col gap-2 w-[40%] max-w-44 animate-float-reverse">
             <div className="flex items-center gap-2">
               <div className="size-6 sm:size-7 rounded-md bg-blue-300/90 flex justify-center items-center shrink-0">
                 <FileSpreadsheet className="size-3.5 sm:size-4 text-blue-900" />
@@ -70,7 +70,7 @@ const SidePanel = () => {
             <div className="w-5/6 rounded-full bg-white/30 h-1.5" />
             <div className="w-1/2 rounded-full bg-white/30 h-1.5" />
           </div>
-          <div className="relative shadow-2xl z-10 rounded-xl bg-white flex p-3 sm:p-4 flex-col gap-2 w-[46%] max-w-48">
+          <div className="relative shadow-2xl z-10 rounded-xl bg-white flex p-3 sm:p-4 flex-col gap-2 w-[46%] max-w-48 animate-float-center">
             <div className="flex items-center gap-2">
               <div className="size-7 sm:size-8 rounded-md bg-[#2b7fff]/15 flex justify-center items-center shrink-0">
                 <FolderOpen className="size-3.5 sm:size-4 text-[#2b7fff]" />

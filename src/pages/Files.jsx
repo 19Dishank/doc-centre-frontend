@@ -13,14 +13,14 @@ import OwnerNameCell from "@/components/Files/Cells/OwnerNameCell";
 import ActionsCell from "@/components/Files/Cells/ActionsCell";
 import PaginationBar from "@/components/ui/pagination-bar";
 import FiltersBar from "@/components/Files/FiltersBar";
-import PageHeading from "@/components/PageHeading";
 import UploadButtons from "@/components/Files/UploadButtons";
 import { socket } from "@/helper/socketService";
 import { useDropzone } from "react-dropzone";
 import { toastNotification } from "@/helper/toastNotification";
 import clsx from "clsx";
-import { progressToast } from "@/components/Files/ProgressToast";
+import ProgressToast, { progressToast } from "@/components/Files/ProgressToast";
 import { SOCKET_EVENTS } from "@/helper/constants/socket.events";
+import PageHeading from "@/components/PageHeading";
 
 export default function Files() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -253,36 +253,79 @@ export default function Files() {
     <div
       {...getRootProps()}
       className={clsx(
-        " transition-all duration-200",
+        "transition-all duration-200",
         isDragActive
           ? "border-blue-500 bg-blue-50 ring-4 ring-blue-200"
           : "border-gray-300 hover:border-gray-400"
       )}
     >
-      <input {...getInputProps()} onClick={e => e.preventDefault()} />
-      <div className="flex h-full flex-col gap-6 w-full max-w-full p-1">
+      <input {...getInputProps()} onClick={(e) => e.preventDefault()} />
 
-        <div className="flex justify-between gap-2 items-center border-b border-zinc-100 pb-4">
+      <div className="flex h-full w-full max-w-full flex-col gap-6 p-1">
+        {/* Header */}
+        <div className="flex items-center justify-between border-b border-zinc-100 pb-4">
           <PageHeading
             heading="Files"
-            subheading="Manage your files and folders."
+            subheading="Browse, upload, and organize your files."
           />
           {canRestoreDocument && (
-            <NavLink to="/trash" className="mt-auto">
-              <Button variant="outline" className="cursor-pointer gap-2 text-zinc-700 hover:text-zinc-900">
-                <Trash2 className="size-4 text-zinc-500" />
+            <NavLink to="/trash">
+              <Button variant="outline">
+                <Trash2 className="size-4" />
                 Recycle Bin
               </Button>
             </NavLink>
           )}
+          {/* <div className="ml-auto">
+            <FloatingActions
+              fabClassName="h-10 w-auto px-4 rounded-lg bg-white border border-zinc-200  text-zinc-700  shadow-sm hover:bg-zinc-50 hover:border-zinc-300"
+              mode="inline"
+              direction="left"
+              icon={
+                <>
+                  <Plus className="size-4" />
+                  <span className="text-sm font-medium">Add</span>
+                </>
+              }
+            >
+              {canRestoreDocument && (
+                <NavLink to="/trash">
+                  <Button variant="outline">
+                    <Trash2 className="size-4" />
+                    Recycle Bin
+                  </Button>
+                </NavLink>
+              )}
+
+              <UploadButtons
+                getFiles={getFiles}
+                parentId={parentId}
+                setNewFolderRow={setNewFolderRow}
+              />
+            </FloatingActions>
+          </div> */}
         </div>
 
-        <div className="flex flex-col gap-4 sm:flex-row sm:justify-between sm:items-center">
-          <BreadcrumbNavigation navigationBar={navigationBar} handleNavigationClick={handleNavigationClick} />
-          <UploadButtons getFiles={getFiles} parentId={parentId} setNewFolderRow={setNewFolderRow} />
+        {/* Old toolbar layout */}
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <BreadcrumbNavigation
+            navigationBar={navigationBar}
+            handleNavigationClick={handleNavigationClick}
+          />
+
+          <UploadButtons
+            getFiles={getFiles}
+            parentId={parentId}
+            setNewFolderRow={setNewFolderRow}
+          />
         </div>
 
-        <FiltersBar parentId={parentId} setCurrentPage={setCurrentPage} currentPage={currentPage} getFiles={getFiles} />
+        <FiltersBar
+          parentId={parentId}
+          setCurrentPage={setCurrentPage}
+          currentPage={currentPage}
+          getFiles={getFiles}
+        />
 
         <div className="rounded-xl border border-zinc-200 bg-white shadow-sm">
           <DataTable
@@ -305,8 +348,9 @@ export default function Files() {
             />
           </div>
         )}
-
       </div>
+      <ProgressToast position="-right" />
     </div>
+
   );
 }

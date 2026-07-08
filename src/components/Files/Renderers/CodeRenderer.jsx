@@ -1,8 +1,15 @@
 import { useEffect, useState } from "react"
 import { AlertCircleIcon } from "lucide-react"
 import Loader from "@/components/ui/loader"
+import ReactMarkdown from 'react-markdown'
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter"
+import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism"
+import { languageMap } from "@/constants/supportedFileTypes"
 
-export default function CodeRenderer({ file, codeUrl }) {
+
+
+
+export default function CodeRenderer({ file, codeUrl, language }) {
     const [content, setContent] = useState("")
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(null)
@@ -48,15 +55,39 @@ export default function CodeRenderer({ file, codeUrl }) {
         }
     }, [file, codeUrl])
 
+    const isMarkdown = language === "md"
+    const prismLanguage = languageMap[language] || "plaintext"
+
     return (
         <div className="relative w-full h-full border border-border rounded-md overflow-hidden bg-zinc-950 text-zinc-100 font-mono text-sm antialiased selection:bg-zinc-800">
-            
-            {/* Code Content Canvas Wrapper */}
+
+            {/* Content Canvas Wrapper */}
             {!error && !loading && (
-                <div className="absolute inset-0 overflow-auto p-5 text-left leading-relaxed whitespace-pre tab-size-4">
-                    <code className="block select-text min-w-full">
-                        {content || "// This file is empty"}
-                    </code>
+                <div className="absolute inset-0 overflow-auto">
+                    {isMarkdown ? (
+                        <div className="p-5 prose prose-invert prose-sm max-w-none">
+                            <ReactMarkdown>{content || "*This file is empty*"}</ReactMarkdown>
+                        </div>
+                    ) : (
+                        <SyntaxHighlighter
+                            language={prismLanguage}
+                            style={oneDark}
+                            showLineNumbers
+                            wrapLongLines={false}
+                            customStyle={{
+                                margin: 0,
+                                padding: "1.25rem",
+                                background: "transparent",
+                                minHeight: "100%",
+                                fontSize: "0.875rem",
+                            }}
+                            codeTagProps={{
+                                className: "select-text",
+                            }}
+                        >
+                            {content || "// This file is empty"}
+                        </SyntaxHighlighter>
+                    )}
                 </div>
             )}
 

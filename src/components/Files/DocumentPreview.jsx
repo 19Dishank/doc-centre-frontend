@@ -12,6 +12,8 @@ import { useEffect, useState } from "react";
 import { getRegistryIcon } from "@/helper/getRegistryIcon";
 import OfficeRendered from "./Renderers/OfficeRendered";
 import DocumentDetails from "./DocumentDetails";
+import { audioTypes, codeTypes, imageTypes, officeTypes, textTypes, videoTypes } from "@/constants/supportedFileTypes";
+
 
 const DocumentPreview = ({ setIsOpen, item }) => {
 
@@ -39,18 +41,9 @@ const DocumentPreview = ({ setIsOpen, item }) => {
     const type = item?.originalFileName?.split(".").pop()?.toLowerCase();
 
     const getRenderer = () => {
-        const imageTypes = ["png", "jpg", "jpeg", "gif", "webp", "svg", 'jfif'];
-        const videoTypes = ["mp4", "webm", "ogg", "mov"];
-        const audioTypes = ["mp3", "wav", "ogg"];
-        const codeTypes = ["js", "jsx", "ts", "tsx", "json", "html", "css", "py", "java", "cpp", "c", "rb", "php", "go", "rs", "swift", "kt", "sql", "sh", "bat", "pl", "r", "lua", "dart"];
-        const textTypes = ["txt", "md"];
-        const officeTypes = [
-            'doc', 'docx', 'docm', 'dot', 'dotx', 'dotm',
-            'xls', 'xlsx', 'xlsm', 'xlsb', 'xlt', 'xltx', 'xltm', 'xlam',
-            'ppt', 'pptx', 'pptm', 'pot', 'potx', 'potm', 'ppam', 'pps', 'ppsx', 'ppsm', 'sldx', 'sldm',
-        ];
 
         if (type === "pdf") return <PDFRenderer pdfUrl={preSignedUrl} />;
+        // if (type === "md") return <MarkdownRenderer codeUrl={preSignedUrl} />;
         if (officeTypes.includes(type)) return <OfficeRendered fileUrl={preSignedUrl} />;
         if (imageTypes.includes(type)) return <ImageRenderer imageUrl={preSignedUrl} />;
         if (videoTypes.includes(type)) return <VideoRenderer videoUrl={preSignedUrl} />;

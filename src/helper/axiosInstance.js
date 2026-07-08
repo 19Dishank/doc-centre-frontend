@@ -4,6 +4,7 @@ import { getSubdomain } from "./getSubdomain";
 import { refreshAccessToken } from "@/api/auth";
 import { clearTokens, getTokens, setTokens } from "./tokens";
 import { reconnectSocket } from "./socketService";
+import { handleHttpError } from "./errorHandler";
 
 const axiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
@@ -153,6 +154,9 @@ axiosInstance.interceptors.response.use(
         isRefreshing = false;
       }
     }
+
+    // Handle all remaining status codes
+    handleHttpError(status, response?.data);
 
     return Promise.reject(error);
   }

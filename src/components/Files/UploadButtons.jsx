@@ -11,7 +11,7 @@ import { usePermissions } from "@/hooks/usePermissions";
 import { getSignedURL, uploadOnSignedURL } from "@/api/file";
 
 import { socket } from "@/helper/socketService";
-import ProgressToast, { progressToast } from "./ProgressToast";
+import { progressToast } from "./ProgressToast";
 import { SOCKET_EVENTS } from "@/helper/constants/socket.events";
 
 const UploadButtons = ({ parentId, setNewFolderRow, getFiles }) => {
@@ -176,7 +176,7 @@ const UploadButtons = ({ parentId, setNewFolderRow, getFiles }) => {
                     </Tooltip>
                 </div>
             )}
-            <ProgressToast position="top-right" />
+
         </>
     );
 };

@@ -1,4 +1,5 @@
 import { fetchLogo } from "@/api/auth";
+import fallbackLogo from '@/assets/google-logo.webp'
 
 import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
@@ -60,6 +61,7 @@ export const CompanyLogo = ({ slug }) => {
     if (!logoSrc) return slug
         ? <span className="text-[#2b7fff] font-bold text-lg uppercase">{slug}</span>
         : null;
+
 
     return (
         <>

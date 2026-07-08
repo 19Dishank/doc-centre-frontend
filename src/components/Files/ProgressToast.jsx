@@ -4,7 +4,6 @@
 /* eslint-disable react-refresh/only-export-components */
 import { useEffect, useRef, useState } from "react";
 import {
-
   Check,
   ChevronDown,
   ChevronUp,
@@ -15,6 +14,7 @@ import {
   Video,
   X,
 } from "lucide-react";
+import { EXT_ICON_MAP } from "@/constants/supportedFileTypes";
 
 /*  module-level state  */
 let uploads = [];
@@ -99,19 +99,32 @@ function useProgressToasts() {
   return state;
 }
 
+/* extension -> icon bucket map */
 
 
-const iconFor = (type) => {
+const getExtension = (name = "") => {
+  const parts = name.split(".");
+  if (parts.length < 2) return "";
+  return parts.pop().toLowerCase();
+};
+
+const iconFor = (type, name = "") => {
+  if (type === "folder") return Folder;
+
+  const ext = getExtension(name);
+  if (ext && EXT_ICON_MAP[ext]) return EXT_ICON_MAP[ext];
+
+  // fallback to loosely-provided type bucket only if extension didn't resolve
   if (type === "image") return ImageIcon;
   if (type === "video") return Video;
-  if (type === "folder") return Folder;
+
   return FileText;
 };
 
 /*  single row  */
 
 function ProgressRow({ item }) {
-  const Icon = iconFor(item.type);
+  const Icon = iconFor(item.type, item.name);
   const isUploading = item.status === "uploading";
   const isDone = item.status === "success";
   const isError = item.status === "error";

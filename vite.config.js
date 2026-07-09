@@ -23,7 +23,7 @@ export default defineConfig({
 
     proxy: {
       "/api": {
-        target: "http://api.doccenter.in/",
+        target: "https://api.doccenter.in/",
         changeOrigin: true,
       },
     },

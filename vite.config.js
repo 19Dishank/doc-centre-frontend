@@ -18,9 +18,7 @@ export default defineConfig({
 
   server: {
     host: true,
-
-    allowedHosts: [".10.155.219.87.nip.io", ".192.168.100.99.nip.io", ".nip.io", "localhost"],
-
+    allowedHosts: [".10.155.219.87.nip.io", ".192.168.100.99.nip.io", ".nip.io", "localhost", ".doccenter.in"],
     proxy: {
       "/api": {
         target: "https://api.doccenter.in/",

@@ -1,5 +1,11 @@
-import { Pencil, Trash2 } from "lucide-react";
+import { MoreVertical, Pencil, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { useMemo, useState } from "react";
 import { deleteUser } from "@/api/user";
 import { PERMISSIONS } from "@/helper/permissions";
@@ -39,26 +45,72 @@ const ActionsCell = ({ row: currentUser, fetchUsers, roles, setCurrentPage, curr
     const canUpdateUser = useMemo(() => checkPermission(PERMISSIONS.UPDATE_USER), [checkPermission]);
     const canDeleteUser = useMemo(() => checkPermission(PERMISSIONS.DELETE_USER), [checkPermission]);
 
+    // Row-level guard: don't show actions for yourself or for Admins
+    const showActions = currentUser._id !== userId && currentUser?.role?.name !== "Admin";
+
+    const actions = [
+        {
+            key: "edit",
+            show: canUpdateUser,
+            label: "Edit",
+            icon: Pencil,
+            onClick: () => setIsEditing(true),
+        },
+        {
+            key: "delete",
+            show: canDeleteUser,
+            label: "Delete",
+            icon: Trash2,
+            onClick: () => setIsDeleting(true),
+            danger: true,
+        },
+    ].filter((action) => action.show);
+
     return (
         <>
-            {(currentUser._id !== userId && currentUser?.role?.name !== "Admin") && (
-                <div className="flex justify-end items-center gap-1">
-                    {canUpdateUser && (
-                        <Button onClick={() => setIsEditing(true)} variant="ghost" size="icon" className="size-8 cursor-pointer">
-                            <Pencil className="size-4 text-zinc-500" />
-                        </Button>
-                    )}
-                    {canDeleteUser && (
-                        <Button
-                            onClick={() => setIsDeleting(true)}
-                            variant="ghost"
-                            size="icon"
-                            className="size-8 cursor-pointer text-red-500 hover:text-red-600 hover:bg-red-50"
-                        >
-                            <Trash2 className="size-4" />
-                        </Button>
-                    )}
-                </div>
+            {showActions && actions.length > 0 && (
+                <>
+                    {/* Desktop / tablet: full icon row */}
+                    <div className="hidden sm:flex justify-end items-center gap-1">
+                        {actions.map(({ key, label, icon: Icon, onClick, danger }) => (
+                            <Button
+                                key={key}
+                                onClick={onClick}
+                                variant="ghost"
+                                size="icon"
+                                title={label}
+                                className={`size-8 cursor-pointer ${danger ? "text-red-500 hover:text-red-600 hover:bg-red-50" : "text-zinc-500"
+                                    }`}
+                            >
+                                <Icon className="size-4" />
+                            </Button>
+                        ))}
+                    </div>
+
+                    {/* Mobile: single 3-dot trigger, labeled items inside */}
+                    <div className="flex sm:hidden justify-end">
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" size="icon" className="size-8 cursor-pointer">
+                                    <MoreVertical className="size-4 text-zinc-500" />
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end" className="w-36">
+                                {actions.map(({ key, label, icon: Icon, onClick, danger }) => (
+                                    <DropdownMenuItem
+                                        key={key}
+                                        onClick={onClick}
+                                        className={`cursor-pointer gap-2 ${danger ? "text-red-500 focus:text-red-600 focus:bg-red-50" : ""
+                                            }`}
+                                    >
+                                        <Icon className="size-3.5" />
+                                        <span>{label}</span>
+                                    </DropdownMenuItem>
+                                ))}
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                    </div>
+                </>
             )}
 
             {isEditing && (

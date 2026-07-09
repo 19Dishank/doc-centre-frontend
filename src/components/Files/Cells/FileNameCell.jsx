@@ -93,6 +93,10 @@ const FileNameCell = ({
     };
 
     const handleClick = () => {
+        if (row.isNewFolder || isEditing) {
+            return;
+        }
+
         if (row.isGoBackRow) {
             setNavigationBar((prev) => {
                 setParentId(prev[prev.length - 2]?.parentId || "");
@@ -123,6 +127,7 @@ const FileNameCell = ({
                     value={row.name}
                     onChange={handleChange}
                     onKeyDown={handleKeyDown}
+                    onClick={(e) => e.stopPropagation()}
                     onBlur={() => setNewFolderRow(null)}
                 />
             );
@@ -137,6 +142,7 @@ const FileNameCell = ({
                     value={input}
                     onChange={handleChange}
                     onKeyDown={handleKeyDown}
+                    onClick={(e) => e.stopPropagation()}
                     onBlur={() => setRenameMode(null)}
                 />
             );

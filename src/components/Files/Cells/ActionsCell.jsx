@@ -1,12 +1,20 @@
 import { deleteFile, deleteFolder, downloadFile } from "@/api/file";
 import ConfirmationModal from "@/components/ConfirmationModal";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { PERMISSIONS } from "@/helper/permissions";
 import { toastNotification } from "@/helper/toastNotification";
 import { usePermissions } from "@/hooks/usePermissions";
-import { Download, Pencil, Share2, Trash2 } from "lucide-react";
+import { Download, InfoIcon, MoreVertical, Pencil, Share2, Trash2 } from "lucide-react";
 import { useMemo, useState } from "react";
 import ShareDocumentModal from "../ShareDocumentModal";
+import FileInfoModal from "@/components/FileInfoModel";
+
 
 const ActionsCell = ({ row: item, getFiles, setRenameMode, currentPageItems, setCurrentPage }) => {
 
@@ -15,6 +23,7 @@ const ActionsCell = ({ row: item, getFiles, setRenameMode, currentPageItems, set
   const [shareDocument, setShareDocument] = useState(null);
   const [confirmationModalOpen, setConfirmationModalOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [infoModel, setInfoModel] = useState(false);
 
   const handleDelete = async () => {
     try {
@@ -39,47 +48,91 @@ const ActionsCell = ({ row: item, getFiles, setRenameMode, currentPageItems, set
   const canUpdateDocument = useMemo(() => checkPermission(PERMISSIONS.UPDATE_DOCUMENT), [checkPermission]);
   const canDeleteDocument = useMemo(() => checkPermission(PERMISSIONS.DELETE_DOCUMENT), [checkPermission]);
 
+
+  const actions = [
+    {
+      key: "info",
+      show: true,
+      label: "Info",
+      icon: InfoIcon,
+      onClick: () => setInfoModel(true),
+    },
+    {
+      key: "share",
+      show: canShareDocument && !isFolder,
+      label: "Share",
+      icon: Share2,
+      onClick: () => setShareDocument(item._id),
+    },
+    {
+      key: "download",
+      show: canDownloadDocument && !isFolder,
+      label: "Download",
+      icon: Download,
+      onClick: () => downloadFile(item._id),
+    },
+    {
+      key: "rename",
+      show: canUpdateDocument,
+      label: "Rename",
+      icon: Pencil,
+      onClick: () => setRenameMode(item._id),
+    },
+    {
+      key: "delete",
+      show: canDeleteDocument,
+      label: "Delete",
+      icon: Trash2,
+      onClick: () => setConfirmationModalOpen(true),
+      danger: true,
+    },
+  ].filter((action) => action.show);
+
   return (
     <>
-      <div className="flex justify-end items-center gap-0.5">
-        {canShareDocument && !isFolder && (
+      {/* Desktop / tablet: full icon row */}
+      <div className="hidden sm:flex justify-end items-center gap-0.5">
+        {actions.map(({ key, label, icon: Icon, onClick, danger }) => (
           <Button
-            onClick={() => setShareDocument(item._id)}
+            key={key}
+            onClick={onClick}
             variant="ghost"
             size="icon"
-            className="size-8 inline-flex cursor-pointer"
+            title={label}
+            className={`size-8 inline-flex cursor-pointer ${danger ? "text-red-400 hover:text-red-600 hover:bg-red-50" : ""
+              }`}
           >
-            <Share2 className="size-3.5 text-[#71717b]" />
+            <Icon className={`size-3.5 ${danger ? "" : "text-[#71717b]"}`} />
           </Button>
-        )}
+        ))}
+      </div>
 
-        {canDownloadDocument && !isFolder && (
-          <Button onClick={() => downloadFile(item._id)} variant="ghost" size="icon" className="size-8 cursor-pointer">
-            <Download className="size-3.5 text-[#71717b]" />
-          </Button>
-        )}
-
-        {canUpdateDocument && (
-          <Button
-            onClick={() => setRenameMode(item._id)}
-            variant="ghost"
-            size="icon"
-            className="size-8 inline-flex cursor-pointer"
-          >
-            <Pencil className="size-3.5 text-[#71717b]" />
-          </Button>
-        )}
-
-        {canDeleteDocument && (
-          <Button
-            onClick={() => setConfirmationModalOpen(true)}
-            variant="ghost"
-            size="icon"
-            className="size-8 text-red-400 hover:text-red-600 hover:bg-red-50 cursor-pointer"
-          >
-            <Trash2 className="size-3.5" />
-          </Button>
-        )}
+      {/* Mobile: single 3-dot trigger, labeled items inside */}
+      <div className="flex sm:hidden justify-end">
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="size-8 inline-flex cursor-pointer"
+            >
+              <MoreVertical className="size-3.5 text-[#71717b]" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-40">
+            {actions.map(({ key, label, icon: Icon, onClick, danger }) => (
+              <DropdownMenuItem
+                key={key}
+                onClick={onClick}
+                className={`cursor-pointer gap-2 ${danger ? "text-red-500 focus:text-red-600 focus:bg-red-50" : ""
+                  }`}
+              >
+                <Icon className="size-3.5" />
+                <span>{label}</span>
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
 
       {confirmationModalOpen && (
@@ -97,9 +150,10 @@ const ActionsCell = ({ row: item, getFiles, setRenameMode, currentPageItems, set
       )}
 
       {shareDocument && <ShareDocumentModal documentId={shareDocument} setIsOpen={setShareDocument} />}
+
+      {infoModel && <FileInfoModal item={item} setIsOpen={setInfoModel} />}
     </>
-  )
-}
+  );
+};
 
 export default ActionsCell;
-

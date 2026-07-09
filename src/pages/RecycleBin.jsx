@@ -87,7 +87,7 @@ export default function RecycleBin() {
         {
             key: "name",
             header: "Name",
-            width: "w-[30%]",
+            width: "w-[55%] sm:w-[35%] lg:w-[30%]",
             cellClassName: "font-medium",
             render: (row) => {
                 return <FileNameCell
@@ -102,20 +102,25 @@ export default function RecycleBin() {
         {
             key: "type",
             header: "Type",
-            width: "w-[10%]",
-            cellClassName: "uppercase",
+            width: "w-[15%] lg:w-[10%]",
+            cellClassName: "hidden lg:table-cell",
+            headerClassName: "hidden sm:table-cell",
             render: (row) => row?.originalFileName ? row?.originalFileName.split(".").pop() : "Folder",
         },
         {
             key: "size",
             header: "Size",
             width: "w-[10%]",
+            headerClassName: "hidden lg:table-cell",
+            cellClassName: "hidden lg:table-cell",
             render: (row) => row?.size ? formatSize(row.size) : "—",
         },
         {
             key: "deletedAt",
             header: "Deleted At",
             width: "w-[10%]",
+            headerClassName: "hidden lg:table-cell",
+            cellClassName: "hidden lg:table-cell",
             render: (row) => formatTime(row.deletedAt),
         },
         // {
@@ -128,7 +133,7 @@ export default function RecycleBin() {
         {
             key: "actions",
             header: "Actions",
-            width: "w-[20%]",
+            width: "w-[45%] sm:w-[25%] lg:w-[20%]",
             align: "right",
             render: (row) => (
                 <ActionsCell row={row} getFiles={getBinData} setRenameMode={setRenameMode} />

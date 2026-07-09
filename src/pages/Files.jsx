@@ -194,7 +194,7 @@ export default function Files() {
     {
       key: "name",
       header: "Name",
-      width: "w-[30%]",
+      width: "w-[55%] sm:w-[35%] lg:w-[30%]",
       cellClassName: "font-medium",
       render: (row) => {
         return <FileNameCell
@@ -212,7 +212,9 @@ export default function Files() {
     {
       key: "type",
       header: "Type",
-      width: "w-[10%]",
+      width: "w-[15%] lg:w-[10%]",
+      headerClassName: "hidden sm:table-cell",
+      cellClassName: "hidden sm:table-cell",
       render: (row) => !row?.isGoBackRow && (
         <div className="uppercase">{row?.originalFileName?.split(".").pop() || "Folder"}</div>
       ),
@@ -221,25 +223,30 @@ export default function Files() {
       key: "size",
       header: "Size",
       width: "w-[10%]",
+      headerClassName: "hidden lg:table-cell",
+      cellClassName: "hidden lg:table-cell",
       render: (row) => !row?.isGoBackRow && (row?.size ? formatSize(row.size) : "—"),
     },
     {
       key: "createdAt",
       header: "Uploaded At",
       width: "w-[10%]",
+      headerClassName: "hidden lg:table-cell",
+      cellClassName: "hidden lg:table-cell",
       render: (row) => !row?.isGoBackRow && (row?.createdAt ? new Date(row.createdAt).toLocaleDateString() : "—"),
     },
     {
       key: "owner",
       header: "Owner",
       width: "w-[15%]",
-      // cellClassName: "flex items-center gap-2",
+      headerClassName: "hidden lg:table-cell",
+      cellClassName: "hidden lg:table-cell",
       render: (row) => (!row?.isGoBackRow) && <OwnerNameCell row={row} />,
     },
     {
       key: "actions",
       header: "Actions",
-      width: "w-[20%]",
+      width: "w-[45%] sm:w-[25%] lg:w-[20%]",
       align: "right",
       render: (row) => !row?.isGoBackRow && (
         <ActionsCell row={row} getFiles={getFiles} setRenameMode={setRenameMode} currentPageItems={tableRows.length} setCurrentPage={setCurrentPage} />

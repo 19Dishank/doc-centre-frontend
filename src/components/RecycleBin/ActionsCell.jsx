@@ -1,5 +1,11 @@
-import { Trash2, ArchiveRestore } from "lucide-react";
+import { MoreVertical, Trash2, ArchiveRestore, InfoIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { deleteFilePermanently, deleteFolderPermanently, restoreFile, restoreFolder } from "@/api/file";
 import { useMemo, useState } from "react";
 import { PERMISSIONS } from "@/helper/permissions";
@@ -7,6 +13,7 @@ import { usePermissions } from "@/hooks/usePermissions";
 import { toastNotification } from "@/helper/toastNotification";
 import ShareDocumentModal from "@/components/Files/ShareDocumentModal";
 import ConfirmationModal from "@/components/ConfirmationModal";
+import FileInfoModal from "../FileInfoModel";
 
 const ActionsCell = ({ row: item, getFiles }) => {
 
@@ -15,7 +22,7 @@ const ActionsCell = ({ row: item, getFiles }) => {
     const [shareDocument, setShareDocument] = useState(null);
     const [confirmationModalOpen, setConfirmationModalOpen] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
-
+    const [infoModel, setInfoModel] = useState(false);
     const handleDelete = async () => {
         setIsDeleting(true);
         try {
@@ -48,32 +55,78 @@ const ActionsCell = ({ row: item, getFiles }) => {
     const canRestoreDocument = useMemo(() => checkPermission(PERMISSIONS.RESTORE_DOCUMENT), [checkPermission]);
     const canPermanentlyDeleteDocument = useMemo(() => checkPermission(PERMISSIONS.DELETE_DOCUMENT), [checkPermission]);
 
+    const actions = [
+        {
+            key: "info",
+            show: true,
+            label: "Info",
+            icon: InfoIcon,
+            onClick: () => setInfoModel(true),
+        },
+        {
+            key: "restore",
+            show: canRestoreDocument,
+            label: "Restore",
+            icon: ArchiveRestore,
+            onClick: () => restore(item._id),
+        },
+        {
+            key: "delete",
+            show: canPermanentlyDeleteDocument,
+            label: "Delete Permanently",
+            icon: Trash2,
+            onClick: () => setConfirmationModalOpen(true),
+            danger: true,
+        },
+    ].filter((action) => action.show);
+
+
     return (
         <>
-            <div className="flex justify-end items-center gap-0.5">
+            {actions.length > 0 && (
+                <>
+                    {/* Desktop / tablet: full icon row */}
+                    <div className="hidden sm:flex justify-end items-center gap-0.5">
+                        {actions.map(({ key, label, icon: Icon, onClick, danger }) => (
+                            <Button
+                                key={key}
+                                onClick={onClick}
+                                variant="ghost"
+                                size="icon"
+                                title={label}
+                                className={`size-8 inline-flex cursor-pointer ${danger ? "text-red-400 hover:text-red-600 hover:bg-red-50" : ""
+                                    }`}
+                            >
+                                <Icon className={`size-3.5 ${danger ? "" : "text-[#71717b]"}`} />
+                            </Button>
+                        ))}
+                    </div>
 
-                {canRestoreDocument && (
-                    <Button
-                        onClick={() => restore(item._id)}
-                        variant="ghost"
-                        size="icon"
-                        className="size-8 inline-flex cursor-pointer"
-                    >
-                        <ArchiveRestore className="size-3.5 text-[#71717b]" />
-                    </Button>
-                )}
-
-                {canPermanentlyDeleteDocument && (
-                    <Button
-                        onClick={() => setConfirmationModalOpen(true)}
-                        variant="ghost"
-                        size="icon"
-                        className="size-8 text-red-400 hover:text-red-600 hover:bg-red-50 cursor-pointer"
-                    >
-                        <Trash2 className="size-3.5" />
-                    </Button>
-                )}
-            </div>
+                    {/* Mobile: single 3-dot trigger, labeled items inside */}
+                    <div className="flex sm:hidden justify-end">
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" size="icon" className="size-8 inline-flex cursor-pointer">
+                                    <MoreVertical className="size-3.5 text-[#71717b]" />
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end" className="w-44">
+                                {actions.map(({ key, label, icon: Icon, onClick, danger }) => (
+                                    <DropdownMenuItem
+                                        key={key}
+                                        onClick={onClick}
+                                        className={`cursor-pointer gap-2 ${danger ? "text-red-500 focus:text-red-600 focus:bg-red-50" : ""
+                                            }`}
+                                    >
+                                        <Icon className="size-3.5" />
+                                        <span>{label}</span>
+                                    </DropdownMenuItem>
+                                ))}
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                    </div>
+                </>
+            )}
 
             {confirmationModalOpen && (
                 <ConfirmationModal
@@ -90,6 +143,7 @@ const ActionsCell = ({ row: item, getFiles }) => {
             )}
 
             {shareDocument && <ShareDocumentModal documentId={shareDocument} setIsOpen={setShareDocument} />}
+            {infoModel && <FileInfoModal item={item} setIsOpen={setInfoModel} />}
         </>
     )
 }

@@ -92,7 +92,7 @@ export default function UsersList() {
     {
       key: "user",
       header: "User",
-      width: "w-[40%]",
+      width: "w-[55%] sm:w-[45%] lg:w-[40%]",
       cellClassName: "font-medium",
       render: (row) => <UserNameCell row={row} />,
     },
@@ -110,12 +110,14 @@ export default function UsersList() {
       key: "lastActive",
       header: "Last Active",
       width: "w-[25%]",
+      headerClassName: "hidden sm:table-cell",
+      cellClassName: "hidden sm:table-cell",
       render: (row) => row.lastActivateAt ? formatTime(row.lastActivateAt, "Active Now") : "—",
     },
     {
       key: "actions",
       header: "Actions",
-      width: "w-[15%]",
+      width: "w-[25%] sm:w-[20%] lg:w-[15%]",
       align: "right",
       render: (row) => <ActionsCell row={row} fetchUsers={fetchUsers} roles={roles} setCurrentPage={setCurrentPage} currentPageItems={usersData.length} />
     },

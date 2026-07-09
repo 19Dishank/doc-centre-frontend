@@ -23,10 +23,10 @@ const Footer = () => {
 
     return (
         <footer className="bg-white border-t border-zinc-200 w-full mt-auto">
-            <div className="max-w-7xl mx-auto px-6 md:px-8 py-12 md:py-16">
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-10 mb-12">
+            <div className="max-w-[1440px] mx-auto px-6 md:px-8 py-12 md:py-16">
+                <div className="flex flex-col md:flex-row justify-between gap-10 mb-12">
                     {/* brand col */}
-                    <div className="col-span-2 md:col-span-1 flex flex-col gap-4">
+                    <div className="flex flex-col gap-4 max-w-sm">
                         <div className="flex items-center gap-2.5">
                             <div className="size-8 rounded-lg bg-slate-800 flex items-center justify-center shadow-sm shrink-0">
                                 {/* <FileStack className="size-4 text-white" /> */}
@@ -34,7 +34,7 @@ const Footer = () => {
                             </div>
                             <span className="font-bold text-zinc-900 text-base">DocCenter</span>
                         </div>
-                        <p className="text-zinc-400 text-sm leading-relaxed max-w-xs">
+                        <p className="text-zinc-400 text-sm leading-relaxed">
                             The modern document management platform for teams that care about organisation, security, and speed.
                         </p>
                         <span className="text-zinc-400 text-xs mt-auto">
@@ -43,22 +43,24 @@ const Footer = () => {
                     </div>
 
                     {/* link cols */}
-                    {Object.entries(links).map(([group, items]) => (
-                        <div key={group} className="flex flex-col gap-3">
-                            <span className="text-xs font-semibold uppercase tracking-widest text-zinc-400">
-                                {group}
-                            </span>
-                            {items.map((item) => (
-                                <NavLink
-                                    key={item.label}
-                                    to={item.to}
-                                    className="text-zinc-500 text-sm hover:text-[#2b7fff] transition-colors duration-200"
-                                >
-                                    {item.label}
-                                </NavLink>
-                            ))}
-                        </div>
-                    ))}
+                    <div className="flex flex-wrap gap-12 md:gap-20 lg:gap-24">
+                        {Object.entries(links).map(([group, items]) => (
+                            <div key={group} className="flex flex-col gap-3 min-w-[120px]">
+                                <span className="text-xs font-semibold uppercase tracking-widest text-zinc-400">
+                                    {group}
+                                </span>
+                                {items.map((item) => (
+                                    <NavLink
+                                        key={item.label}
+                                        to={item.to}
+                                        className="text-zinc-500 text-sm hover:text-[#2b7fff] transition-colors duration-200"
+                                    >
+                                        {item.label}
+                                    </NavLink>
+                                ))}
+                            </div>
+                        ))}
+                    </div>
                 </div>
             </div>
         </footer>

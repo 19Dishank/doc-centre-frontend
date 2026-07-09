@@ -1,14 +1,16 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { Button } from "../ui/button";
 import Logo from "../ui/logo";
 
 const navItems = ["Features", "Pricing", "Docs"];
 
 const Header = () => {
+    const navigate = useNavigate()
+
     return (
         <header className="sticky top-0 z-50 bg-white/60 backdrop-blur-xl backdrop-saturate-150 border-b border-white/40 shadow-[0_1px_0_0_rgba(0,0,0,0.03)] w-full">
-            <div className="max-w-7xl mx-auto px-4 sm:px-8 flex justify-between items-center h-16">
-                <Logo width={170} height={36} />
+            <div className="max-w-[1440px] mx-auto px-4 sm:px-8 flex justify-between items-center h-16">
+                <Logo width={170} height={36} onClick={() => navigate("/")} />
 
                 <nav className="hidden md:flex items-center gap-9">
                     {navItems.map((item) => (

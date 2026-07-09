@@ -1,6 +1,7 @@
+import { useState } from "react";
 import Header from "@/components/HomePage/Header";
 import Footer from "@/components/HomePage/Footer";
-import Sidebar from "@/components/DocsPage/Sidebar";
+import Sidebar, { sections } from "@/components/DocsPage/Sidebar";
 import Introduction from "@/components/DocsPage/Introduction";
 import Overview from "@/components/DocsPage/Overview";
 import Installation from "@/components/DocsPage/Installation";
@@ -10,14 +11,37 @@ import Operations from "@/components/DocsPage/Operations";
 import BestPractices from "@/components/DocsPage/BestPractices";
 import BackendPattern from "@/components/DocsPage/BackendPattern";
 import Reference from "@/components/DocsPage/Reference";
+import { BookOpen, Menu } from "lucide-react";
 
 export default function DocsPage() {
+  const [activeSection, setActiveSection] = useState("overview");
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const activeLabel = sections.find((s) => s.id === activeSection)?.label.substring(3) || "Overview";
+
   return (
     <div className="min-h-screen bg-zinc-50/50 flex flex-col text-zinc-800 antialiased ">
       <Header />
-      <div className="flex-1 flex max-w-7xl w-full mx-auto relative px-4 sm:px-6 lg:px-8">
-        <Sidebar />
-        <main className="flex-1 min-w-0 py-8 md:px-8 lg:px-12 max-w-4xl">
+
+      {/* Sticky Mobile Sub-Header */}
+      <div className="sticky top-16 z-30 lg:hidden w-full bg-white/95 backdrop-blur-md border-b border-zinc-200/80 px-4 sm:px-6 py-3 flex items-center justify-between shadow-sm">
+        <div className="flex items-center gap-2">
+          <BookOpen className="size-4 text-[#2b7fff]" />
+          <span className="text-sm font-semibold text-zinc-700">
+            {activeLabel}
+          </span>
+        </div>
+        <button
+          onClick={() => setMobileMenuOpen(true)}
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-zinc-200 bg-white text-xs font-semibold text-zinc-600 shadow-sm hover:bg-zinc-50 active:scale-95 transition-all cursor-pointer"
+        >
+          <Menu className="size-3.5 text-zinc-500" />
+          <span>Menu</span>
+        </button>
+      </div>
+
+      <div className="flex-1 flex max-w-[1440px] justify-between w-full mx-auto relative px-4 sm:px-6 lg:px-8">
+        <main className="flex-1 min-w-0 py-8 px-0 lg:px-8 xl:px-12">
           <Introduction />
           <Overview />
           <Installation />
@@ -28,6 +52,12 @@ export default function DocsPage() {
           <BestPractices />
           <Reference />
         </main>
+        <Sidebar 
+          activeSection={activeSection} 
+          setActiveSection={setActiveSection} 
+          mobileMenuOpen={mobileMenuOpen} 
+          setMobileMenuOpen={setMobileMenuOpen} 
+        />
       </div>
       <Footer />
     </div>

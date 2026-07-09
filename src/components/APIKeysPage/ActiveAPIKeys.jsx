@@ -9,8 +9,14 @@ import { toastNotification } from "@/helper/toastNotification";
 const ActiveAPIKeys = ({ apiKeys, getApiKeys }) => {
 
     const formatKey = keySuffix => {
-        return `••••••••••••••••••••••••••••${keySuffix}`
-    }
+        return (
+            <>
+                <span className="hidden sm:inline">••••••••••••••••••••••••••••</span>
+                <span className="sm:hidden">••••</span>
+                {keySuffix}
+            </>
+        );
+    };
 
     useEffect(() => {
         getApiKeys();
@@ -20,12 +26,12 @@ const ActiveAPIKeys = ({ apiKeys, getApiKeys }) => {
         {
             key: "name",
             header: "Name",
-            width: "w-[15%]",
+            width: "w-[30%] sm:w-[15%]",
         },
         {
             key: "key_suffix",
             header: "API Key",
-            width: "w-[25%]",
+            width: "w-[40%] sm:w-[25%]",
             render: (row) => (
                 <span className="font-mono">
                     {formatKey(row?.key_suffix)}
@@ -35,7 +41,7 @@ const ActiveAPIKeys = ({ apiKeys, getApiKeys }) => {
         {
             key: "isActive",
             header: "Status",
-            width: "w-[10%]",
+            width: "w-[15%] sm:w-[10%]",
             render: (row) => (
                 <span
                     className={`px-2 py-1 rounded text-xs ${row.isActive
@@ -50,7 +56,9 @@ const ActiveAPIKeys = ({ apiKeys, getApiKeys }) => {
         {
             key: "createdAt",
             header: "Created At",
-            width: "w-[15%]",
+            width: "w-[20%] sm:w-[15%]",
+            headerClassName: "hidden sm:table-cell",
+            cellClassName: "hidden sm:table-cell",
             render: (row) =>
                 new Date(row.createdAt).toLocaleString(),
         },

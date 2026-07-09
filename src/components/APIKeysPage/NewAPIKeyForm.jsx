@@ -32,7 +32,7 @@ const NewAPIKeyForm = ({ getApiKeys }) => {
 
     return (
         <>
-            <form onSubmit={handleGenerateKey} className="flex gap-2 flex-1 w-full">
+            <form onSubmit={handleGenerateKey} className="flex flex-col sm:flex-row gap-2 flex-1 w-full">
                 <Input
                     id="key-name"
                     placeholder="e.g., Production Web App"

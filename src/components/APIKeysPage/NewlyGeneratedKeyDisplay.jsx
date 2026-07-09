@@ -63,7 +63,7 @@ SSO_SECRET=${credentials.rawSsoSecret}
 
     return createPortal(
         <div className="bg-zinc-950/40 flex fixed inset-0 justify-center items-center z-100 backdrop-blur">
-            <Card className="w-130 overflow-hidden animate-in fade-in zoom-in-95 duration-150 border border-zinc-200 bg-white shadow-xl shadow-zinc-900/10 rounded-2xl p-0 gap-0">
+            <Card className="w-full max-w-lg mx-4 sm:mx-0 sm:w-130 overflow-hidden animate-in fade-in zoom-in-95 duration-150 border border-zinc-200 bg-white shadow-xl shadow-zinc-900/10 rounded-2xl p-0 gap-0">
                 <div className="h-1 w-full bg-linear-to-r from-blue-500 via-blue-600 to-blue-500" />
 
                 <div className="p-6 shadow-2xl flex flex-col gap-4 w-full">
@@ -98,11 +98,11 @@ SSO_SECRET=${credentials.rawSsoSecret}
                             <label className="flex font-semibold uppercase text-zinc-500 text-[11px] leading-4 tracking-[0.06em]">
                                 API Key
                             </label>
-                            <div className="relative flex items-center">
-                                <div className="w-full font-mono text-sm bg-zinc-50 border border-zinc-200 rounded-lg pl-3 pr-28 py-2.5 text-zinc-900 focus:outline-hidden">
+                            <div className="relative flex flex-col gap-2 sm:gap-0 justify-center">
+                                <div className="w-full font-mono text-xs sm:text-sm bg-zinc-50 border border-zinc-200 rounded-lg pl-3 pr-3 sm:pr-28 py-2.5 text-zinc-900 focus:outline-hidden break-all">
                                     {showKey.rawApiKey ? credentials.rawApiKey : formatKey(credentials.rawApiKey)}
                                 </div>
-                                <div className="absolute right-1.5 flex items-center gap-1">
+                                <div className="sm:absolute right-1.5 flex items-center justify-end gap-1 mt-1 sm:mt-0">
                                     <Button
                                         type="button"
                                         variant="ghost"
@@ -137,11 +137,11 @@ SSO_SECRET=${credentials.rawSsoSecret}
                             <label className="flex font-semibold uppercase text-zinc-500 text-[11px] leading-4 tracking-[0.06em]">
                                 SSO Secret
                             </label>
-                            <div className="relative flex items-center">
-                                <div className="w-full font-mono text-sm bg-zinc-50 border border-zinc-200 rounded-lg pl-3 pr-28 py-2.5 text-zinc-900 focus:outline-hidden break-all">
+                            <div className="relative flex flex-col gap-2 sm:gap-0 justify-center">
+                                <div className="w-full font-mono text-xs sm:text-sm bg-zinc-50 border border-zinc-200 rounded-lg pl-3 pr-3 sm:pr-28 py-2.5 text-zinc-900 focus:outline-hidden break-all">
                                     {showKey.rawSsoSecret ? credentials.rawSsoSecret : formatKey(credentials.rawSsoSecret)}
                                 </div>
-                                <div className="absolute right-1.5 flex items-center gap-1">
+                                <div className="sm:absolute right-1.5 flex items-center justify-end gap-1 mt-1 sm:mt-0">
                                     <Button
                                         type="button"
                                         variant="ghost"
@@ -173,9 +173,9 @@ SSO_SECRET=${credentials.rawSsoSecret}
                         </div>
                     </CardContent>
 
-                    <CardFooter className="justify-end bg-white px-0 pb-0 pt-2">
+                    <CardFooter className="justify-end bg-white px-0 pb-0 pt-2 w-full">
                         <Button
-                            className="cursor-pointer font-semibold bg-[#2b7fff] text-blue-50 hover:bg-blue-600 px-5 shadow-xs"
+                            className="cursor-pointer font-semibold bg-[#2b7fff] text-blue-50 hover:bg-blue-600 px-5 shadow-xs w-full sm:w-auto justify-center"
                             onClick={downloadEnvFile}
                         >
                             <Download className="size-4" />

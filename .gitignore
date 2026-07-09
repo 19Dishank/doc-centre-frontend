@@ -24,7 +24,8 @@ dist-ssr
 *.sw?
 
 .env
-
+.env.development
+.env.production
 # custom
 MULTI_TENANT_ARCHITECTURE.md
 .vercel

@@ -9,7 +9,8 @@ import { useSearchParams } from "react-router-dom";
 const FiltersBar = ({ roles, currentPage, fetchUsers, setCurrentPage }) => {
 
     const [searchParams, setSearchParams] = useSearchParams();
-    const prevCurrentPageRef = useRef(null);
+
+    const [searchInput, setSearchInput] = useState(searchParams.get("q") || "");
 
     const [filters, setFilters] = useState({
         q: searchParams.get("q") || "",
@@ -17,27 +18,41 @@ const FiltersBar = ({ roles, currentPage, fetchUsers, setCurrentPage }) => {
         type: searchParams.get("type") || "",
     });
 
+    // Debounce search input and update active filter
     useEffect(() => {
-        const isCurrentPageChanged = prevCurrentPageRef.current !== currentPage;
-        prevCurrentPageRef.current = currentPage;
-
-        if (isCurrentPageChanged) {
-            fetchUsers();
-            return;
-        }
-
-        setCurrentPage(1);
-        const debounceTimeout = setTimeout(() => {
-            fetchUsers(filters);
-            setSearchParams((prev) => {
-                filters.q ? prev.set("q", filters.q) : prev.delete("q");
-                filters.sort ? prev.set("sort", filters.sort) : prev.delete("sort");
-                filters.type ? prev.set("type", filters.type) : prev.delete("type");
-                return prev;
-            })
+        const handler = setTimeout(() => {
+            setFilters((prev) => {
+                if (prev.q === searchInput) return prev;
+                setCurrentPage(1);
+                return { ...prev, q: searchInput };
+            });
         }, 500);
-        return () => clearTimeout(debounceTimeout);
-    }, [currentPage, filters]);
+
+        return () => clearTimeout(handler);
+    }, [searchInput, setCurrentPage]);
+
+    // Handle initial load and subsequent page/filter changes
+    useEffect(() => {
+        fetchUsers(filters);
+
+        setSearchParams((prev) => {
+            filters.q ? prev.set("q", filters.q) : prev.delete("q");
+            filters.sort ? prev.set("sort", filters.sort) : prev.delete("sort");
+            filters.type ? prev.set("type", filters.type) : prev.delete("type");
+            return prev;
+        });
+    }, [currentPage, filters, fetchUsers, setSearchParams]);
+
+    const handleRoleChange = (value) => {
+        setCurrentPage(1);
+        setFilters((prev) => ({ ...prev, type: value }));
+    };
+
+    const handleClearFilters = () => {
+        setSearchInput("");
+        setCurrentPage(1);
+        setFilters({ q: "", sort: "", type: "" });
+    };
 
     return (
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-2">
@@ -45,15 +60,15 @@ const FiltersBar = ({ roles, currentPage, fetchUsers, setCurrentPage }) => {
             <div className="relative w-full">
                 <Search className="size-4 top-1/2 -translate-y-1/2 text-[#71717b] absolute left-3" />
                 <Input
-                    value={filters.q}
-                    onChange={(e) => setFilters((prev) => ({ ...prev, q: e.target.value }))}
+                    value={searchInput}
+                    onChange={(e) => setSearchInput(e.target.value)}
                     placeholder="Search users…"
                     className="bg-white pl-9 w-full"
                 />
             </div>
 
             <div className="flex items-center gap-2 w-full md:w-auto pb-2 md:pb-0">
-                <Select name="type" value={filters.type} onValueChange={(value) => setFilters((prev) => ({ ...prev, type: value }))}>
+                <Select name="type" value={filters.type} onValueChange={handleRoleChange}>
                     <SelectTrigger id="type-select" className="w-full h-10 bg-white text-zinc-900">
                         <SelectValue placeholder="Role" />
                     </SelectTrigger>
@@ -85,7 +100,7 @@ const FiltersBar = ({ roles, currentPage, fetchUsers, setCurrentPage }) => {
                 </Select> */}
                 <Button
                     variant="outline"
-                    onClick={() => setFilters({ q: "", sort: "", type: "" })}
+                    onClick={handleClearFilters}
                     className="w-full md:w-auto cursor-pointer disabled:cursor-not-allowed!"
                     disabled={!filters.q && !filters.sort && !filters.type}
                 >

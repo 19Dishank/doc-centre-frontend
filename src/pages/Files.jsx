@@ -140,7 +140,7 @@ export default function Files() {
     setNavigationBar(prev => prev.slice(0, index + 1))
   }
 
-  const getFiles = async (filters) => {
+  const getFiles = useCallback(async (filters) => {
     setLoading(true);
     try {
       const res = await fetchFiles(parentId, {
@@ -157,7 +157,7 @@ export default function Files() {
     } finally {
       setLoading(false);
     }
-  }
+  }, [parentId, currentPage]);
 
   // useEffect(() => {
   //   const handleDocumentCreated = (event) => {
@@ -172,7 +172,7 @@ export default function Files() {
   // }, []);
   useEffect(() => {
     const refreshFilesData = async (event) => {
-      console.log("🚀 ~ Files.jsx:174 ~ Document deleted event received:", event)
+      console.log("🚀 ~ Files.jsx:174 ~ Document deleted/restored event received:", event)
       await getFiles()
     }
 
@@ -184,11 +184,11 @@ export default function Files() {
 
     return () => {
       socket.off(SOCKET_EVENTS.DOCUMENT_TRASHED, refreshFilesData);
-      socket.on(SOCKET_EVENTS.DOCUMENT_RESTORED, refreshFilesData);
+      socket.off(SOCKET_EVENTS.DOCUMENT_RESTORED, refreshFilesData);
       socket.off(SOCKET_EVENTS.FOLDER_TRASHED, refreshFilesData);
       socket.off(SOCKET_EVENTS.FOLDER_RESTORED, refreshFilesData);
     }
-  }, []);
+  }, [getFiles]);
 
   const columns = [
     {

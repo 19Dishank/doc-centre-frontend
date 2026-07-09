@@ -8,6 +8,8 @@ import { useSearchParams } from "react-router-dom";
 const FiltersBar = ({ parentId, setCurrentPage, currentPage, getFiles }) => {
     const [searchParams, setSearchParams] = useSearchParams();
 
+    const [searchInput, setSearchInput] = useState(searchParams.get("q") || "");
+
     const [filters, setFilters] = useState({
         q: searchParams.get("q") || "",
         sort: searchParams.get("sort") || "createdAt_desc",
@@ -28,37 +30,43 @@ const FiltersBar = ({ parentId, setCurrentPage, currentPage, getFiles }) => {
         { label: "All Types", value: "all" },
         { label: "Folders", value: "folder" },
         { label: "Documents", value: "file" },
-    ]
+    ];
 
-    const prevParentIdRef = useRef(parentId);
-    const prevCurrentPageRef = useRef(currentPage);
-
+    // Debounce search input and update active filter
     useEffect(() => {
-
-        const isParentIdChanged = prevParentIdRef.current !== parentId;
-        prevParentIdRef.current = parentId;
-
-        const isCurrentPageChanged = prevCurrentPageRef.current !== currentPage;
-        prevCurrentPageRef.current = currentPage;
-
-        if (isParentIdChanged || isCurrentPageChanged) {
-            getFiles();
-            return;
-        }
-
-        setCurrentPage(1);
-        const delayDebounceFn = setTimeout(() => {
-            getFiles(filters);
-            setSearchParams((prev) => {
-                filters.q ? prev.set("q", filters.q) : prev.delete("q");
-                filters.sort ? prev.set("sort", filters.sort) : prev.delete("sort");
-                filters.type ? prev.set("type", filters.type) : prev.delete("type");
-                return prev;
+        const handler = setTimeout(() => {
+            setFilters((prev) => {
+                if (prev.q === searchInput) return prev;
+                setCurrentPage(1);
+                return { ...prev, q: searchInput };
             });
         }, 500);
 
-        return () => clearTimeout(delayDebounceFn);
-    }, [filters, parentId, currentPage]);
+        return () => clearTimeout(handler);
+    }, [searchInput, setCurrentPage]);
+
+    // Handle initial load and subsequent filter/page/folder changes
+    useEffect(() => {
+        getFiles(filters);
+
+        setSearchParams((prev) => {
+            filters.q ? prev.set("q", filters.q) : prev.delete("q");
+            filters.sort ? prev.set("sort", filters.sort) : prev.delete("sort");
+            filters.type ? prev.set("type", filters.type) : prev.delete("type");
+            return prev;
+        });
+    }, [parentId, currentPage, filters, getFiles, setSearchParams]);
+
+    const handleSortChange = (value) => {
+        setCurrentPage(1);
+        setFilters((prev) => ({ ...prev, sort: value }));
+    };
+
+    const handleClearFilters = () => {
+        setSearchInput("");
+        setCurrentPage(1);
+        setFilters({ q: "", sort: "createdAt_desc", type: "" });
+    };
 
     return (
         <div className="flex flex-col gap-3 md:flex-row md:items-center">
@@ -67,27 +75,13 @@ const FiltersBar = ({ parentId, setCurrentPage, currentPage, getFiles }) => {
                 <Input
                     placeholder="Search files…"
                     className="bg-white pl-9 w-full border-zinc-200"
-                    value={filters.q}
-                    onChange={(e) => setFilters((prev) => ({ ...prev, q: e.target.value }))}
+                    value={searchInput}
+                    onChange={(e) => setSearchInput(e.target.value)}
                 />
             </div>
 
             <div className="grid grid-cols-2 gap-2 sm:flex sm:items-center sm:w-auto w-full">
-                {/* <Select disabled name="type" value={filters.type} onValueChange={(value) => setFilters((prev) => ({ ...prev, type: value }))}>
-            <SelectTrigger id="type-select" className="w-full sm:w-[130px] bg-white text-zinc-900 border-zinc-200">
-              <SelectValue placeholder="Type" />
-            </SelectTrigger>
-            <SelectContent position="popper" className="z-50">
-              <SelectGroup>
-                <SelectLabel>Select Type</SelectLabel>
-                {typeOptions.map((type) => (
-                  <SelectItem key={type.value} value={type.value}>{type.label}</SelectItem>
-                ))}
-              </SelectGroup>
-            </SelectContent>
-          </Select> */}
-
-                <Select name="sort" className="cursor-pointer" value={filters.sort} onValueChange={(value) => setFilters((prev) => ({ ...prev, sort: value }))}>
+                <Select name="sort" className="cursor-pointer" value={filters.sort} onValueChange={handleSortChange}>
                     <SelectTrigger id="sort-select" className="w-full sm:w-35 bg-white text-zinc-900 border-zinc-200">
                         <SelectValue placeholder="Sort By" />
                     </SelectTrigger>
@@ -103,9 +97,9 @@ const FiltersBar = ({ parentId, setCurrentPage, currentPage, getFiles }) => {
 
                 <Button
                     variant="outline"
-                    onClick={() => setFilters({ q: "", sort: "", type: "" })}
+                    onClick={handleClearFilters}
                     className="col-span-2 sm:w-auto text-zinc-500 hover:text-zinc-900 disabled:opacity-50 disabled:pointer-events-none cursor-pointer"
-                    disabled={!filters.q && !filters.sort && !filters.type}
+                    disabled={!filters.q && filters.sort === "createdAt_desc" && !filters.type}
                 >
                     Clear Filters
                 </Button>

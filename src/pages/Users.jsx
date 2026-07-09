@@ -1,6 +1,6 @@
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import PaginationBar from "@/components/ui/pagination-bar";
 import { getUsers } from "@/api/user";
 import { PERMISSIONS } from "@/helper/permissions";
@@ -37,7 +37,7 @@ export default function UsersList() {
   } = paginationData || {};
 
 
-  const fetchUsers = async (filters) => {
+  const fetchUsers = useCallback(async (filters) => {
     setLoading(true);
     try {
       const res = await getUsers({
@@ -56,7 +56,7 @@ export default function UsersList() {
     } finally {
       setLoading(false);
     }
-  }
+  }, [currentPage]);
 
   const getRoles = async () => {
     try {

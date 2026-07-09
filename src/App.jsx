@@ -10,6 +10,10 @@ import AppLayout from "./layouts/AppLayout/AppLayout";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import { protectedRoutes, publicRoutes } from "./routes/tenantRoutes";
 import { useAuthContext } from "./contexts/AuthContext";
+import MaintenancePage from "./pages/maintenance/MaintenancePage";
+
+
+const IS_MAINTENANCE_MODE = import.meta.env.VITE_MAINTENANCE_MODE === "true";
 
 export default function App() {
 
@@ -65,6 +69,10 @@ export default function App() {
       },
     ])
   ), [loading]);
+
+  if (IS_MAINTENANCE_MODE) {
+    return <MaintenancePage />;
+  }
 
   const subdomain = getSubdomain();
   const isPlatform = subdomain === "app" || subdomain === null;

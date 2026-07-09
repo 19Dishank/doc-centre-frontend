@@ -23,7 +23,7 @@ export default defineConfig({
 
     proxy: {
       "/api": {
-        target: "http://aman-alb-529653104.ap-south-1.elb.amazonaws.com",
+        target: "http://api.doccenter.in/",
         changeOrigin: true,
       },
     },

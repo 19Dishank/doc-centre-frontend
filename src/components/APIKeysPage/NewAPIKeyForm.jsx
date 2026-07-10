@@ -57,7 +57,7 @@ const NewAPIKeyForm = ({ getApiKeys }) => {
 export default NewAPIKeyForm
 
 const GenerateButton = memo(({ loading, disabled }) => {
-    console.log("Button rendered");
+    // console.log("Button rendered");
 
     return (
         <Button

@@ -5,7 +5,7 @@ import WorkflowPanel from "./WorkflowPanel";
 import SecurityPanel from "./SecurityPanel";
 
 const steps = [
-    { icon: <Users className="size-4 text-[#2b7fff]" />, title: "Create your workspace", desc: "Sign up, name your organisation and you're in. No credit card needed." },
+    { icon: <Users className="size-4 text-[#2b7fff]" />, title: "Create your workspace", desc: "Sign up, name your organization and you're in. No credit card needed." },
     { icon: <Lock className="size-4 text-violet-600" />, title: "Set up roles & invite team", desc: "Define custom permissions per role, then invite members via email link." },
     { icon: <KeyRound className="size-4 text-emerald-600" />, title: "Upload, share or integrate", desc: "Start uploading immediately, or connect via API for programmatic access." },
 ];
@@ -38,7 +38,8 @@ const GetStarted = () => {
                         Ready to bring order to your documents?
                     </h3>
                     <p className="text-blue-100 text-base max-w-lg mx-auto lg:mx-0">
-                        14-day free trial. No credit card. Your team can be set up in under 5 minutes.
+                        {/* 14-day free trial. No credit card. */}
+                        Your team can be set up in under 5 minutes.
                     </p>
                 </div>
                 <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto shrink-0 relative z-10">

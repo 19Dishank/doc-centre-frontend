@@ -2,7 +2,7 @@ import { verifyUser } from "@/api/auth";
 import { Button } from "@/components/ui/button";
 import FormField from "@/components/ui/form-field";
 import { emailRegex } from "@/constants";
-import { toastNotification } from "@/helper/toastNotification";
+// import { toastNotification } from "@/helper/toastNotification";
 import { ArrowRight } from "lucide-react";
 import { useState } from "react";
 

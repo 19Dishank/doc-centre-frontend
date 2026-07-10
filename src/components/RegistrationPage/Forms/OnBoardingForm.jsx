@@ -164,7 +164,7 @@ const OnBoardingForm = () => {
 
         } catch (error) {
             console.error("Error creating tenant:", error);
-            toastNotification(error?.response?.data?.message || "An error occurred while creating the tenant. Please try again.", "error");
+            // toastNotification(error?.response?.data?.message || "An error occurred while creating the tenant. Please try again.", "error");
         } finally {
             setLoading(false);
         }

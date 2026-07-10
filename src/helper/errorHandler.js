@@ -1,7 +1,6 @@
 import { toastNotification } from "./toastNotification";
 
 export function handleHttpError(status, data) {
-  console.log("🚀 ~ errorHandler.js:4 ~ data:", data);
   const serverMessage = data?.message || data?.error || data?.errors[0]?.msg;
 
   switch (status) {
@@ -42,7 +41,7 @@ export function handleHttpError(status, data) {
       break;
 
     case 422:
-      toastNotification(`${serverMessage}${status}` || "Validation failed. Please check your input.", "error");
+      toastNotification(serverMessage || "Validation failed. Please check your input.", "error");
       break;
 
     case 429:

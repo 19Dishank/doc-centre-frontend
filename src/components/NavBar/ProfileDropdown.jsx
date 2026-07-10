@@ -46,19 +46,19 @@ const ProfileDropdown = () => {
             </div>
 
             {profileOpen && (
-                <div className="absolute right-0 mt-2 w-56 p-1 bg-white border border-zinc-200 rounded-lg shadow-xl z-50 overflow-hidden transform origin-top-right animate-in fade-in slide-in-from-top-2 duration-150">
+                <div className="absolute right-0 mt-2 w-72 max-w-[90vw] p-1 bg-white border border-zinc-200 rounded-lg shadow-xl z-50 overflow-hidden transform origin-top-right animate-in fade-in slide-in-from-top-2 duration-150">
 
-                    <div className="px-3 py-2.5 border-b border-zinc-100 flex gap-3 justify-between">
-                        <div>
-                            <p className="text-sm font-semibold text-zinc-900 truncate">
+                    <div className="px-3 py-2.5 border-b border-zinc-100 flex gap-2 items-start">
+                        <div className="min-w-0 flex-1">
+                            <p className="text-sm font-semibold text-zinc-900 truncate" title={`${user?.firstName ?? ""} ${user?.lastName ?? ""}`}>
                                 {user?.firstName} {user?.lastName}
                             </p>
-                            <p className="text-xs text-zinc-500 truncate mt-0.5">
+                            <p className="text-xs text-zinc-500 truncate mt-0.5" title={user?.email}>
                                 {user?.email}
                             </p>
                         </div>
                         {user?.role?.name && (
-                            <span className="inline-flex items-center mb-auto h-fit px-2 py-0.5 rounded-md text-[10px] font-medium bg-blue-50 text-blue-700 border border-blue-100">
+                            <span className="inline-flex items-center shrink-0 whitespace-nowrap h-fit px-2 py-0.5 rounded-md text-[10px] font-medium bg-blue-50 text-blue-700 border border-blue-100">
                                 {user.role.name}
                             </span>
                         )}

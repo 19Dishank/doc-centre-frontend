@@ -1,5 +1,5 @@
 const UIAvatar = ({ fullName, firstName, lastName, userId }) => {
-    
+
     function getAvatarColors() {
         const seed = String(userId);
 
@@ -27,15 +27,21 @@ const UIAvatar = ({ fullName, firstName, lastName, userId }) => {
     const { bgColor, textColor } = getAvatarColors();
 
     const name = fullName || `${firstName} ${lastName}`;
-    const initials = name
-        .split(" ")
-        .map((n) => n[0])
-        .join("")
-        .toUpperCase();
+
+
+    const nameParts = name.trim().split(/\s+/).filter(Boolean);
+
+
+    const initials =
+        nameParts.length > 1
+            ? `${nameParts[0][0]}${nameParts[1][0]}`.toUpperCase()
+            : (nameParts[0]?.slice(0, 2) || "").toUpperCase();
 
     return (
-        <div className="size-8 rounded-full shrink-0 flex items-center justify-center text-sm"
+        <div
+            className="size-8 rounded-full shrink-0 flex items-center justify-center text-sm font-medium leading-none select-none"
             style={{ backgroundColor: `#${bgColor}`, color: `#${textColor}` }}
+            title={name}
         >
             {initials}
         </div>

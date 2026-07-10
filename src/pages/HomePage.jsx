@@ -1,7 +1,6 @@
 import Header from "@/components/HomePage/Header";
 import Footer from "@/components/HomePage/Footer";
 import HeroSection from "@/components/HomePage/HeroSection";
-import TrustedBy from "@/components/HomePage/TrustedBy";
 import Features from "@/components/HomePage/Features";
 import Stats from "@/components/HomePage/Stats";
 import GetStarted from "@/components/HomePage/GetStarted";
@@ -9,7 +8,8 @@ import DocumentPreview from "@/components/Files/DocumentPreview";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { fetchSharedDocumentDetails } from "@/api/file";
-import PlanComparison from "@/components/HomePage/PlanComparison";
+// import PlanComparison from "@/components/HomePage/PlanComparison";
+// import TrustedBy from "@/components/HomePage/TrustedBy";
 
 export default function HomePage() {
 
@@ -50,10 +50,10 @@ export default function HomePage() {
                 <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-10 lg:py-10">
                     <div className="flex flex-col gap-16 md:gap-20 lg:gap-24">
                         <HeroSection />
-                        <TrustedBy />
+                        {/* <TrustedBy /> */}
                         <Features />
                         <Stats />
-                        <PlanComparison />
+                        {/* <PlanComparison /> */}
                         <GetStarted />
                     </div>
                 </main>

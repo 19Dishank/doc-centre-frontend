@@ -56,7 +56,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
 
     const settingsSubItems = [
         {
-            name: "User",
+            name: "User settings",
             icon: <User className="size-4" />,
             path: "/settings/user",
         },

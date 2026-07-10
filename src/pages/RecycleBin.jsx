@@ -104,7 +104,7 @@ export default function RecycleBin() {
             header: "Type",
             width: "w-[15%] lg:w-[10%]",
             cellClassName: "hidden lg:table-cell",
-            headerClassName: "hidden sm:table-cell",
+            headerClassName: "hidden lg:table-cell",
             render: (row) => row?.originalFileName ? row?.originalFileName.split(".").pop() : "Folder",
         },
         {

@@ -24,7 +24,7 @@ const MobileAuthBanner = () => {
                 <CompanyLogo slug={slug} className="w-auto max-w-[90px] max-h-8 object-contain block shrink-0" />
                 <div className="w-px h-7 bg-white/30 shrink-0" />
                 <div className="shrink-0">
-                  <Logo width={110} mode="dark" />
+                  <Logo width={110} />
                 </div>
               </div>
             ) : (
@@ -88,7 +88,7 @@ const MobileAuthBanner = () => {
             </div>
           </div>
 
-          <div className="absolute bottom-[4%] right-0 w-[clamp(82px,18vw,118px)] p-[clamp(7px,1.2vw,10px)] backdrop-blur-sm shadow-xl rounded-xl bg-white/15 border border-white/25 flex flex-col gap-1.5 rotate-6 animate-float-reverse">
+          <div className="absolute bottom-[20%] right-0 w-[clamp(82px,18vw,118px)] p-[clamp(7px,1.2vw,10px)] backdrop-blur-sm shadow-xl rounded-xl bg-white/15 border border-white/25 flex flex-col gap-1.5 rotate-6 animate-float-reverse">
             <div className="flex items-center gap-1.5">
               <div className="size-[18px] rounded-md bg-blue-300/90 flex justify-center items-center shrink-0">
                 <FileSpreadsheet className="size-2.5 text-blue-900" />

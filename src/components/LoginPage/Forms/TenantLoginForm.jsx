@@ -86,8 +86,6 @@ const TenantLoginForm = () => {
                 type: "ACCOUNT_CHANGED"
             });
 
-        } else {
-            toastNotification(res?.data?.message || "Login failed. Please try again.", "error");
         }
         setLoading(false);
     };

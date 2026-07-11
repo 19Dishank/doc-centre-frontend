@@ -151,8 +151,7 @@ const OnBoardingForm = () => {
             }
 
             const res = await createTenant({ ...registrationData, logo: undefined, logoKey });
-            console.log("Response Data:", res);
-
+            
             toastNotification("Organization created successfully! Please check your email to complete the onboarding process.", "success");
 
             if (registrationData.logo.startsWith("blob:")) URL.revokeObjectURL(registrationData.logo);

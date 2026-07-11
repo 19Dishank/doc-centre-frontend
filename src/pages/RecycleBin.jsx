@@ -61,8 +61,7 @@ export default function RecycleBin() {
 
     useEffect(() => {
         const refreshRecycleBin = async () => {
-            // console.log("🚀 ~ RecycleBin.jsx:62 ~ Document deleted event received:", event)
-            await getBinData()
+                        await getBinData()
         }
         socket.on(SOCKET_EVENTS.DOCUMENT_TRASHED, refreshRecycleBin);
         socket.on(SOCKET_EVENTS.DOCUMENT_DELETED, refreshRecycleBin);

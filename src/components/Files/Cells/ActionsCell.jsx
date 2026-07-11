@@ -37,7 +37,6 @@ const ActionsCell = ({ row: item, getFiles, setRenameMode, currentPageItems, set
       }
     } catch (error) {
       console.error("Error deleting :", error);
-      toastNotification(error?.response?.data?.message || `Error deleting ${isFolder ? "folder" : "file"}. Please try again.`, "error");
     } finally {
       setIsDeleting(false);
     }

@@ -35,8 +35,7 @@ const ActionsCell = ({ row: currentUser, fetchUsers, roles, setCurrentPage, curr
                 }
             }
         } catch (error) {
-            console.log("Error deleting user: ", error);
-            toastNotification(error?.response?.data?.message || "Failed to delete user", "error");
+            // Handled globally
         } finally {
             setDeletingUser(false);
         }

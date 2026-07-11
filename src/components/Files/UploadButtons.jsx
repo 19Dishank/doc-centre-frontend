@@ -25,8 +25,7 @@ const UploadButtons = ({ parentId, setNewFolderRow, getFiles }) => {
     const onChangeFile = async (event) => {
         const file = event.target.files?.[0];
         if (!file) {
-            console.log("No file selected");
-            return;
+                        return;
         }
 
         setIsUploading(true);
@@ -41,8 +40,7 @@ const UploadButtons = ({ parentId, setNewFolderRow, getFiles }) => {
         });
 
         try {
-            // console.log("🚀 ~ UploadButtons.jsx:43 ~ parentId:", parentId)
-            const payload = {
+                        const payload = {
                 fileName: file.name,
                 contentType: file.type,
                 folderId: parentId ?? undefined,
@@ -116,8 +114,7 @@ const UploadButtons = ({ parentId, setNewFolderRow, getFiles }) => {
     useEffect(() => {
 
         const handleDocumentUploadedEvent = () => {
-            console.log("Document uploaded event received");
-            getFiles();
+                        getFiles();
             setIsUploading(false);
         };
 

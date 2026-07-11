@@ -46,11 +46,9 @@ export default function NotificationsSetting() {
     setLoading(true);
     try {
       const res = await changePreferences(formData);
-      console.log("Preferences updated: ", res);
-      getUserDetails();
+            getUserDetails();
       toastNotification("Preferences updated successfully.", "success");
     } catch (error) {
-      toastNotification(error.response?.data?.message || "An error occurred while updating preferences.", "error");
       console.error("Error updating preferences: ", error);
     } finally {
       setLoading(false);

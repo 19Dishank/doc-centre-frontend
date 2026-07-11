@@ -55,8 +55,7 @@ const OrganizationDetailsForm = () => {
             }
 
             const logoURL = URL.createObjectURL(file);
-            console.log("Selected logo file:", logoURL);
-
+            
             setSelectedLogoFile(file);
             setFormData((prev) => ({
                 ...prev,
@@ -97,7 +96,6 @@ const OrganizationDetailsForm = () => {
             toastNotification("Organization details updated successfully", "success");
             getOrganizationDetails();
         } catch (error) {
-            toastNotification(error?.response?.data?.message || "Failed to update organization details. Please try again.", "error");
             console.error("Error updating organization details:", error);
         }
     };

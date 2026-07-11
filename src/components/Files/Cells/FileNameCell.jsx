@@ -63,9 +63,6 @@ const FileNameCell = ({
                 getFiles();
                 return;
             } catch (error) {
-                toastNotification(
-                    error?.response?.data?.errors?.[0]?.msg ||
-                    "Error creating folder:", "error");
                 return;
             }
         }

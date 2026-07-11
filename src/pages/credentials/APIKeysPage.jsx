@@ -16,7 +16,6 @@ const APIKeysPage = () => {
             setApiKeys(res.data.apiKeys);
         } catch (error) {
             console.error("Error fetching API keys: ", error);
-            toastNotification(error?.response?.data?.message || "Failed to fetch API keys. Please try again.", "error");
         }
     }, []);
 

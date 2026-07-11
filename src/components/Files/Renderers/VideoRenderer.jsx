@@ -23,8 +23,7 @@ export default function VideoRenderer({ file, videoUrl }) {
         }
     }, [file, videoUrl])
 
-    console.log("VideoRenderer - src:", src, "loading:", loading, "error:", error)
-
+    
     return (
         <div className="relative w-full h-full border border-border rounded-md overflow-hidden bg-zinc-950 flex items-center justify-center select-none">
             

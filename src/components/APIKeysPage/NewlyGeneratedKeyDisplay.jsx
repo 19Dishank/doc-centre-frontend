@@ -47,8 +47,7 @@ SSO_SECRET=${credentials.rawSsoSecret}
         });
 
         const url = window.URL.createObjectURL(blob);
-        // console.log("🚀 ~ downloadEnvFile ~ url:", url)
-
+        
 
         const link = document.createElement("a");
         link.href = url;

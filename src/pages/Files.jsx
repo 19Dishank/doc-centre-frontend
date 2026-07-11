@@ -50,10 +50,8 @@ export default function Files() {
     const file = acceptedFiles[0];
     if (!file) return;
 
-    console.log(file);
-    if (!file) {
-      console.log("No file selected");
-      return;
+        if (!file) {
+            return;
     }
 
 
@@ -161,7 +159,7 @@ export default function Files() {
 
   // useEffect(() => {
   //   const handleDocumentCreated = (event) => {
-  //     console.log("Document uploaded event received:", event);
+  //     
   //   }
 
   //   socket.on(SOCKET_EVENTS.DOCUMENT_UPLOADED, handleDocumentCreated);
@@ -172,8 +170,7 @@ export default function Files() {
   // }, []);
   useEffect(() => {
     const refreshFilesData = async (event) => {
-      console.log("🚀 ~ Files.jsx:174 ~ Document deleted/restored event received:", event)
-      await getFiles()
+            await getFiles()
     }
 
     socket.on(SOCKET_EVENTS.DOCUMENT_TRASHED, refreshFilesData);

@@ -75,7 +75,6 @@ const UserModal = ({ setIsOpen, user, fetchUsers, roles }) => {
             fetchUsers();
         } catch (error) {
             console.error(`Error ${user ? "updating" : "inviting"} user:`, error);
-            toastNotification(error?.response?.data?.message || "An error occurred. Please try again.", "error");
         } finally {
             setLoading(false);
         }

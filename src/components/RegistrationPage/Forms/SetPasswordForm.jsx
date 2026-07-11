@@ -86,7 +86,6 @@ const SetPasswordForm = ({ isOnboardingFlow, token }) => {
             );
         } catch (error) {
             console.error(error);
-            toastNotification(error.response?.data?.message || "An error occurred. Please try again.", "error");
         } finally {
             setLoading(false);
         }

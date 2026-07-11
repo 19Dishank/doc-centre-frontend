@@ -76,14 +76,11 @@ const ShareDocumentModal = ({ setIsOpen, documentId }) => {
         try {
             const payload = { expiryTime: Number(formData.expiryTime) };
             const res = await createShareLink(documentId, payload);
-            console.log("Share Link Response:", res);
-            setShareLink(res?.data?.url);
+                        setShareLink(res?.data?.url);
             toastNotification("Share link generated successfully!", "success"
             );
         } catch (error) {
             console.error("Error generating share link:", error);
-            toastNotification(error?.response?.data?.message || "Failed to generate share link", "error"
-            );
         } finally {
             setLoading(false);
         }

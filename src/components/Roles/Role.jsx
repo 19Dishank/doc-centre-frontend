@@ -40,7 +40,6 @@ const Role = ({ currentRoleId, handleRoleChange, role, getAvailableRoles }) => {
             handleRoleChange(null);
         } catch (error) {
             console.error(error);
-            toastNotification(error?.response?.data?.message || "Could not delete role.", "error");
         } finally {
             setIsDeleting(false);
             setShowModel(false);

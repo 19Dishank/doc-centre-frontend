@@ -41,8 +41,7 @@ const EmailInput = () => {
             localStorage.setItem("otp_expiry", res.data.expiryTime);   
             navigate(`/forgot-password/verify`, { state: { email } });
         } catch (error) {
-            console.log("Error : ", error)
-        } finally {
+                    } finally {
             setLoading(false);
         }
 

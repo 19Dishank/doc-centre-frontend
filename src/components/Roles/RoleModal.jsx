@@ -72,13 +72,11 @@ const RoleModal = ({ setIsOpen, getAvailableRoles, currentRole }) => {
             const res = currentRole
                 ? await updateRole(currentRole._id, invitationData)
                 : await createNewRole(invitationData);
-            console.log("Response Data:", res);
-            toastNotification(`Role ${currentRole ? "updated" : "created"} successfully!`, "success");
+                        toastNotification(`Role ${currentRole ? "updated" : "created"} successfully!`, "success");
             getAvailableRoles();
             setInvitationData({ name: "", description: "" });
         } catch (error) {
             console.error("Error creating role:", error);
-            toastNotification(error?.response?.data?.message || `An error occurred while ${currentRole ? "updating" : "creating"} the role. Please try again.`, "error");
         } finally {
             setIsOpen(false);
         }

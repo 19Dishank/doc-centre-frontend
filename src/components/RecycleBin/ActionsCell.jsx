@@ -33,7 +33,6 @@ const ActionsCell = ({ row: item, getFiles }) => {
             getFiles();
         } catch (error) {
             console.error("Error deleting :", error);
-            toastNotification(error?.response?.data?.message || `Error deleting ${isFolder ? "folder" : "file"}. Please try again.`, "error");
         } finally {
             setIsDeleting(false);
             setConfirmationModalOpen(false);
@@ -48,7 +47,6 @@ const ActionsCell = ({ row: item, getFiles }) => {
             getFiles();
         } catch (error) {
             console.error("Error restoring :", error);
-            toastNotification(error?.response?.data?.message || `Error restoring ${isFolder ? "folder" : "file"}. Please try again.`, "error");
         }
     }
 

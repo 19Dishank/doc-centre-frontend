@@ -51,8 +51,7 @@ const OTPInput = () => {
                 setCanResend(true);
                 setTimeLeft(0);
             }
-            console.log("Error verifying otp", error)
-        } finally {
+                    } finally {
             setIsVerifying(false);
         }
     }
@@ -95,11 +94,7 @@ const OTPInput = () => {
                 setOtp(new Array(6).fill(""));
             }
         } catch (error) {
-            console.log(
-                error.response?.data?.message ||
-                "Error resending OTP. Please try again."
-            );
-        }
+                    }
     };
 
     if (!email) return <Navigate to="/forgot-password" />;

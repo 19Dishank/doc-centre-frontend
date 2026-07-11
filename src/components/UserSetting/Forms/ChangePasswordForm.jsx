@@ -112,14 +112,12 @@ const ChangePasswordForm = ({ setShowPasswordForm }) => {
                 newPassword: securityData.newPassword,
                 confirmPassword: securityData.confirmPassword
             });
-            console.log("Password change response:", res);
-            setShowPasswordForm(false);
+                        setShowPasswordForm(false);
             setSecurityData(initialData);
             setErrors(initialData);
             toastNotification("Password updated successfully", "success");
         } catch (error) {
             console.error("Error changing password:", error);
-            toastNotification(error?.response?.data?.message || "Failed to change password. Please try again.", "error");
         } finally {
             setLoading(false);
         }

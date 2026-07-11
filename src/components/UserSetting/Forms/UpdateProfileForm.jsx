@@ -101,7 +101,6 @@ const UpdateProfileForm = () => {
             );
             getUserDetails();
         } catch (error) {
-            toastNotification(error?.response?.data?.message || "Failed to update profile. Please try again.", "error");
             console.error("Error updating profile:", error);
         } finally {
             setLoading(false);

@@ -32,13 +32,11 @@ export const SocketProvider = ({ children }) => {
         }
 
         socket.on("hello", (message) => {
-            console.log("Received from server:", message);
-            socket.emit("helloResponse", `Hello from client in response i have received! ${message}`);
+                        socket.emit("helloResponse", `Hello from client in response i have received! ${message}`);
         });
 
         socket.on("connect_error", (err) => {
-            console.log("Socket Error:", err.message);
-        });
+                    });
 
         return () => {
             socket.off("connect");

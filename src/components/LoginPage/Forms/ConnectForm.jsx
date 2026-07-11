@@ -73,8 +73,6 @@ const ConnectForm = () => {
         const res = await loginUser(loginData);
         if (res.success) {
             navigate("/connect/authorize")
-        } else {
-            toastNotification(res?.data?.message || "Login failed. Please try again.", "error");
         }
         setLoading(false);
     };

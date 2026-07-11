@@ -52,11 +52,9 @@ export const createTenant = async (tenantData) => {
             tenantData
         );
         if (response.success) {
-            console.log("Tenant created successfully:", response.data);
-            toastNotification("Tenant created successfully, please check your mailbox to activate your account!", "success");
+                        toastNotification("Tenant created successfully, please check your mailbox to activate your account!", "success");
         }
-        console.log("Response Data:", response)
-        return response.data;
+                return response.data;
     } catch (error) {
         console.error("Error creating tenant:", error);
         throw error;
@@ -76,10 +74,8 @@ export const fetchLogo = async () => {
 
 export const validateSecureToken = async (token) => {
     try {
-        console.log("Validating secure token:", token);
-        const response = await axiosInstance.get(`/auth/validate-secure-token?token=${token}`);
-        console.log("Response : ", response)
-        return response.data;
+                const response = await axiosInstance.get(`/auth/validate-secure-token?token=${token}`);
+                return response.data;
     } catch (error) {
         console.error("Error validating secure token:", error);
         throw error;
@@ -217,8 +213,7 @@ export const verifyOTP = async (otpData) => {
             `/auth/verify-forgot-password-otp`,
             otpData
         );
-        console.log("response", response)
-        return response.data;
+                return response.data;
     } catch (error) {
         console.error("Error verifying OTP:", error);
         throw error;
@@ -231,8 +226,7 @@ export const resetPassword = async (resetPasswordData) => {
             `/auth/reset-password`,
             resetPasswordData
         );
-        console.log("response", response)
-        return response.data;
+                return response.data;
     } catch (error) {
         console.error("Error resetting password:", error);
         throw error;

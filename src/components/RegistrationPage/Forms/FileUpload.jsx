@@ -60,8 +60,7 @@ const FileUpload = ({
         setIsDragging(false);
 
         const file = e.dataTransfer.files[0];
-        console.log("Dropped file:", file);
-        processFile(file);
+                processFile(file);
     };
 
     const handleDragOver = (e) => {

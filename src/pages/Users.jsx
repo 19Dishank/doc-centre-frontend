@@ -52,8 +52,7 @@ export default function UsersList() {
       setUsersData(res?.data?.users);
       setPaginationData(res?.data?.paginationData);
     } catch (error) {
-      console.log("Error : ", error);
-    } finally {
+          } finally {
       setLoading(false);
     }
   }, [currentPage]);

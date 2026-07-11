@@ -14,8 +14,7 @@ export const getSignedURL = async (payload) => {
 
 export const uploadOnSignedURL = async (signedURL, file, onProgress) => {
   try {
-    console.log("Signed URL : ", file.type);
-    const response = await axios.put(signedURL, file, {
+        const response = await axios.put(signedURL, file, {
       headers: {
         "Content-Type": file.type,
       },
@@ -24,8 +23,7 @@ export const uploadOnSignedURL = async (signedURL, file, onProgress) => {
         onProgress?.(processPercent);
       },
     });
-    console.log("Upload response : ", response);
-    return response;
+        return response;
   } catch (error) {
     console.error("Error uploading file to signed URL:", error);
     throw error;
@@ -45,8 +43,7 @@ export const createFolder = async (payload) => {
 export const upload = async (payload) => {
   try {
     const { file, parentId, name } = payload;
-    console.log("File : ", file);
-    const formData = new FormData();
+        const formData = new FormData();
     const subdomain = getSubdomain();
 
     if (file) {

@@ -73,7 +73,6 @@ const Permissions = ({ currentRoleId, currentRole, getAvailableRoles }) => {
             await getAvailableRoles();
             toastNotification("Permissions saved successfully!", "success");
         } catch (error) {
-            toastNotification(error?.response?.data?.message || "Failed to update profile permissions.", "error");
             console.error(error);
         } finally {
             setIsSaving(false);

@@ -69,19 +69,12 @@ const processQueue = (error, token = null) => {
 axiosInstance.interceptors.response.use(
   (response) => response,
   async (error) => {
-    console.log("Axios Error:", {
-      message: error.message,
-      status: error.response?.status,
-      data: error.response?.data,
-      url: error.config?.url,
-    });
-
+    
     const { config, response } = error;
     const originalRequest = config;
 
     if (!response) {
-      // console.log("🚀 ~ axiosInstance.js:82 ~ error:", error);
-      if (error.code === "ECONNABORTED" || error?.message?.includes("timeout")) {
+            if (error.code === "ECONNABORTED" || error?.message?.includes("timeout")) {
         toastNotification("Server timed out. Please try again.", "error");
       } else {
         // toastNotification(`Network error. Please check if your Express server is running.`, "error");
@@ -121,25 +114,19 @@ axiosInstance.interceptors.response.use(
         const newAccessToken = res.data.accessToken;
         const newRefreshToken = res.data.refreshToken;
 
-        // console.log("New Access Token:", newAccessToken);
-
+        
         setTokens(newAccessToken, newRefreshToken);
         axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${newAccessToken}`;
         originalRequest.headers["Authorization"] = `Bearer ${newAccessToken}`;
 
         // reconnect socket with new token
         reconnectSocket(newAccessToken);
-        // console.log("Socket reconnected with new token");
-
+        
         processQueue(null, newAccessToken);
 
         return axiosInstance(originalRequest);
       } catch (refreshError) {
-        console.log("Token refresh failed:", {
-          status: refreshError?.response?.status,
-          data: refreshError?.response?.data,
-        });
-
+        
         processQueue(refreshError, null);
 
         const refreshStatus = refreshError?.response?.status;

@@ -36,8 +36,7 @@ const PlatformLoginForm = () => {
         setLoading(true);
         try {
             const res = await verifyUser({ email });
-            // console.log("Verification Data:", res);
-            window.location.replace(import.meta.env.VITE_APP_BASE_URL.replace("slug", res.data.slug) + `/login?email=${email}`);
+                        window.location.replace(import.meta.env.VITE_APP_BASE_URL.replace("slug", res.data.slug) + `/login?email=${email}`);
         } catch (error) {
             console.error("", error);
             // toastNotification(error?.response?.data?.message || "An error occurred while verifying the email. Please try again.", "error");

@@ -8,12 +8,10 @@ export const socket = io(import.meta.env.VITE_SOCKET_URL, {
 let documentDeletedListenerAttached = false;
 
 const handleDocumentDeleted = (event) => {
-  console.log("document-deleted event received:", event);
-};
+  };
 
 socket.onAny((eventName, ...args) => {
-  console.log(`[socket] event received: ${eventName}`, args);
-});
+  });
 
 const ensureDocumentDeletedListener = () => {
   if (!documentDeletedListenerAttached) {
@@ -30,13 +28,11 @@ const removeDocumentDeletedListener = () => {
 };
 
 socket.on("connect", () => {
-  console.log("Socket connected:", socket.id, "connected:", socket.connected);
-  // ensureDocumentDeletedListener();
+    // ensureDocumentDeletedListener();
 });
 
 socket.on("disconnect", (reason) => {
-  console.log("Socket disconnected:", reason);
-});
+  });
 
 socket.on("connect_error", (error) => {
   console.error("Socket connection error:", error.message);
@@ -44,8 +40,7 @@ socket.on("connect_error", (error) => {
 
 export const connectSocket = (accessToken) => {
   socket.auth = { token: accessToken };
-  console.log("Connecting socket with auth token:", !!accessToken);
-  // ensureDocumentDeletedListener();
+    // ensureDocumentDeletedListener();
 
   if (!socket.connected) {
     socket.connect();

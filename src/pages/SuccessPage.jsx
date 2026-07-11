@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { CheckCircle2, ArrowRight, Loader2 } from 'lucide-react';
 import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
+import useSEO from '@/hooks/useSEO';
 
 const SuccessPage = () => {
     const [countdown, setCountdown] = useState(5);
@@ -9,6 +10,11 @@ const SuccessPage = () => {
 
     const location = useLocation();
     const { heading, subheading, fallbackLink } = location.state || {};
+
+    useSEO({
+        title: heading || "Success",
+        description: subheading || "The action has been completed successfully.",
+    });
 
 
     useEffect(() => {

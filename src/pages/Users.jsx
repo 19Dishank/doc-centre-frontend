@@ -15,8 +15,14 @@ import UserNameCell from "@/components/Users/Cells/UserNameCell";
 import ActionsCell from "@/components/Users/Cells/ActionsCell";
 import PageHeading from "@/components/PageHeading";
 import FiltersBar from "@/components/Users/FiltersBar";
+import useSEO from "@/hooks/useSEO";
 
 export default function UsersList() {
+
+  useSEO({
+    title: "Users Management",
+    description: "Manage team members, roles, invites, and access permissions in DocCenter.",
+  });
 
   const { checkPermission } = usePermissions();
 

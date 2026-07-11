@@ -8,8 +8,13 @@ import {
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import useSEO from "@/hooks/useSEO";
 
 export default function ConsentScreen() {
+    useSEO({
+        title: "Authorize Access",
+        description: "Review and grant application permissions to access your DocCenter account assets.",
+    });
     return (
         <div className="w-full max-w-xl mx-auto">
 

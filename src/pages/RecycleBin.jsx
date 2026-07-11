@@ -12,8 +12,14 @@ import ActionsCell from "@/components/RecycleBin/ActionsCell";
 import { formatTime } from "@/helper/formatTime";
 import { socket } from "@/helper/socketService";
 import { SOCKET_EVENTS } from "@/helper/constants/socket.events";
+import useSEO from "@/hooks/useSEO";
 
 export default function RecycleBin() {
+
+    useSEO({
+        title: "Recycle Bin",
+        description: "View and restore recently deleted files and folders from the Recycle Bin.",
+    });
 
     const [tableRows, setTableRows] = useState([]);
     const [renameMode, setRenameMode] = useState(null);

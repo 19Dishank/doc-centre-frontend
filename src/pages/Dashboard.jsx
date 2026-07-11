@@ -7,10 +7,16 @@ import { PERMISSIONS } from "@/helper/permissions";
 import { usePermissions } from "@/hooks/usePermissions";
 import { useEffect, useMemo, useState } from "react";
 import { fetchStorageStats } from "@/api/dashboard";
+import useSEO from "@/hooks/useSEO";
 
 export default function Dashboard() {
 
   const { user } = useAuthContext();
+
+  useSEO({
+    title: "Dashboard",
+    description: "Manage storage, view upload analytics and access recent team files on your dashboard.",
+  });
 
   const { checkPermission } = usePermissions();
   const displayName = user?.firstName || user?.lastName ? `${user.firstName || ""} ${user.lastName || ""}`.trim() : user?.email || "User";

@@ -8,6 +8,7 @@ import DocumentPreview from "@/components/Files/DocumentPreview";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { fetchSharedDocumentDetails } from "@/api/file";
+import useSEO from "@/hooks/useSEO";
 // import PlanComparison from "@/components/HomePage/PlanComparison";
 // import TrustedBy from "@/components/HomePage/TrustedBy";
 
@@ -18,6 +19,15 @@ export default function HomePage() {
     const [item, setItem] = useState(null);
     const { id: sharedDocumentId } = useParams();
     const [isOpen, setIsOpen] = useState(true);
+
+    useSEO({
+        title: isSharedFilePage
+            ? (item ? `${item.originalFileName || item.name} - Shared Document` : "Shared Document")
+            : "Centralize & Organize Team Knowledge",
+        description: isSharedFilePage
+            ? "View and download this shared document securely on DocCenter."
+            : "DocCenter is a secure document management system to centralize, organize, search, and collaborate on team files and shared knowledge.",
+    });
 
     const getSharedDocumentDetails = async (id) => {
         try {

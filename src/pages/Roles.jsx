@@ -4,8 +4,14 @@ import Permissions from "@/components/Roles/Permissions";
 import { useEffect, useState, useCallback } from "react";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import useSEO from "@/hooks/useSEO";
 
 export default function Roles() {
+  useSEO({
+    title: "Roles & Permissions",
+    description: "Manage security roles and granular feature permissions in DocCenter.",
+  });
+
   const [currentRoleId, setCurrentRoleId] = useState(null);
   const [availableRoles, setAvailableRoles] = useState([]);
   const [isLoading, setIsLoading] = useState(true);

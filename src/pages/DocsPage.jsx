@@ -12,12 +12,18 @@ import BestPractices from "@/components/DocsPage/BestPractices";
 import BackendPattern from "@/components/DocsPage/BackendPattern";
 import Reference from "@/components/DocsPage/Reference";
 import { BookOpen, Menu } from "lucide-react";
+import useSEO from "@/hooks/useSEO";
 
 export default function DocsPage() {
   const [activeSection, setActiveSection] = useState("overview");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const activeLabel = sections.find((s) => s.id === activeSection)?.label.substring(3) || "Overview";
+  const activeLabel = sections.find((s) => s.id === activeSection)?.label.replace(/^\d+\.\s*/, "") || "Overview";
+
+  useSEO({
+    title: `${activeLabel} | Developer Documentation`,
+    description: `Read the official DocCenter developer documentation for ${activeLabel}. Explore guides, API reference, installation steps, and integration details.`,
+  });
 
   return (
     <div className="min-h-screen bg-zinc-50/50 flex flex-col text-zinc-800 antialiased ">

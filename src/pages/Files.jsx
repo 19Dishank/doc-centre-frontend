@@ -21,9 +21,15 @@ import clsx from "clsx";
 import ProgressToast, { progressToast } from "@/components/Files/ProgressToast";
 import { SOCKET_EVENTS } from "@/helper/constants/socket.events";
 import PageHeading from "@/components/PageHeading";
+import useSEO from "@/hooks/useSEO";
 
 export default function Files() {
   const [searchParams, setSearchParams] = useSearchParams();
+
+  useSEO({
+    title: "My Files",
+    description: "Access, organize, upload, and search documents and folders inside your secure team workspace.",
+  });
   const [parentId, setParentId] = useState("");
   const [navigationBar, setNavigationBar] = useState([{ name: "My Files", parentId: "" }]);
   const [tableRows, setTableRows] = useState([]);

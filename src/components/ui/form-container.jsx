@@ -32,7 +32,7 @@ const FormContainer = ({ heading, subheading, linkText, linkUrl, linkHelperText,
     );
 };
 
-export const CompanyLogo = ({ slug }) => {
+export const CompanyLogo = ({ slug, className, style }) => {
 
     const [logoSrc, setLogoSrc] = useState(null);
 
@@ -53,18 +53,18 @@ export const CompanyLogo = ({ slug }) => {
     }, []);
 
     if (!logoSrc) return slug
-        ? <span className="text-[#2b7fff] font-bold text-lg uppercase">{slug}</span>
+        ? <span className={`text-[#2b7fff] font-bold text-lg uppercase ${className}`} style={style}>{slug}</span>
         : null;
 
 
     return (
-        <>
-            <img
-                width={150}
-                src={logoSrc}
-                alt={slug}
-            />
-        </>
+        <img
+            width={150}
+            src={logoSrc}
+            alt={slug}
+            className={className}
+            style={style}
+        />
     );
 }
 

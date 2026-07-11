@@ -20,20 +20,15 @@ const MobileAuthBanner = () => {
         <div className="flex flex-col gap-3 flex-1 min-w-0">
           <div className="shrink-0">
             {isTenant ? (
-              <div className="inline-flex items-center gap-2.5 bg-white brightness-95 rounded-xl px-3 sm:px-4 py-2.5 sm:py-3">
-                <div className="shrink-0 mobile-company-logo-wrap">
-                  <CompanyLogo slug={slug} />
-                </div>
-                <style>{`.mobile-company-logo-wrap img { width: auto !important; max-width: 90px !important; max-height: 32px !important; object-fit: contain; display: block; }`}</style>
-                <div className="w-px h-7 bg-zinc-200 shrink-0" />
+              <div className="inline-flex items-center gap-2.5 bg-white/15 brightness-95 rounded-xl px-3 sm:px-4 py-2.5 sm:py-3 border border-white/20">
+                <CompanyLogo slug={slug} className="w-auto max-w-[90px] max-h-8 object-contain block shrink-0" />
+                <div className="w-px h-7 bg-white/30 shrink-0" />
                 <div className="shrink-0">
-                  <Logo width={110} />
+                  <Logo width={110} mode="dark" />
                 </div>
               </div>
             ) : (
-              <div className="inline-flex bg-white brightness-95 rounded-xl px-4 py-2.5">
-                <Logo width={130} />
-              </div>
+              <Logo width={130} mode="dark" />
             )}
           </div>
 

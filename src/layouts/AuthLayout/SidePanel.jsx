@@ -21,10 +21,7 @@ const SidePanel = () => {
       <div className="shrink-0">
         {isTenant ? (
           <div className="inline-flex items-center gap-3 bg-white brightness-95 rounded-xl px-6 py-5">
-            <div className="shrink-0 company-logo-wrap">
-              <CompanyLogo slug={slug} />
-            </div>
-            <style>{`.company-logo-wrap img { width: auto !important; max-width: 144px !important; max-height: 60px !important; object-fit: contain; display: block; }`}</style>
+            <CompanyLogo slug={slug} className="w-auto max-w-[144px] max-h-[60px] object-contain block shrink-0" />
             <div className="w-px h-10 bg-zinc-200 shrink-0" />
             <div className="flex flex-col shrink-0">
               <Logo width={200} />

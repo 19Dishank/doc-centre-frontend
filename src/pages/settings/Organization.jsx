@@ -3,8 +3,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Separator } from "@/components/ui/separator";
 import PageHeading from "@/components/PageHeading";
 import OrganizationDetailsForm from "@/components/Organization/OrganizationDetailsForm";
+import useSEO from "@/hooks/useSEO";
 
 export default function Organization() {
+  useSEO({
+    title: "Organization Settings",
+  });
   return (
     <div className="w-full max-w-4xl mx-auto">
 

@@ -10,6 +10,7 @@ import { toastNotification } from "@/helper/toastNotification";
 import { changePreferences } from "@/api/user";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { useCatalogContext } from "@/contexts/CatalogContext";
+import useSEO from "@/hooks/useSEO";
 
 export default function NotificationsSetting() {
 
@@ -46,7 +47,7 @@ export default function NotificationsSetting() {
     setLoading(true);
     try {
       const res = await changePreferences(formData);
-            getUserDetails();
+      getUserDetails();
       toastNotification("Preferences updated successfully.", "success");
     } catch (error) {
       console.error("Error updating preferences: ", error);
@@ -54,7 +55,9 @@ export default function NotificationsSetting() {
       setLoading(false);
     }
   }
-
+  useSEO({
+    title: "Notification Settings",
+  });
   return (
     <div className="w-full max-w-4xl mx-auto flex flex-col gap-6">
       <PageHeading

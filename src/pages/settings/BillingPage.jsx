@@ -2,6 +2,7 @@ import { Check, HelpCircle, X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
+import useSEO from "@/hooks/useSEO";
 
 export default function BillingPage() {
 
@@ -10,7 +11,9 @@ export default function BillingPage() {
   const handleBillingCycleChange = (cycle) => {
     setSelectedBillingCycle(cycle);
   };
-
+  useSEO({
+    title: "Billing",
+  });
   const plans = [
     {
       "id": "starter",

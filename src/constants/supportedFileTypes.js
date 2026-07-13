@@ -22,6 +22,7 @@ export const codeTypes = [
   "tsx",
   "json",
   "html",
+  "htm",
   "css",
   "py",
   "java",

@@ -1,11 +1,15 @@
 import { toastNotification } from "./toastNotification";
 
 export function handleHttpError(status, data) {
-  const serverMessage = data?.message || data?.error || data?.errors[0]?.msg;
+  const serverMessage = data?.message || data?.error || data?.errors?.[0]?.msg;
 
   switch (status) {
     case 400:
       toastNotification(serverMessage || "Bad request. Please check your input.", "error");
+      break;
+
+    case 401:
+      toastNotification(serverMessage || "Invalid credentials or session. Please log in again.", "error");
       break;
 
     case 403:

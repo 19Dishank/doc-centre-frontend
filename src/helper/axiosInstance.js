@@ -69,12 +69,11 @@ const processQueue = (error, token = null) => {
 axiosInstance.interceptors.response.use(
   (response) => response,
   async (error) => {
-    
     const { config, response } = error;
     const originalRequest = config;
 
     if (!response) {
-            if (error.code === "ECONNABORTED" || error?.message?.includes("timeout")) {
+      if (error.code === "ECONNABORTED" || error?.message?.includes("timeout")) {
         toastNotification("Server timed out. Please try again.", "error");
       } else {
         // toastNotification(`Network error. Please check if your Express server is running.`, "error");
@@ -92,6 +91,7 @@ axiosInstance.interceptors.response.use(
 
     if (status === 401 && !originalRequest._retry) {
       if (isAuthRoute.includes(originalRequest.url)) {
+        handleHttpError(status, response?.data);
         return Promise.reject(error);
       }
 
@@ -114,19 +114,16 @@ axiosInstance.interceptors.response.use(
         const newAccessToken = res.data.accessToken;
         const newRefreshToken = res.data.refreshToken;
 
-        
         setTokens(newAccessToken, newRefreshToken);
         axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${newAccessToken}`;
         originalRequest.headers["Authorization"] = `Bearer ${newAccessToken}`;
 
-        // reconnect socket with new token
         reconnectSocket(newAccessToken);
-        
+
         processQueue(null, newAccessToken);
 
         return axiosInstance(originalRequest);
       } catch (refreshError) {
-        
         processQueue(refreshError, null);
 
         const refreshStatus = refreshError?.response?.status;
@@ -134,6 +131,8 @@ axiosInstance.interceptors.response.use(
           clearTokens();
           toastNotification("Session expired. Please log in again.", "error");
           window.location.replace(import.meta.env.VITE_APP_BASE_URL.replace("slug", "app") + "/login");
+        } else {
+          handleHttpError(refreshStatus, refreshError?.response?.data);
         }
 
         return Promise.reject(refreshError);

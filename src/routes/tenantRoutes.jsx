@@ -85,6 +85,9 @@ export const protectedRoutes = [
     {
         path: "/credentials/api-keys",
         element: <APIKeysPage />,
+        isRouteAccessible: {
+            role: "Admin"
+        },
     },
     // {
     //     path: "/settings/billing",

@@ -1,10 +1,10 @@
 import { AlertTriangle } from "lucide-react"
 import { useCallback, useState } from "react"
 import { fetchApiKeys } from "@/api/api"
-import { toastNotification } from "@/helper/toastNotification"
 import PageHeading from "@/components/PageHeading"
 import ActiveAPIKeys from "@/components/APIKeysPage/ActiveAPIKeys"
 import GenerateNewKey from "@/components/APIKeysPage/GenerateNewKey"
+import useSEO from "@/hooks/useSEO"
 
 const APIKeysPage = () => {
 
@@ -18,7 +18,9 @@ const APIKeysPage = () => {
             console.error("Error fetching API keys: ", error);
         }
     }, []);
-
+    useSEO({
+        title: "API Keys "
+    })
     return (
         <div className="flex flex-col gap-6">
 

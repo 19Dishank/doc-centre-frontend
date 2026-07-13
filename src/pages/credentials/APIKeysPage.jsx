@@ -1,13 +1,15 @@
 import { AlertTriangle } from "lucide-react"
-import { useCallback, useState } from "react"
+import { useCallback, useMemo, useState } from "react"
 import { fetchApiKeys } from "@/api/api"
 import PageHeading from "@/components/PageHeading"
 import ActiveAPIKeys from "@/components/APIKeysPage/ActiveAPIKeys"
 import GenerateNewKey from "@/components/APIKeysPage/GenerateNewKey"
 import useSEO from "@/hooks/useSEO"
+import { usePermissions } from "@/hooks/usePermissions"
 
 const APIKeysPage = () => {
-
+    const { checkRole } = usePermissions()
+    const canGenerateAPIKey = useMemo(() => checkRole("Admin"), [checkRole]);
     const [apiKeys, setApiKeys] = useState([])
 
     const getApiKeys = useCallback(async () => {
@@ -37,7 +39,7 @@ const APIKeysPage = () => {
                 </p>
             </div>
 
-            <GenerateNewKey getApiKeys={getApiKeys} />
+            {canGenerateAPIKey && <GenerateNewKey getApiKeys={getApiKeys} />}
             <ActiveAPIKeys apiKeys={apiKeys} getApiKeys={getApiKeys} />
         </div>
     )

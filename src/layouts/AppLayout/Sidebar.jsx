@@ -28,6 +28,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
     const canViewDocument = useMemo(() => checkPermission(PERMISSIONS.VIEW_DOCUMENT), [checkPermission]);
     const canViewUsers = useMemo(() => checkPermission(PERMISSIONS.VIEW_USER), [checkPermission]);
     const canViewRoles = useMemo(() => checkPermission(PERMISSIONS.VIEW_ROLE), [checkPermission]);
+    const canViewAPIKeys = useMemo(() => checkRole("Admin"), [checkRole]);
     const canViewOrganizationSettings = useMemo(() => checkRole("Admin"), [checkRole]);
     const canViewBillingSection = useMemo(() => checkRole("Admin"), [checkRole]);
 
@@ -65,7 +66,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
             icon: <Building2 className="size-4" />,
             path: "/settings/organization",
         },
-        {
+        canViewAPIKeys && {
             name: "API Keys",
             icon: <KeyRound className="size-4" />,
             path: "/credentials/api-keys",

@@ -24,7 +24,7 @@ const NewAPIKeyForm = ({ getApiKeys }) => {
             toastNotification("API key generated successfully!", "success");
         } catch (error) {
             console.error("Error generating API key: ", error);
-            toastNotification(error?.response?.data?.message || "Failed to generate API key. Please try again.", "error");
+            // toastNotification(error?.response?.data?.message || "Failed to generate API key. Please try again.", "error");
         } finally {
             setLoading(false);
         }
@@ -57,7 +57,7 @@ const NewAPIKeyForm = ({ getApiKeys }) => {
 export default NewAPIKeyForm
 
 const GenerateButton = memo(({ loading, disabled }) => {
-    
+
     return (
         <Button
             type="submit"

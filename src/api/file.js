@@ -14,7 +14,7 @@ export const getSignedURL = async (payload) => {
 
 export const uploadOnSignedURL = async (signedURL, file, onProgress) => {
   try {
-        const response = await axios.put(signedURL, file, {
+    const response = await axios.put(signedURL, file, {
       headers: {
         "Content-Type": file.type,
       },
@@ -23,7 +23,7 @@ export const uploadOnSignedURL = async (signedURL, file, onProgress) => {
         onProgress?.(processPercent);
       },
     });
-        return response;
+    return response;
   } catch (error) {
     console.error("Error uploading file to signed URL:", error);
     throw error;
@@ -43,7 +43,7 @@ export const createFolder = async (payload) => {
 export const upload = async (payload) => {
   try {
     const { file, parentId, name } = payload;
-        const formData = new FormData();
+    const formData = new FormData();
     const subdomain = getSubdomain();
 
     if (file) {
@@ -201,6 +201,16 @@ export const fetchSharedDocumentDetails = async (id) => {
     return response.data;
   } catch (error) {
     console.error("Error fetching shared document details:", error);
+    throw error;
+  }
+};
+
+export const emptyBin = async () => {
+  try {
+    const response = await axiosInstance.delete("docs/recycle-bin/empty");
+    return response.data;
+  } catch (error) {
+    console.error("Error emptying trash:", error);
     throw error;
   }
 };

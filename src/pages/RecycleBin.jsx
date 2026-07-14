@@ -1,6 +1,4 @@
-import {
-    Files,
-} from "lucide-react";
+import { Files } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { fetchBinData } from "@/api/file";
 import { useEffect, useState } from "react";
@@ -13,6 +11,7 @@ import { formatTime } from "@/helper/formatTime";
 import { socket } from "@/helper/socketService";
 import { SOCKET_EVENTS } from "@/helper/constants/socket.events";
 import useSEO from "@/hooks/useSEO";
+import EmptyBinButton from "@/components/RecycleBin/EmptyBinButton";
 
 export default function RecycleBin() {
 
@@ -67,7 +66,7 @@ export default function RecycleBin() {
 
     useEffect(() => {
         const refreshRecycleBin = async () => {
-                        await getBinData()
+            await getBinData()
         }
         socket.on(SOCKET_EVENTS.DOCUMENT_TRASHED, refreshRecycleBin);
         socket.on(SOCKET_EVENTS.DOCUMENT_DELETED, refreshRecycleBin);
@@ -149,17 +148,23 @@ export default function RecycleBin() {
     return (
         <div className="flex flex-col gap-6 w-full max-w-full">
 
-            <div className="flex justify-between border-b border-zinc-100 pb-3">
+            <div className="flex flex-col gap-3 sm:flex-row sm:justify-between sm:items-start border-b border-zinc-100 pb-3">
                 <div className="flex flex-col gap-1">
                     <h1 className="font-semibold text-2xl md:text-3xl leading-8 tracking-tight text-zinc-950">Recycle Bin</h1>
                     <p className="text-zinc-500 text-sm">Manage your deleted files and folders. These items will be permanently deleted after 7 days.</p>
                 </div>
-                <NavLink to="/files" className="cursor-pointer mt-auto flex items-center gap-1 text-sm text-zinc-500 hover:text-zinc-700">
-                    <Button variant="outline" className="cursor-pointer">
-                        <Files className="size-4" />
-                        Files
-                    </Button>
-                </NavLink>
+
+                <div className="flex items-center gap-2 shrink-0">
+                    <NavLink to="/files" className="cursor-pointer">
+                        <Button variant="outline" className="cursor-pointer">
+                            <Files className="size-4" />
+                            Files
+                        </Button>
+                    </NavLink>
+
+                    {/* empty bin button */}
+                    <EmptyBinButton getBinData={getBinData} disabled={loading || tableRows.length === 0} />
+                </div>
             </div>
 
             {/* <FiltersBar filters={filters} setFilters={setFilters}  /> */}

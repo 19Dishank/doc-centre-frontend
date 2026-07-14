@@ -25,7 +25,7 @@ const UploadButtons = ({ parentId, setNewFolderRow, getFiles }) => {
     const onChangeFile = async (event) => {
         const file = event.target.files?.[0];
         if (!file) {
-                        return;
+            return;
         }
 
         setIsUploading(true);
@@ -40,7 +40,7 @@ const UploadButtons = ({ parentId, setNewFolderRow, getFiles }) => {
         });
 
         try {
-                        const payload = {
+            const payload = {
                 fileName: file.name,
                 contentType: file.type,
                 folderId: parentId ?? undefined,
@@ -114,7 +114,7 @@ const UploadButtons = ({ parentId, setNewFolderRow, getFiles }) => {
     useEffect(() => {
 
         const handleDocumentUploadedEvent = () => {
-                        getFiles();
+            getFiles();
             setIsUploading(false);
         };
 

@@ -1,0 +1,11 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <!-- background -->
+  <rect width="512" height="512" rx="96" fill="#ffffff"/>
+
+  <!-- stacked document icon, scaled up and centered from the original 32x32 design -->
+  <g transform="translate(102.4, 92.8) scale(9.6)">
+    <rect x="2" y="8" width="20" height="24" rx="2.5" fill="#ffffff" stroke="#cbd5e1" stroke-width="0.8"/>
+    <rect x="6" y="5" width="20" height="24" rx="2.5" fill="#e0f2fe" stroke="#38bdf8" stroke-width="0.7"/>
+    <rect x="10" y="2" width="20" height="24" rx="2.5" fill="#2B7FFF" stroke="#1e40af" stroke-width="0.6"/>
+  </g>
+</svg>

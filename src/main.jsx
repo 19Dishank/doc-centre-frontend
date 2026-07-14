@@ -5,7 +5,11 @@ import { ToastContainer } from "react-toastify";
 import AuthProvider from "./contexts/AuthContext";
 import { TooltipProvider } from "./components/ui/tooltip";
 import CatalogProvider from "./contexts/CatalogContext";
+import { registerSW } from "virtual:pwa-register";
 
+registerSW({
+  immediate: true,
+});
 createRoot(document.getElementById("root")).render(
   // <StrictMode>
   <TooltipProvider>

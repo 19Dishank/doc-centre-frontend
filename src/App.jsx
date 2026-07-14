@@ -70,6 +70,8 @@ export default function App() {
     ])
   ), [loading]);
 
+
+
   if (IS_MAINTENANCE_MODE) {
     return <MaintenancePage />;
   }

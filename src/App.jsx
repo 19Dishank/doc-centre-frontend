@@ -2,7 +2,7 @@ import Loader from "./components/ui/loader";
 import { createBrowserRouter, Navigate, RouterProvider } from "react-router-dom";
 import { getSubdomain } from "./helper/getSubdomain";
 import { platformRoutes } from "./routes/platformRoutes";
-import { Suspense, useMemo } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import ErrorPage from "./pages/ErrorPage";
 import AuthLayout from "./layouts/AuthLayout/AuthLayout";
 import PublicRoute from "./routes/PublicRoute";
@@ -11,11 +11,13 @@ import ProtectedRoute from "./routes/ProtectedRoute";
 import { protectedRoutes, publicRoutes } from "./routes/tenantRoutes";
 import { useAuthContext } from "./contexts/AuthContext";
 import MaintenancePage from "./pages/maintenance/MaintenancePage";
+import OfflinePage from "./pages/OfflinePage";
 
 
 const IS_MAINTENANCE_MODE = import.meta.env.VITE_MAINTENANCE_MODE === "true";
 
 export default function App() {
+  const [isOnline, setIsOnline] = useState(navigator.onLine);
 
   const { loading } = useAuthContext();
 
@@ -70,10 +72,21 @@ export default function App() {
     ])
   ), [loading]);
 
+  useEffect(() => {
+    const goOnline = () => setIsOnline(true);
+    const goOffline = () => setIsOnline(false);
+    window.addEventListener("online", goOnline);
+    window.addEventListener("offline", goOffline);
+    return () => {
+      window.removeEventListener("online", goOnline);
+      window.removeEventListener("offline", goOffline);
+    };
+  }, []);
+
   if (IS_MAINTENANCE_MODE) {
     return <MaintenancePage />;
   }
-
+  // if (!isOnline) return <OfflinePage />;
   const subdomain = getSubdomain();
   const isPlatform = subdomain === "app" || subdomain === null;
   const router = isPlatform ? platformRouter : tenantRouter;

@@ -14,7 +14,7 @@ import { socket } from "@/helper/socketService";
 import { progressToast } from "./ProgressToast";
 import { SOCKET_EVENTS } from "@/helper/constants/socket.events";
 
-const UploadButtons = ({ parentId, setNewFolderRow, getFiles }) => {
+const UploadButtons = ({ parentId, setNewFolderRow }) => {
 
     const { checkPermission } = usePermissions();
     const canUploadDocument = useMemo(() => checkPermission(PERMISSIONS.UPLOAD_DOCUMENT), [checkPermission]);
@@ -114,7 +114,6 @@ const UploadButtons = ({ parentId, setNewFolderRow, getFiles }) => {
     useEffect(() => {
 
         const handleDocumentUploadedEvent = () => {
-            getFiles();
             setIsUploading(false);
         };
 

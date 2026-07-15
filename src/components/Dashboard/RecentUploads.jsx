@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import { fetchRecentDocs } from "@/api/dashboard";
 import RecentUploadFile from "./RecentUploadFile";
+import { socket } from "@/helper/socketService";
+import { SOCKET_EVENTS } from "@/helper/constants/socket.events";
 
 const RecentUploads = () => {
 
@@ -25,6 +27,20 @@ const RecentUploads = () => {
     useEffect(() => {
         // eslint-disable-next-line react-hooks/set-state-in-effect
         getRecentUploads();
+
+        const refreshRecent = () => {
+            getRecentUploads();
+        };
+
+        socket.on(SOCKET_EVENTS.DOCUMENT_UPLOADED, refreshRecent);
+        socket.on(SOCKET_EVENTS.DOCUMENT_TRASHED, refreshRecent);
+        socket.on(SOCKET_EVENTS.DOCUMENT_RESTORED, refreshRecent);
+
+        return () => {
+            socket.off(SOCKET_EVENTS.DOCUMENT_UPLOADED, refreshRecent);
+            socket.off(SOCKET_EVENTS.DOCUMENT_TRASHED, refreshRecent);
+            socket.off(SOCKET_EVENTS.DOCUMENT_RESTORED, refreshRecent);
+        };
     }, []);
 
     return (

@@ -175,19 +175,23 @@ export default function Files() {
   //   }
   // }, []);
   useEffect(() => {
-    const refreshFilesData = async (event) => {
+    const refreshFilesData = async () => {
             await getFiles()
     }
 
+    socket.on(SOCKET_EVENTS.DOCUMENT_UPLOADED, refreshFilesData);
     socket.on(SOCKET_EVENTS.DOCUMENT_TRASHED, refreshFilesData);
     socket.on(SOCKET_EVENTS.DOCUMENT_RESTORED, refreshFilesData);
 
+    socket.on(SOCKET_EVENTS.FOLDER_CREATED, refreshFilesData);
     socket.on(SOCKET_EVENTS.FOLDER_TRASHED, refreshFilesData);
     socket.on(SOCKET_EVENTS.FOLDER_RESTORED, refreshFilesData);
 
     return () => {
+      socket.off(SOCKET_EVENTS.DOCUMENT_UPLOADED, refreshFilesData);
       socket.off(SOCKET_EVENTS.DOCUMENT_TRASHED, refreshFilesData);
       socket.off(SOCKET_EVENTS.DOCUMENT_RESTORED, refreshFilesData);
+      socket.off(SOCKET_EVENTS.FOLDER_CREATED, refreshFilesData);
       socket.off(SOCKET_EVENTS.FOLDER_TRASHED, refreshFilesData);
       socket.off(SOCKET_EVENTS.FOLDER_RESTORED, refreshFilesData);
     }
@@ -324,7 +328,6 @@ export default function Files() {
           />
 
           <UploadButtons
-            getFiles={getFiles}
             parentId={parentId}
             setNewFolderRow={setNewFolderRow}
           />

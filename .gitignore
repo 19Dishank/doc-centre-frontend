@@ -26,6 +26,8 @@ dist-ssr
 .env
 .env.development
 .env.production
+.env.staging
 # custom
 MULTI_TENANT_ARCHITECTURE.md
 .vercel
+/doc-center-backend-main

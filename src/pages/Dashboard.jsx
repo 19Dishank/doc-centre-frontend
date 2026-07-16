@@ -8,6 +8,8 @@ import { usePermissions } from "@/hooks/usePermissions";
 import { useEffect, useMemo, useState } from "react";
 import { fetchStorageStats } from "@/api/dashboard";
 import useSEO from "@/hooks/useSEO";
+import { socket } from "@/helper/socketService";
+import { SOCKET_EVENTS } from "@/helper/constants/socket.events";
 
 export default function Dashboard() {
 
@@ -41,6 +43,24 @@ export default function Dashboard() {
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     getStorageStatsData();
+
+    const refreshStats = () => {
+      getStorageStatsData();
+    };
+
+    socket.on(SOCKET_EVENTS.DOCUMENT_UPLOADED, refreshStats);
+    socket.on(SOCKET_EVENTS.DOCUMENT_TRASHED, refreshStats);
+    socket.on(SOCKET_EVENTS.DOCUMENT_RESTORED, refreshStats);
+    socket.on(SOCKET_EVENTS.DOCUMENT_DELETED, refreshStats);
+    socket.on(SOCKET_EVENTS.FOLDER_DELETED, refreshStats);
+
+    return () => {
+      socket.off(SOCKET_EVENTS.DOCUMENT_UPLOADED, refreshStats);
+      socket.off(SOCKET_EVENTS.DOCUMENT_TRASHED, refreshStats);
+      socket.off(SOCKET_EVENTS.DOCUMENT_RESTORED, refreshStats);
+      socket.off(SOCKET_EVENTS.DOCUMENT_DELETED, refreshStats);
+      socket.off(SOCKET_EVENTS.FOLDER_DELETED, refreshStats);
+    };
   }, []);
 
   return (

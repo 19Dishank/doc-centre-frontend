@@ -51,7 +51,7 @@ const AuthProvider = ({ children }) => {
 
         // eslint-disable-next-line react-hooks/set-state-in-effect
         getUserDetails();
-        connectSocket(accessToken);
+        connectSocket();
 
     }, [isAuthenticated]);
 

@@ -213,14 +213,14 @@ const APIData = ({ stats }) => {
             </CardHeader>
             <CardContent className="p-0 flex flex-col gap-2">
                 <div className="font-bold text-2xl md:text-3xl leading-9">{value}</div>
-                {badge && (
+                {/* {badge && (
                     <div className="flex">
                         <Badge variant="secondary" className={`${badgeStyles} gap-1`}>
                             {badgeType === "success" && <TrendingUp className="size-3" />}
                             {badge}
                         </Badge>
                     </div>
-                )}
+                )} */}
             </CardContent>
         </Card>
     )

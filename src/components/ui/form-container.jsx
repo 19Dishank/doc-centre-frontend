@@ -3,7 +3,7 @@ import { fetchLogo } from "@/api/auth";
 import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 
-const FormContainer = ({ heading, subheading, linkText, linkUrl, linkHelperText, children }) => {
+const FormContainer = ({ heading, subheading = "", linkText, linkUrl, linkHelperText, children }) => {
 
     return (
         <div className="bg-white flex justify-center items-center flex-1 w-full lg:max-w-165 px-4">

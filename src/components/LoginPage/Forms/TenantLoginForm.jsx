@@ -73,21 +73,26 @@ const TenantLoginForm = () => {
         e.preventDefault();
 
         const isValid = validateForm();
-
         if (!isValid) return;
 
         setLoading(true);
-        const res = await loginUser(loginData);
-        if (res.success) {
-            setTokens(res.data.accessToken, res.data.refreshToken);
-            navigate("/dashboard");
-            setIsAuthenticated(true);
-            authChannel.postMessage({
-                type: "ACCOUNT_CHANGED"
-            });
-
+        try {
+            const res = await loginUser(loginData);
+            if (res.success) {
+                setTokens(res.data.accessToken, res.data.refreshToken);
+                navigate("/dashboard");
+                setIsAuthenticated(true);
+                authChannel.postMessage({ type: "ACCOUNT_CHANGED" });
+            } else {
+                toastNotification.error(res.message || "Invalid email or password");
+            }
+        } catch (error) {
+            toastNotification.error(
+                error?.response?.data?.message || "Something went wrong. Please try again."
+            );
+        } finally {
+            setLoading(false);
         }
-        setLoading(false);
     };
 
     const onUseCurrent = () => {

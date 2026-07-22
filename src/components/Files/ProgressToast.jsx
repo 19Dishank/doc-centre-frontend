@@ -34,28 +34,88 @@ const POSITIONS = {
   "top-center": { top: "1.5rem", left: "50%", transform: "translateX(-50%)" },
 };
 
+// rolling window keeps speed/ETA smooth instead of jumping on every tick
+const SPEED_WINDOW_MS = 4000;
+
+const formatSpeed = (bytesPerSecond) => {
+  if (!bytesPerSecond || bytesPerSecond <= 0) return null;
+  if (bytesPerSecond < 1024) return `${Math.round(bytesPerSecond)} B/s`;
+  if (bytesPerSecond < 1024 ** 2) return `${(bytesPerSecond / 1024).toFixed(1)} KB/s`;
+  if (bytesPerSecond < 1024 ** 3) return `${(bytesPerSecond / 1024 ** 2).toFixed(1)} MB/s`;
+  return `${(bytesPerSecond / 1024 ** 3).toFixed(2)} GB/s`;
+};
+
+const formatDuration = (seconds) => {
+  if (seconds == null || !isFinite(seconds) || seconds < 0) return null;
+  if (seconds < 1) return "<1s";
+  if (seconds < 60) return `${Math.ceil(seconds)}s`;
+  if (seconds < 3600) {
+    const m = Math.floor(seconds / 60);
+    const s = Math.round(seconds % 60);
+    return s > 0 ? `${m}m ${s}s` : `${m}m`;
+  }
+  const h = Math.floor(seconds / 3600);
+  const m = Math.floor((seconds % 3600) / 60);
+  return m > 0 ? `${h}h ${m}m` : `${h}h`;
+};
 
 export const progressToast = {
   start(name, meta = {}) {
     const id = genId();
+    const now = Date.now();
     uploads = [
       ...uploads,
-      { id, name, progress: 0, status: "uploading", error: null, type: meta.type || "file", removing: false },
+      {
+        id,
+        name,
+        progress: 0,
+        status: "uploading",
+        error: null,
+        type: meta.type || "file",
+        removing: false,
+        size: meta.size || null,   // total bytes, if known — enables speed/ETA
+        startedAt: now,
+        completedAt: null,
+        samples: [{ t: now, p: 0 }],
+        speedBps: 0,
+      },
     ];
     notify();
     return id;
   },
 
   update(id, progress) {
-    uploads = uploads.map((u) =>
-      u.id === id ? { ...u, progress: Math.min(100, Math.max(0, progress)) } : u
-    );
+    const now = Date.now();
+    uploads = uploads.map((u) => {
+      if (u.id !== id) return u;
+
+      const clamped = Math.min(100, Math.max(0, progress));
+
+      const samples = [...u.samples, { t: now, p: clamped }].filter(
+        (s) => now - s.t <= SPEED_WINDOW_MS
+      );
+
+      let speedBps = u.speedBps;
+      if (u.size && samples.length >= 2) {
+        const oldest = samples[0];
+        const newest = samples[samples.length - 1];
+        const dt = (newest.t - oldest.t) / 1000;
+        const dp = newest.p - oldest.p;
+        if (dt > 0 && dp > 0) {
+          const bytesDelta = (dp / 100) * u.size;
+          speedBps = bytesDelta / dt;
+        }
+      }
+
+      return { ...u, progress: clamped, samples, speedBps };
+    });
     notify();
   },
 
   success(id) {
+    const now = Date.now();
     uploads = uploads.map((u) =>
-      u.id === id ? { ...u, progress: 100, status: "success" } : u
+      u.id === id ? { ...u, progress: 100, status: "success", completedAt: now } : u
     );
     notify();
     setTimeout(() => {
@@ -129,6 +189,34 @@ function ProgressRow({ item }) {
   const isDone = item.status === "success";
   const isError = item.status === "error";
 
+  // live-ticking clock, independent of progress updates, so elapsed time
+  // keeps counting even if no progress event fires for a second or two
+  // eslint-disable-next-line react-hooks/purity
+  const [now, setNow] = useState(Date.now());
+
+  useEffect(() => {
+    if (!isUploading) return;
+    const interval = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(interval);
+  }, [isUploading]);
+
+  const speedLabel = isUploading ? formatSpeed(item.speedBps) : null;
+  const remainingBytes = item.size ? item.size * (1 - item.progress / 100) : null;
+  const etaSeconds = (isUploading && item.speedBps > 0 && remainingBytes != null)
+    ? remainingBytes / item.speedBps
+    : null;
+  const etaLabel = etaSeconds != null ? formatDuration(etaSeconds) : null;
+
+  // live "time elapsed so far" while uploading — ticks every second via `now`
+  const elapsedSoFarLabel = isUploading
+    ? formatDuration((now - item.startedAt) / 1000)
+    : null;
+
+  // actual total time taken, once complete
+  const elapsedLabel = (isDone && item.completedAt)
+    ? formatDuration((item.completedAt - item.startedAt) / 1000)
+    : null;
+
   return (
     <div style={{
       opacity: item.removing ? 0 : 1,
@@ -181,6 +269,28 @@ function ProgressRow({ item }) {
                 style={{ width: `${item.progress}%` }}
               />
             </div>
+          )}
+
+          {/* speed + ETA */}
+          {isUploading && (speedLabel || etaLabel) && (
+            <p className="text-[11px] text-zinc-400 mt-1 tabular-nums">
+              {speedLabel}
+              {speedLabel && etaLabel && " · "}
+              {etaLabel && `${etaLabel} left`}
+            </p>
+          )}
+
+          {/* live elapsed time, ticking every second while uploading */}
+          {isUploading && elapsedSoFarLabel && (
+            <p className="text-[11px] text-zinc-400 mt-0.5 tabular-nums">
+              Elapsed: {elapsedSoFarLabel}
+            </p>
+          )}
+
+          {elapsedLabel && (
+            <p className="text-[11px] text-zinc-400 mt-1">
+              Uploaded in {elapsedLabel}
+            </p>
           )}
 
           {isError && (

@@ -29,18 +29,27 @@ const PlatformLoginForm = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        const isValid = validateEmail(email) === "";
+        const validationError = validateEmail(email);
 
-        if (!isValid) return;
+        setError(validationError);
+
+        if (validationError) {
+            return;
+        }
 
         setLoading(true);
+
         try {
             const res = await verifyUser({ email });
-                        window.location.replace(import.meta.env.VITE_APP_BASE_URL.replace("slug", res.data.slug) + `/login?email=${email}`);
+
+            window.location.replace(
+                import.meta.env.VITE_APP_BASE_URL.replace(
+                    "slug",
+                    res.data.slug
+                ) + `/login?email=${email}`
+            );
         } catch (error) {
-            console.error("", error);
-            // toastNotification(error?.response?.data?.message || "An error occurred while verifying the email. Please try again.", "error");
-            // toastNotification(error?.response?.data?.message || error.message, "error");
+            console.error(error);
         } finally {
             setLoading(false);
         }
@@ -48,7 +57,14 @@ const PlatformLoginForm = () => {
 
     return (
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-            <FormField label="Email Address" name="email" value={email} onChange={handleChange} placeholder="you@company.com" error={error} />
+            <FormField
+                label="Email Address"
+                name="email"
+                value={email}
+                onChange={handleChange}
+                placeholder="you@company.com"
+                error={error}
+            />
             <Button type="submit" className="cursor-pointer font-semibold rounded-lg bg-[#2b7fff] text-blue-50 mt-2 w-full h-11" disabled={loading}>
                 {loading ? "Signing In..." : "Sign In"}
                 <ArrowRight className="size-4 ml-1" />

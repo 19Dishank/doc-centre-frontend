@@ -30,6 +30,46 @@ export const uploadOnSignedURL = async (signedURL, file, onProgress) => {
   }
 };
 
+export const initiateUpload = async (payload) => {
+  try {
+    const response = axiosInstance.post("/docs/initiate-upload", payload);
+    return response;
+  } catch (error) {
+    console.error("Error initiate upload:", error);
+    throw error;
+  }
+};
+
+export const uploadMultipartDocument = async (payload) => {
+  try {
+    const response = axiosInstance.post("/docs/multipart/upload-url", payload);
+    return response;
+  } catch (error) {
+    console.error("Error uploading multipart file:", error);
+    throw error;
+  }
+};
+
+export const getMultipartUploadStatus = (documentId) => {
+  try {
+    const response = axiosInstance.get(`/multipart/${documentId}/status`);
+    return response;
+  } catch (error) {
+    console.error("Error uploading multipart file:", error);
+    throw error;
+  }
+};
+
+export const completeMultipartUpload = async (payload) => {
+  try {
+    const response = await axiosInstance.post("/docs/multipart/complete", payload);
+    return response;
+  } catch (error) {
+    console.error("Error completing multipart upload:", error);
+    throw error;
+  }
+};
+
 export const createFolder = async (payload) => {
   try {
     const response = await axiosInstance.post("/docs/folder", payload);

@@ -1,11 +1,11 @@
 import { FolderPlus, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { PERMISSIONS } from "@/helper/permissions";
 import { usePermissions } from "@/hooks/usePermissions";
 import { initiateUpload, completeMultipartUpload } from "@/api/file";
-import { uploadFileInParts } from "@/helper/multipartUpload";
+import { uploadFileInParts, UploadCancelledError } from "@/helper/multipartUpload";
 import { socket } from "@/helper/socketService";
 import { progressToast } from "./ProgressToast";
 import { SOCKET_EVENTS } from "@/helper/constants/socket.events";
@@ -32,19 +32,28 @@ const UploadButtons = ({ parentId, setNewFolderRow }) => {
                     : "file",
         });
 
+        // lets the toast's cancel button stop this upload loop immediately,
+        // before the backend abort call even resolves
+        const controller = new AbortController();
+        progressToast.registerAbort(toastId, () => controller.abort());
+
         try {
-            const startUpload = await initiateUpload({
-                fileName: file.name,
-                contentType: file.type,
-                folderId: parentId,
-                size: file.size,
-            });
+            const startUpload = await initiateUpload(
+                {
+                    fileName: file.name,
+                    contentType: file.type,
+                    folderId: parentId,
+                    size: file.size,
+                },
+                { signal: controller.signal }
+            );
 
             const { documentId, chunkSize, totalParts } = startUpload?.data?.data || {};
 
             if (!documentId || !totalParts) {
                 throw new Error("Failed to start upload");
             }
+            progressToast.setDocumentId(toastId, documentId);
 
             const parts = await uploadFileInParts({
                 file,
@@ -52,14 +61,25 @@ const UploadButtons = ({ parentId, setNewFolderRow }) => {
                 chunkSize,
                 totalParts,
                 onProgress: (pct) => progressToast.update(toastId, pct),
+                signal: controller.signal,
             });
 
-            await completeMultipartUpload({ documentId, parts });
+            progressToast.setFinalizing(toastId, true);
+
+            await completeMultipartUpload({ documentId, parts }, { signal: controller.signal });
 
             progressToast.success(toastId);
             setTimeout(() => setIsUploading(false), 2000);
         } catch (error) {
             setIsUploading(false);
+
+            // user-initiated cancel: progressToast.cancel() already removed
+            // the toast and called the backend abort — don't also flag this
+            // as a failed upload
+            if (error instanceof UploadCancelledError || controller.signal.aborted) {
+                console.log(`Upload ${toastId} cancelled by user`);
+                return;
+            }
 
             progressToast.error(
                 toastId,
@@ -75,9 +95,9 @@ const UploadButtons = ({ parentId, setNewFolderRow }) => {
         }
     };
 
-    const handleNewFolder = () => {
+    const handleNewFolder = useCallback(() => {
         setNewFolderRow({ id: "new-folder", isNewFolder: true, name: "" });
-    };
+    }, [setNewFolderRow]);
 
     const handleUpload = () => {
         if (!inputRef.current) return;
@@ -98,7 +118,7 @@ const UploadButtons = ({ parentId, setNewFolderRow }) => {
 
         document.addEventListener("keydown", handleKeyDown);
         return () => document.removeEventListener("keydown", handleKeyDown);
-    }, []);
+    }, [canUploadDocument, handleNewFolder]);
 
     useEffect(() => {
         const handleDocumentUploadedEvent = () => setIsUploading(false);

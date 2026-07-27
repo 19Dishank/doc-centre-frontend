@@ -1,6 +1,7 @@
 import { Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { fetchFiles, getSignedURL, uploadOnSignedURL } from "@/api/file";
+import { fetchFiles, initiateUpload, completeMultipartUpload } from "@/api/file";
+import { uploadFileInParts, UploadCancelledError } from "@/helper/multipartUpload";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { PERMISSIONS } from "@/helper/permissions";
 import { usePermissions } from "@/hooks/usePermissions";
@@ -42,7 +43,7 @@ export default function Files() {
   const { checkPermission } = usePermissions();
   const canUploadDocument = useMemo(() => checkPermission(PERMISSIONS.UPLOAD_DOCUMENT), [checkPermission]);
 
-  const onDrop = useCallback(async (acceptedFiles, fileRejections) => {
+  const onDrop = useCallback(async (acceptedFiles, fileRejections, event) => {
     if (!canUploadDocument) {
       toastNotification("Doesn't have permission to upload doc", "error");
       return;
@@ -56,14 +57,8 @@ export default function Files() {
     const file = acceptedFiles[0];
     if (!file) return;
 
-        if (!file) {
-            return;
-    }
-
-
-
-    // start tracking this upload in the toast store
     const toastId = progressToast.start(file.name, {
+      size: file.size,
       type: file.type?.startsWith("image")
         ? "image"
         : file.type?.startsWith("video")
@@ -71,36 +66,60 @@ export default function Files() {
           : "file",
     });
 
+    const controller = new AbortController();
+    progressToast.registerAbort(toastId, () => controller.abort());
+
     try {
+      const startUpload = await initiateUpload(
+        {
+          fileName: file.name,
+          contentType: file.type,
+          folderId: parentId ?? undefined,
+          size: file.size,
+        },
+        { signal: controller.signal }
+      );
 
-      const payload = {
-        fileName: file.name,
-        contentType: file.type,
-        folderId: parentId ?? undefined,
-        size: file.size,
-      };
-      const getSignedURLResponse = await getSignedURL(payload);
-      const { url } = getSignedURLResponse.data;
+      const { documentId, chunkSize, totalParts } = startUpload?.data?.data || {};
 
-      const uploadResponse = await uploadOnSignedURL(url, file, (percent) => {
-        progressToast.update(toastId, percent);
+      if (!documentId || !totalParts) {
+        throw new Error("Failed to start upload");
+      }
+
+      progressToast.setDocumentId(toastId, documentId);
+
+      const parts = await uploadFileInParts({
+        file,
+        documentId,
+        chunkSize,
+        totalParts,
+        onProgress: (percent) => progressToast.update(toastId, percent),
+        signal: controller.signal,
       });
 
-      if (uploadResponse.status === 200) {
-        progressToast.success(toastId);
-      }
+      progressToast.setFinalizing(toastId, true);
+      await completeMultipartUpload({ documentId, parts }, { signal: controller.signal });
+
+      progressToast.success(toastId);
     } catch (error) {
+      if (error instanceof UploadCancelledError || controller.signal.aborted) {
+        console.log(`Upload ${toastId} cancelled by user`);
+        return;
+      }
+
       progressToast.error(
         toastId,
         error?.response?.data?.message
         || error?.response?.data?.errors?.[0]?.msg
+        || error?.message
         || "File upload failed. Please try again."
       );
-      console.error("File upload failed :", error);
+      console.error("Multipart upload failed:", error);
     } finally {
-      event.target.value = "";
+      if (event?.target && "value" in event.target) {
+        event.target.value = "";
+      }
     }
-
   }, [canUploadDocument, parentId]);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -137,7 +156,7 @@ export default function Files() {
       prev.set("page", currentPage);
       return prev;
     });
-  }, [currentPage]);
+  }, [currentPage, setSearchParams]);
 
   const handleNavigationClick = (parentId, index) => {
     setParentId(parentId)
@@ -176,7 +195,7 @@ export default function Files() {
   // }, []);
   useEffect(() => {
     const refreshFilesData = async () => {
-            await getFiles()
+      await getFiles()
     }
 
     socket.on(SOCKET_EVENTS.DOCUMENT_UPLOADED, refreshFilesData);

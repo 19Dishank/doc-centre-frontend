@@ -70,6 +70,16 @@ export const completeMultipartUpload = async (payload) => {
   }
 };
 
+export const cancelUpload = async (docId) => {
+  try {
+    const response = await axiosInstance.post("/docs/multipart/abort", { docId });
+    return response;
+  } catch (error) {
+    console.error("Error Canceling file:", error);
+    throw error;
+  }
+};
+
 export const createFolder = async (payload) => {
   try {
     const response = await axiosInstance.post("/docs/folder", payload);

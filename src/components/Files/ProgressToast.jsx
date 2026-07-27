@@ -15,10 +15,12 @@ import {
   X,
 } from "lucide-react";
 import { EXT_ICON_MAP } from "@/constants/supportedFileTypes";
+import { cancelUpload } from "@/api/file";
 
 /*  module-level state  */
 let uploads = [];
 let listeners = new Set();
+let abortControllers = new Map(); // id -> () => void, registered by UploadButtons per upload
 
 const notify = () => listeners.forEach((cb) => cb([...uploads]));
 const genId = () => `upl_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
@@ -34,7 +36,6 @@ const POSITIONS = {
   "top-center": { top: "1.5rem", left: "50%", transform: "translateX(-50%)" },
 };
 
-// rolling window keeps speed/ETA smooth instead of jumping on every tick
 const SPEED_WINDOW_MS = 4000;
 
 const formatSpeed = (bytesPerSecond) => {
@@ -73,15 +74,38 @@ export const progressToast = {
         error: null,
         type: meta.type || "file",
         removing: false,
-        size: meta.size || null,   // total bytes, if known — enables speed/ETA
+        size: meta.size || null,
         startedAt: now,
         completedAt: null,
         samples: [{ t: now, p: 0 }],
         speedBps: 0,
+        documentId: null,      // set later via setDocumentId() once backend returns it
+        cancelling: false,
+        finalizing: false,
       },
     ];
     notify();
     return id;
+  },
+  setFinalizing(id, value) {
+    uploads = uploads.map((u) =>
+      u.id === id ? { ...u, finalizing: value } : u
+    );
+    notify();
+  },
+  // called from UploadButtons once initiateUpload resolves and we have documentId
+  setDocumentId(id, docId) {
+    uploads = uploads.map((u) =>
+      u.id === id ? { ...u, documentId: docId } : u
+    );
+    notify();
+  },
+
+  // called from UploadButtons right after start(), so cancel() can stop the
+  // local upload loop (presigned URL requests + part uploads) immediately,
+  // without waiting on the backend abort call.
+  registerAbort(id, abortFn) {
+    abortControllers.set(id, abortFn);
   },
 
   update(id, progress) {
@@ -114,6 +138,7 @@ export const progressToast = {
 
   success(id) {
     const now = Date.now();
+    abortControllers.delete(id);
     uploads = uploads.map((u) =>
       u.id === id ? { ...u, progress: 100, status: "success", completedAt: now } : u
     );
@@ -129,6 +154,7 @@ export const progressToast = {
   },
 
   error(id, message = "Upload failed") {
+    abortControllers.delete(id);
     uploads = uploads.map((u) =>
       u.id === id ? { ...u, status: "error", error: message } : u
     );
@@ -136,6 +162,7 @@ export const progressToast = {
   },
 
   remove(id) {
+    abortControllers.delete(id);
     uploads = uploads.map((u) => u.id === id ? { ...u, removing: true } : u);
     notify();
     setTimeout(() => {
@@ -145,8 +172,38 @@ export const progressToast = {
   },
 
   clear() {
+    abortControllers.clear();
     uploads = [];
     notify();
+  },
+
+  // Single entry point for cancelling: stops the local upload loop
+  // synchronously (so no more presigned URLs / part uploads fire), then
+  // tells the backend to abort the multipart upload server-side.
+  // in cancel(id): bail out immediately if we're already finalizing
+  async cancel(id) {
+    const item = uploads.find((u) => u.id === id);
+    if (!item || item.cancelling || item.finalizing) return;
+
+    uploads = uploads.map((u) => (u.id === id ? { ...u, cancelling: true } : u));
+    notify();
+
+    abortControllers.get(id)?.();
+    abortControllers.delete(id);
+
+    if (!item.documentId) {
+      progressToast.remove(id);
+      return;
+    }
+
+    try {
+      await cancelUpload(item.documentId);
+      progressToast.remove(id);
+    } catch (error) {
+      console.error("Cancel upload failed:", error);
+      uploads = uploads.map((u) => (u.id === id ? { ...u, cancelling: false } : u));
+      notify();
+    }
   },
 };
 
@@ -159,9 +216,6 @@ function useProgressToasts() {
   return state;
 }
 
-/* extension -> icon bucket map */
-
-
 const getExtension = (name = "") => {
   const parts = name.split(".");
   if (parts.length < 2) return "";
@@ -170,14 +224,10 @@ const getExtension = (name = "") => {
 
 const iconFor = (type, name = "") => {
   if (type === "folder") return Folder;
-
   const ext = getExtension(name);
   if (ext && EXT_ICON_MAP[ext]) return EXT_ICON_MAP[ext];
-
-  // fallback to loosely-provided type bucket only if extension didn't resolve
   if (type === "image") return ImageIcon;
   if (type === "video") return Video;
-
   return FileText;
 };
 
@@ -189,8 +239,6 @@ function ProgressRow({ item }) {
   const isDone = item.status === "success";
   const isError = item.status === "error";
 
-  // live-ticking clock, independent of progress updates, so elapsed time
-  // keeps counting even if no progress event fires for a second or two
   // eslint-disable-next-line react-hooks/purity
   const [now, setNow] = useState(Date.now());
 
@@ -206,21 +254,20 @@ function ProgressRow({ item }) {
     ? remainingBytes / item.speedBps
     : null;
   const etaLabel = etaSeconds != null ? formatDuration(etaSeconds) : null;
-
-  // live "time elapsed so far" while uploading — ticks every second via `now`
-  const elapsedSoFarLabel = isUploading
-    ? formatDuration((now - item.startedAt) / 1000)
-    : null;
-
-  // actual total time taken, once complete
+  const elapsedSoFarLabel = isUploading ? formatDuration((now - item.startedAt) / 1000) : null;
   const elapsedLabel = (isDone && item.completedAt)
     ? formatDuration((item.completedAt - item.startedAt) / 1000)
     : null;
 
+  const handleCancel = () => {
+    if (item.cancelling) return;
+    progressToast.cancel(item.id);
+  };
+
   return (
     <div style={{
       opacity: item.removing ? 0 : 1,
-      maxHeight: item.removing ? "0px" : "100px",
+      maxHeight: item.removing ? "0px" : "110px",
       overflow: "hidden",
       transition: "opacity 0.35s ease, max-height 0.35s ease",
     }}>
@@ -248,6 +295,22 @@ function ProgressRow({ item }) {
                   Done
                 </span>
               )}
+              {/* cancel while uploading */}
+              {isUploading && !item.finalizing && (
+                <button
+                  onClick={handleCancel}
+                  disabled={item.cancelling}
+                  className="flex items-center gap-1 text-xs font-medium text-zinc-400 hover:text-red-500 transition-colors disabled:opacity-40 disabled:cursor-not-allowed ml-1"
+                  aria-label="Cancel upload"
+                >
+                  <X className="h-3 w-3" />
+                  {item.cancelling ? "Cancelling…" : "Cancel"}
+                </button>
+              )}
+              {isUploading && item.finalizing && (
+                <span className="text-xs font-medium text-zinc-400">Finishing…</span>
+              )}
+              {/* dismiss after error */}
               {isError && (
                 <button
                   onClick={() => progressToast.remove(item.id)}
@@ -264,14 +327,13 @@ function ProgressRow({ item }) {
           {!isError && (
             <div className="h-1 w-full overflow-hidden rounded-full bg-zinc-100">
               <div
-                className={`h-full rounded-full transition-all duration-500 ease-out ${isDone ? "bg-emerald-500" : "bg-[#2b7fff]"
+                className={`h-full rounded-full transition-all duration-500 ease-out ${isDone ? "bg-emerald-500" : item.cancelling ? "bg-zinc-300" : "bg-[#2b7fff]"
                   }`}
                 style={{ width: `${item.progress}%` }}
               />
             </div>
           )}
 
-          {/* speed + ETA */}
           {isUploading && (speedLabel || etaLabel) && (
             <p className="text-[11px] text-zinc-400 mt-1 tabular-nums">
               {speedLabel}
@@ -280,7 +342,6 @@ function ProgressRow({ item }) {
             </p>
           )}
 
-          {/* live elapsed time, ticking every second while uploading */}
           {isUploading && elapsedSoFarLabel && (
             <p className="text-[11px] text-zinc-400 mt-0.5 tabular-nums">
               Elapsed: {elapsedSoFarLabel}
@@ -296,6 +357,7 @@ function ProgressRow({ item }) {
           {isError && (
             <p className="text-xs text-red-400 leading-tight">{item.error}</p>
           )}
+
         </div>
       </div>
     </div>
@@ -355,7 +417,6 @@ export function ProgressToast({ position = "bottom-right" }) {
     }}>
       <div className="overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-lg">
 
-        {/* header */}
         <button
           onClick={() => setCollapsed((c) => !c)}
           className="flex w-full items-center justify-between gap-3 px-4 py-3 text-left"
@@ -367,11 +428,6 @@ export function ProgressToast({ position = "bottom-right" }) {
               <span className="text-sm font-semibold text-white leading-tight">
                 {headerLabel()}
               </span>
-              {/* {activeCount > 0 && (
-                <span className="text-[11px] text-white/70 leading-tight">
-                  Only one file can be uploaded at a time
-                </span>
-              )} */}
             </div>
           </div>
 
@@ -388,7 +444,6 @@ export function ProgressToast({ position = "bottom-right" }) {
           </div>
         </button>
 
-        {/* rows */}
         {!collapsed && (
           <div style={{ maxHeight: "280px", overflowY: "auto" }}>
             {items.map((item) => (

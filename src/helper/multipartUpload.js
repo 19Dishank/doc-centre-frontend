@@ -7,14 +7,30 @@ const MAX_RESUME_ROUNDS = 3;
 const retryDelay = (attempt) => 1000 * 2 ** attempt;
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-export async function uploadPartWithRetry({ partNumber, url, chunk, onPartProgress }) {
+// Thrown when we stop because the user cancelled — kept distinct from real
+// failures so callers don't show it as an "upload failed" error.
+export class UploadCancelledError extends Error {
+  constructor(message = "Upload cancelled") {
+    super(message);
+    this.name = "UploadCancelledError";
+  }
+}
+
+const throwIfCancelled = (signal) => {
+  if (signal?.aborted) throw new UploadCancelledError();
+};
+
+export async function uploadPartWithRetry({ partNumber, url, chunk, onPartProgress, signal }) {
   let attempt = 0;
 
   while (attempt <= MAX_RETRIES_PER_PART) {
+    throwIfCancelled(signal);
+
     try {
-      const response = await uploadOnSignedURL(url, chunk, (pct) => {
-        onPartProgress(partNumber, pct);
-      });
+      // pass the signal into the actual PUT/axios call so an in-flight
+      // request to S3/the presigned URL is aborted immediately, not just
+      // future ones
+      const response = await uploadOnSignedURL(url, chunk, (pct) => onPartProgress(partNumber, pct), { signal });
 
       const etag = response.headers?.etag;
       if (!etag) {
@@ -23,6 +39,10 @@ export async function uploadPartWithRetry({ partNumber, url, chunk, onPartProgre
 
       return { PartNumber: partNumber, ETag: etag.replaceAll('"', "") };
     } catch (error) {
+      if (signal?.aborted || error?.name === "CanceledError" || error?.name === "AbortError") {
+        throw new UploadCancelledError();
+      }
+
       attempt++;
 
       if (attempt > MAX_RETRIES_PER_PART) {
@@ -36,15 +56,16 @@ export async function uploadPartWithRetry({ partNumber, url, chunk, onPartProgre
   }
 }
 
-export async function uploadPartsInParallel(parts, concurrency, onPartProgress) {
+export async function uploadPartsInParallel(parts, concurrency, onPartProgress, signal) {
   const results = new Array(parts.length);
   let cursor = 0;
 
   async function worker() {
     while (cursor < parts.length) {
+      throwIfCancelled(signal);
       const currentIndex = cursor++;
       const part = parts[currentIndex];
-      results[currentIndex] = await uploadPartWithRetry({ ...part, onPartProgress });
+      results[currentIndex] = await uploadPartWithRetry({ ...part, onPartProgress, signal });
     }
   }
 
@@ -74,9 +95,16 @@ export async function uploadBatchWithReconciliation({
   onPartProgress,
   onPartSizesKnown,
   partResults,
+  signal,
 }) {
-  const partsResponse = await uploadMultipartDocument({ documentId, startPart });
+  // check BEFORE requesting new presigned URLs — this is the call you saw
+  // still firing after cancel
+  throwIfCancelled(signal);
+
+  const partsResponse = await uploadMultipartDocument({ documentId, startPart }, { signal });
   const { urls } = partsResponse?.data?.data?.url || {};
+
+  throwIfCancelled(signal);
 
   if (!urls?.length) {
     throw new Error(`Failed to get upload URLs for batch starting at part ${startPart}`);
@@ -90,7 +118,7 @@ export async function uploadBatchWithReconciliation({
 
   onPartSizesKnown(parts);
 
-  const uploadedResults = await uploadPartsInParallel(parts, CONCURRENCY_LIMIT, onPartProgress);
+  const uploadedResults = await uploadPartsInParallel(parts, CONCURRENCY_LIMIT, onPartProgress, signal);
   uploadedResults.forEach((r) => {
     if (r) partResults.set(r.PartNumber, r.ETag);
   });
@@ -98,8 +126,10 @@ export async function uploadBatchWithReconciliation({
   let missing = parts.filter((p) => !partResults.has(p.partNumber));
 
   for (let round = 0; round < MAX_RESUME_ROUNDS && missing.length > 0; round++) {
+    throwIfCancelled(signal);
+
     try {
-      const statusResponse = await getMultipartUploadStatus(documentId);
+      const statusResponse = await getMultipartUploadStatus(documentId, { signal });
       const statusData = statusResponse?.data?.data || statusResponse?.data || {};
       const statusUploadedParts = statusData.uploadedParts || [];
 
@@ -112,13 +142,16 @@ export async function uploadBatchWithReconciliation({
         }
       });
     } catch (statusError) {
+      if (signal?.aborted) throw new UploadCancelledError();
       console.error("Failed to fetch upload status:", statusError);
     }
 
     missing = parts.filter((p) => !partResults.has(p.partNumber));
     if (missing.length === 0) break;
 
-    const retryResults = await uploadPartsInParallel(missing, CONCURRENCY_LIMIT, onPartProgress);
+    throwIfCancelled(signal);
+
+    const retryResults = await uploadPartsInParallel(missing, CONCURRENCY_LIMIT, onPartProgress, signal);
     retryResults.forEach((r) => {
       if (r) partResults.set(r.PartNumber, r.ETag);
     });
@@ -135,7 +168,7 @@ export async function uploadBatchWithReconciliation({
   return parts[parts.length - 1].partNumber;
 }
 
-export async function uploadFileInParts({ file, documentId, chunkSize, totalParts, onProgress }) {
+export async function uploadFileInParts({ file, documentId, chunkSize, totalParts, onProgress, signal }) {
   const partResults = new Map();
   const partPercents = new Map();
   const partSizes = new Map();
@@ -164,6 +197,8 @@ export async function uploadFileInParts({ file, documentId, chunkSize, totalPart
 
   let nextStartPart = 1;
   while (nextStartPart <= totalParts) {
+    throwIfCancelled(signal); // stop BEFORE the next batch requests new presigned URLs
+
     const lastPartNumber = await uploadBatchWithReconciliation({
       documentId,
       startPart: nextStartPart,
@@ -172,6 +207,7 @@ export async function uploadFileInParts({ file, documentId, chunkSize, totalPart
       onPartProgress,
       onPartSizesKnown: registerPartSizes,
       partResults,
+      signal,
     });
 
     nextStartPart = lastPartNumber + 1;

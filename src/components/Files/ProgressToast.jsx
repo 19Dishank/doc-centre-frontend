@@ -17,10 +17,10 @@ import {
 import { EXT_ICON_MAP } from "@/constants/supportedFileTypes";
 import { cancelUpload } from "@/api/file";
 
-/*  module-level state  */
+
 let uploads = [];
 let listeners = new Set();
-let abortControllers = new Map(); // id -> () => void, registered by UploadButtons per upload
+let abortControllers = new Map();
 
 const notify = () => listeners.forEach((cb) => cb([...uploads]));
 const genId = () => `upl_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
@@ -79,7 +79,7 @@ export const progressToast = {
         completedAt: null,
         samples: [{ t: now, p: 0 }],
         speedBps: 0,
-        documentId: null,      // set later via setDocumentId() once backend returns it
+        documentId: null,
         cancelling: false,
         finalizing: false,
       },
@@ -93,7 +93,7 @@ export const progressToast = {
     );
     notify();
   },
-  // called from UploadButtons once initiateUpload resolves and we have documentId
+
   setDocumentId(id, docId) {
     uploads = uploads.map((u) =>
       u.id === id ? { ...u, documentId: docId } : u
@@ -101,9 +101,7 @@ export const progressToast = {
     notify();
   },
 
-  // called from UploadButtons right after start(), so cancel() can stop the
-  // local upload loop (presigned URL requests + part uploads) immediately,
-  // without waiting on the backend abort call.
+
   registerAbort(id, abortFn) {
     abortControllers.set(id, abortFn);
   },
@@ -177,10 +175,6 @@ export const progressToast = {
     notify();
   },
 
-  // Single entry point for cancelling: stops the local upload loop
-  // synchronously (so no more presigned URLs / part uploads fire), then
-  // tells the backend to abort the multipart upload server-side.
-  // in cancel(id): bail out immediately if we're already finalizing
   async cancel(id) {
     const item = uploads.find((u) => u.id === id);
     if (!item || item.cancelling || item.finalizing) return;

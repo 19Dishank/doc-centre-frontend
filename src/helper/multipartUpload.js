@@ -7,8 +7,6 @@ const MAX_RESUME_ROUNDS = 3;
 const retryDelay = (attempt) => 1000 * 2 ** attempt;
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-// Thrown when we stop because the user cancelled — kept distinct from real
-// failures so callers don't show it as an "upload failed" error.
 export class UploadCancelledError extends Error {
   constructor(message = "Upload cancelled") {
     super(message);
@@ -27,9 +25,6 @@ export async function uploadPartWithRetry({ partNumber, url, chunk, onPartProgre
     throwIfCancelled(signal);
 
     try {
-      // pass the signal into the actual PUT/axios call so an in-flight
-      // request to S3/the presigned URL is aborted immediately, not just
-      // future ones
       const response = await uploadOnSignedURL(url, chunk, (pct) => onPartProgress(partNumber, pct), { signal });
 
       const etag = response.headers?.etag;
@@ -97,8 +92,6 @@ export async function uploadBatchWithReconciliation({
   partResults,
   signal,
 }) {
-  // check BEFORE requesting new presigned URLs — this is the call you saw
-  // still firing after cancel
   throwIfCancelled(signal);
 
   const partsResponse = await uploadMultipartDocument({ documentId, startPart }, { signal });
@@ -197,7 +190,7 @@ export async function uploadFileInParts({ file, documentId, chunkSize, totalPart
 
   let nextStartPart = 1;
   while (nextStartPart <= totalParts) {
-    throwIfCancelled(signal); // stop BEFORE the next batch requests new presigned URLs
+    throwIfCancelled(signal);
 
     const lastPartNumber = await uploadBatchWithReconciliation({
       documentId,

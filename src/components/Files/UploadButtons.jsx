@@ -32,8 +32,6 @@ const UploadButtons = ({ parentId, setNewFolderRow }) => {
                     : "file",
         });
 
-        // lets the toast's cancel button stop this upload loop immediately,
-        // before the backend abort call even resolves
         const controller = new AbortController();
         progressToast.registerAbort(toastId, () => controller.abort());
 
@@ -73,9 +71,6 @@ const UploadButtons = ({ parentId, setNewFolderRow }) => {
         } catch (error) {
             setIsUploading(false);
 
-            // user-initiated cancel: progressToast.cancel() already removed
-            // the toast and called the backend abort — don't also flag this
-            // as a failed upload
             if (error instanceof UploadCancelledError || controller.signal.aborted) {
                 console.log(`Upload ${toastId} cancelled by user`);
                 return;
@@ -143,7 +138,7 @@ const UploadButtons = ({ parentId, setNewFolderRow }) => {
                                 onClick={handleUpload}
                             >
                                 <Plus className="size-4" />
-                                <span>Upload</span>
+                                <span>{isUploading ? "Uploading" : "Upload"}</span>
                                 <input ref={inputRef} id="file-input" type="file" className="hidden" onChange={onChangeFile} />
                             </Button>
                         </TooltipTrigger>

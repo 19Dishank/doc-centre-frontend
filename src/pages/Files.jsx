@@ -182,17 +182,7 @@ export default function Files() {
     }
   }, [parentId, currentPage]);
 
-  // useEffect(() => {
-  //   const handleDocumentCreated = (event) => {
-  //     
-  //   }
 
-  //   socket.on(SOCKET_EVENTS.DOCUMENT_UPLOADED, handleDocumentCreated);
-
-  //   return () => {
-  //     socket.off(SOCKET_EVENTS.DOCUMENT_UPLOADED, handleDocumentCreated);
-  //   }
-  // }, []);
   useEffect(() => {
     const refreshFilesData = async () => {
       await getFiles()
@@ -309,34 +299,6 @@ export default function Files() {
               </Button>
             </NavLink>
           )}
-          {/* <div className="ml-auto">
-            <FloatingActions
-              fabClassName="h-10 w-auto px-4 rounded-lg bg-white border border-zinc-200  text-zinc-700  shadow-sm hover:bg-zinc-50 hover:border-zinc-300"
-              mode="inline"
-              direction="left"
-              icon={
-                <>
-                  <Plus className="size-4" />
-                  <span className="text-sm font-medium">Add</span>
-                </>
-              }
-            >
-              {canRestoreDocument && (
-                <NavLink to="/trash">
-                  <Button variant="outline">
-                    <Trash2 className="size-4" />
-                    Recycle Bin
-                  </Button>
-                </NavLink>
-              )}
-
-              <UploadButtons
-                getFiles={getFiles}
-                parentId={parentId}
-                setNewFolderRow={setNewFolderRow}
-              />
-            </FloatingActions>
-          </div> */}
         </div>
 
         {/* Old toolbar layout */}
@@ -381,7 +343,7 @@ export default function Files() {
           </div>
         )}
       </div>
-      <ProgressToast position="-right" />
+      <ProgressToast />
     </div>
 
   );

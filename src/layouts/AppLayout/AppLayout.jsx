@@ -2,6 +2,7 @@ import { useState } from "react";
 import Sidebar from "./Sidebar";
 import Navbar from "./Navbar";
 import { Outlet } from "react-router-dom";
+import ProgressToast from "@/components/Files/ProgressToast";
 
 export default function AppLayout() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -14,6 +15,7 @@ export default function AppLayout() {
           <Outlet />
         </main>
       </div>
+      <ProgressToast position="bottom-right" />
     </div>
   );
 }

@@ -19,7 +19,7 @@ import { socket } from "@/helper/socketService";
 import { useDropzone } from "react-dropzone";
 import { toastNotification } from "@/helper/toastNotification";
 import clsx from "clsx";
-import ProgressToast, { progressToast } from "@/components/Files/ProgressToast";
+import { progressToast } from "@/components/Files/ProgressToast";
 import { SOCKET_EVENTS } from "@/helper/constants/socket.events";
 import PageHeading from "@/components/PageHeading";
 import useSEO from "@/hooks/useSEO";
@@ -343,7 +343,6 @@ export default function Files() {
           </div>
         )}
       </div>
-      <ProgressToast />
     </div>
 
   );

@@ -15,7 +15,7 @@ export default function AppLayout() {
           <Outlet />
         </main>
       </div>
-      <ProgressToast position="bottom-right" />
+      <ProgressToast />
     </div>
   );
 }
